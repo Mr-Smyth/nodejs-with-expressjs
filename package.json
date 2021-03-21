@@ -1,0 +1,26 @@
+{
+  "name": "nodejs-with-expressjs",
+  "version": "1.0.0",
+  "description": "Lesson to practice using ExpressJS",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mr-Smyth/nodejs-with-expressjs.git"
+  },
+  "author": "Mr-Smyth",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Mr-Smyth/nodejs-with-expressjs/issues"
+  },
+  "homepage": "https://github.com/Mr-Smyth/nodejs-with-expressjs#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
