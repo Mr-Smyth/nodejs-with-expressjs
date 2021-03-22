@@ -10,8 +10,8 @@ app.use((req, res, next) => {
 });
 
 app.use((req, res, next) => {
-    console.log("Im also here");
-    // ... response here
+    console.log("Im also here because of next() in prev middleware");
+    res.send('<h1>This is the send method</h1>');
 });
 
 const server = http.createServer(app);

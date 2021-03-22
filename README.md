@@ -69,6 +69,22 @@ server.listen(3000);
 ```   
 
 
+## Adding some response in the middleware
+
+We can still use the setHeader and write, but express gives us .send();
+
++ send() allows us to directly insert html, and it will automatically set the header to text/html if not set otherwise.
+
+Enter the following for example:   
+`res.send(<h1>This is the send method</h1>)`
+
 
 ## Handling requests with Express
     
+... 
+
+# Glossary of Terms
+
++ .use():   use() function is used to mount the specified middleware function(s) at the path which is being specified. It is mostly used to set up middleware for your application. Parameters: path: It is the path for which the middleware function is being called.
++ next():   included in the function passed into use, then is called from within to pass the request to the next middleware
++ .send():   Used to send a response uses default header text/html - (`res.send(<h1>This is the send method</h1>)`)
