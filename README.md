@@ -33,10 +33,10 @@ ExpressJs is a light-weight web application framework to help organize your web 
 `server.listen(3000)`
 
 +   or we can even leave the createServer out alltogether and just add listen onto app:   
-`app.listen(3000`) [This shows you that express already does this for us.](https://github.com/expressjs/express/blob/508936853a6e311099c9985d4c11a4b1b8f6af07/lib/application.js#L616)   
+`app.listen(3000`) [This shows you how express already does this for us.](https://github.com/expressjs/express/blob/508936853a6e311099c9985d4c11a4b1b8f6af07/lib/application.js#L616)   
 + This also means we do not have to import the http method either.
 
-## Middleware
+# Middleware
 
 **middleware functions are executed sequentially - so the order matters**
 
@@ -135,6 +135,33 @@ app.use('/', (req, res) => {
 app.listen(3000);
 ```
 
+### How to add a form and extract data
+
++ Add a new page/route called add-product:
+```
+app.use('/add-product', (req, res, next) => {
+    console.log("Im the add-product page");
+    res.send('<form action="/product" method="POST"><input type="text" name="title"><button>Submit</button></form>');
+});
+```
++ So in the /product route we want to get the body, but trying to console.log it gives us undefined:
+
+```
+app.use('/product', (req, res, next) => {
+    console.log(req.body);
+    // >> undefined
+});
+```
++   By default, request gives us the body - but it does not try to parse the information in the body. To do this we will use another 3rd party parser package.
++ So first lets install it: `npm install --save body-parser`
++ Then import it: const bodyParser = require('body-parser')
+
+! *Note body-parser was included in express by default - then removed - then added again - but doing this will ensure you get it no matter its status.*
+
++ Now we setup another middleware to handle the parsing of the body - this should usually be done towards the top of the code - no matter where we actually need to parse the body:
+```
+
+```
 
 
     

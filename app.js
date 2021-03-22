@@ -1,4 +1,5 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 
 const app = express();
 
@@ -7,14 +8,18 @@ app.get('/favicon.ico', (req, res) => {
     res.end();
 });
 
-app.use('/', (req, res, next) => {
-    console.log("Im First - im here to demonstrate that i will always run - then i use next to pass the request on...");
-    next();
+app.use('/add-product', (req, res, next) => {
+    console.log("Im the add-product page");
+    res.send('<form action="/product" method="POST"><input type="text" name="title"><button>Submit</button></form>');
 });
 
-app.use('/next-page', (req, res) => {
-    console.log("Im the next-page middleware - i must execute before the request gets to the '/' middleware ");
-    res.send('<h1>This is the "next-page" page</h1>');
+app.use('/product', (req, res, next) => {
+    // get the body of the incoming request to extract what was sent
+    console.log(req.body);
+    // >> undefined
+
+    // redirect to / page
+    res.redirect('/');
 });
 
 app.use('/', (req, res) => {
