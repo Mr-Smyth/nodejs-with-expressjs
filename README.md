@@ -160,9 +160,21 @@ app.use('/product', (req, res, next) => {
 
 + Now we setup another middleware to handle the parsing of the body - this should usually be done towards the top of the code - no matter where we actually need to parse the body:
 ```
-
+app.use(bodyParser.urlencoded({extended: false}));
 ```
+The urlencoded function is the function that is now available from body-parser package that parses all of our body and then passes a next so that our other middleware is executed. We will be advised to include the {extended: false} option, this is if it should be able to parse non default features.   
 
++ So now our middleware can give us the correct content, we also here change .use() to **.post()**, which only gets triggered with a POST request:
+```
+app.post('/product', (req, res, next) => {
+    // get the body of the incoming request to extract what was sent
+    // using bodyParser
+    console.log(req.body);
+    // >> 
+    // redirect to / page
+    res.redirect('/');
+});
+```
 
     
 ---
@@ -176,6 +188,8 @@ app.use('/product', (req, res, next) => {
 # Glossary of Terms
 
 + .use():   use() function is used to mount the specified middleware function(s) at the path which is being specified. It is mostly used to set up middleware for your application. Parameters: path: It is the path for which the middleware function is being called. [See More...](http://expressjs.com/en/4x/api.html#app.use)
++ .get():   Basically the same as .use() - except it will only trigger for incomming **GET** requests.
++ .post():   Basically the same as .use() and get() - except it will only trigger for incomming **POST** requests.
 + next():   included in the function passed into use, then is called from within to pass the request to the next middleware
 + .send():   Used to send a response uses default header text/html - (`res.send(<h1>This is the send method</h1>)`) [More Info](https://github.com/expressjs/express/blob/508936853a6e311099c9985d4c11a4b1b8f6af07/lib/response.js#L107)
 
