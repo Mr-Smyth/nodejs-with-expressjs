@@ -209,7 +209,18 @@ Inside the router related file.
 
 + Remember to take care with the order these miidleware imports are called in the app.js file - get and post will save most problems and keep everything in order, but it is better to behave like every middleware is using a use();
 
-    
+
+## Adding a 404 page
+
+If we change our default '/' page to a get - then unknown url paths will result in a cannot find page, so now we will setup a 404.   
+
+Remember the middleware is read from top to bottom searching for a condition that fits - we can use this now, by placing this at the end of the pile of middleware:
+```
+app.use((req, res, next) => {
+    res.status(404).send('Sorry but we cannot find that page<br><a href="/"><button>Back to safety..</button></a>')
+});
+```
+
 ---
 ---
 ---

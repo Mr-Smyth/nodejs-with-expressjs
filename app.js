@@ -16,4 +16,9 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(adminRoutes);
 app.use(shopRoutes);
 
+// add a 404
+app.use((req, res, next) => {
+    res.status(404).send('Sorry but we cannot find that page<br><a href="/"><button>Back to safety..</button></a>')
+});
+
 app.listen(3000);
