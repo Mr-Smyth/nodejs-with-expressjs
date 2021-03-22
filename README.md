@@ -178,6 +178,8 @@ app.post('/product', (req, res, next) => {
 
 # Handling routing with Express JS
 
+This is known as outsourcing your routes - (modularization)
+
 + Create a folder called routes. (conventional name)
 + Inside this folder it is conventional to create files which handle the various routes in our project.
 + Create the following files - for a shop example: 
@@ -210,6 +212,28 @@ Inside the router related file.
 + Remember to take care with the order these miidleware imports are called in the app.js file - get and post will save most problems and keep everything in order, but it is better to behave like every middleware is using a use();
 
 
+## Grouping outsourced apps under an app name
+
+If all the paths in a route file are associated with a particular path, this path name can be ommitted from the route and added as a filter in the app.js file, when the middleware is being referenced.
+
+Example:
+```
+router.get('/admin/add-product', (req, res, next) => {...});
+
+router.post('/admin/product', (req, res, next) => {...});
+```
+These 2 files have same first segment, so we can remove `/admin`:
+```
+router.get('/add-product', (req, res, next) => {...});
+
+router.post('/product', (req, res, next) => {...});
+```
+And add the `/admin` to the app.js file:
+```
+// outsourced routes
+app.use('/admin', adminRoutes);
+```
+
 ## Adding a 404 page
 
 If we change our default '/' page to a get - then unknown url paths will result in a cannot find page, so now we will setup a 404.   
@@ -220,6 +244,33 @@ app.use((req, res, next) => {
     res.status(404).send('Sorry but we cannot find that page<br><a href="/"><button>Back to safety..</button></a>')
 });
 ```
+
+## Setting up Templates
+For this project - 
++ create a folder called views.
++ Create a shop and an admin.html template.
++ Create the required markup
+
+## Serving the templates
++ In app.js - import path: `const path = require('path');`
++ Then we send a file with the join() method.
++ Join will give us a path by concatinating the followin segments:    
+    + **__dirname**: a global variable which holds the absolute path on our operating system to the folder its being called from.
+    + **'../':** Tells the path to go up one level - out of the routes folder - then we will find views which is a sibling folder.
+    + **"views":** the name of the folder we want to get to
+    + **shop.html:** or whatever the filename is
+
+It is important not to use slashes here, path.join will construct the path in a way that works on widows or linux, as the path slashes are different on these - no one size fits all solution. If slashes were the same we could just construct it manually using join and slashes.
+
+So the finished code should look like this:   
+`res.sendFile(path.join(__dirname, '../', 'views', 'shop.html'));`
+
+
+
+
+
+
+
 
 ---
 ---
@@ -235,6 +286,17 @@ app.use((req, res, next) => {
 + .get():   Basically the same as .use() - except it will only trigger for incomming **GET** requests.
 + .post():   Basically the same as .use() and get() - except it will only trigger for incomming **POST** requests.
 + next():   included in the function passed into use, then is called from within to pass the request to the next middleware
-+ .send():   Used to send a response uses default header text/html - (`res.send(<h1>This is the send method</h1>)`) [More Info](https://github.com/expressjs/express/blob/508936853a6e311099c9985d4c11a4b1b8f6af07/lib/response.js#L107)
++ .send():   Used to send a response uses default header text/html - (`res.send(<h1>This is the send method</h1>)`) [More Info](https://github.com/expressjs/express/blob/508936853a6e311099c9985d4c11a4b1b8f6af07/lib/response.js#L107)   
+---
 
+
+# Useful links:
+
+[Official Node.js Docs:](https://nodejs.org/en/docs/guides/)
+
+[Full Node.js Reference (for all core modules):](https://nodejs.org/dist/latest/docs/api/)
+
+[More about the Node.js Event Loop:](https://nodejs.org/en/docs/guides/event-loop-timers-and-nexttick/)
+
+[Blocking and Non-Blocking Code:](https://nodejs.org/en/docs/guides/dont-block-the-event-loop/)
 

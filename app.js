@@ -13,7 +13,8 @@ app.get('/favicon.ico', (req, res) => {
 
 app.use(bodyParser.urlencoded({extended: false}));
 
-app.use(adminRoutes);
+// outsourced routes
+app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 
 // add a 404
