@@ -176,6 +176,39 @@ app.post('/product', (req, res, next) => {
 });
 ```
 
+# Handling routing with Express JS
+
++ Create a folder called routes. (conventional name)
++ Inside this folder it is conventional to create files which handle the various routes in our project.
++ Create the following files - for a shop example: 
+    + admin.js: would handle the admin page/management funtionality.
+    + shop.js: What the user will see.
++ Now in each of these files import express.
++ Now we can use the Router feature - `const router = express.Router();` add this to each new file.
++ Now we can export the router: `module.exports = router
++ Cut the routes from the server file, that we want to move to a specific file, and replace app with router.
++ So this :
+```
+app.use('/', (req, res) => {
+    console.log("Im the '/' Middleware - im only executed if im reached");
+    res.send('<h1>This is the "/" Page</h1>');
+});
+```
+becomes this:
+
+```
+router.use('/', (req, res) => {
+    console.log("Im the '/' Middleware - im only executed if im reached");
+    res.send('<h1>This is the "/" Page</h1>');
+});
+```
+Inside the router related file.
+
++ Now with that in place in the router rile, we can now import it into the app.js file: `const shopRoutes = require('./routes/admin');`
++ As this imported code is in fact valid middleware we can place it in our app.js file where we would have placed it: `app.use(shopRoutes);`
+
++ Remember to take care with the order these miidleware imports are called in the app.js file - get and post will save most problems and keep everything in order, but it is better to behave like every middleware is using a use();
+
     
 ---
 ---
