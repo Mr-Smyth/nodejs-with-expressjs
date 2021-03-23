@@ -5,15 +5,27 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>404 - Page not found</title>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
-    <header>
-        <h1>Whoops - Sorry but we could not find this page</h1>
+    <header class="main-header">
+        <nav class="main-header__nav">
+            <ul class="main-header__item-list">
+                <li class="main-header__item"><a href="/" class="active">Shop</a></li>
+                <li class="main-header__item"><a href="/admin/add-product">Add Product</a></li>
+                <li class="main-header__item"><a href="/admin/product">A Bad link</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main class="main-section">
+        <h1 class="main-section__heading">Whoops - Sorry but we could not find this page</h1>
         <div>
             <a href="/">
                 <button>Return to Home</button>
             </a>
         </div>
-    </header>
+    </main>
 </body>
 </html>

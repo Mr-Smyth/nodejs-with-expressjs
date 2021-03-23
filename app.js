@@ -15,6 +15,8 @@ app.get('/favicon.ico', (req, res) => {
 });
 
 app.use(bodyParser.urlencoded({extended: false}));
+// this tells express to look into the public folder to serve up css files
+app.use(express.static(path.join(__dirname, 'public')));
 
 // outsourced routes
 app.use('/admin', adminRoutes);

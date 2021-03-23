@@ -310,7 +310,23 @@ res.sendFile(path.join(findDir, 'views', 'shop.html'));
 ```
 NOTE: The import path will change depending on what the relative path is, so app.js imports from'./utility/path', instead of '../utility/path'
 
+## Serving up Static or Public files
 
+### How to make our Css available
+
+if you ever tried to enter localhost and then something like views, shop.html, that will not work because this is simply accepted by express and it tries to find a route that matches this. It tries to find it here in app.js basically and also of course in shop routes and so on. It doesn't find that route and therefore it doesn't give you access, you can't access the file system here and that is of course good and what you want.
+
+But now We actually want to make an exception.
+
+So For this we need a feature expressjs offers us, we need to be able to serve files statically and statically simply means not handled
+by the express router or other middleware but instead directly forwarded to the file system. And for this, we register a new middleware with app use and this this one expressjs ships with called static.
+
+
++ Create main css file and following folder structure: `public/css/main.css`
++ Place your css in here.
++ inside app.js, enter: `app.use(express.static(path.join(__dirname, 'public')));`
+This tells express to goto the public folder when it gets any link to find  .css or .js files, this says to look in the public folder, so our link to the css file within the html page should be from the public folder.
++ Inside our template add the link to the css file: `<link rel="stylesheet" href="/css/main.css">`
 
 
 

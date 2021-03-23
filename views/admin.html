@@ -5,21 +5,29 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Node admin Page</title>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
-    <header>
-        <nav>
-            <ul>
-                <li><a href="/">Shop</a></li>
-                <li><a href="/admin/add-product">Add Product</a></li>
+    <header class="main-header">
+        <nav class="main-header__nav">
+            <ul class="main-header__item-list">
+                <li class="main-header__item"><a href="/">Shop</a></li>
+                <li class="main-header__item"><a href="/admin/add-product" class="active">Add Product</a></li>
+                <li class="main-header__item"><a href="/admin/product">A Bad link</a></li>
             </ul>
         </nav>
     </header>
 
-    <main>
-        <form action="/admin/product" method="POST">
-            <input type="text" name="title">
-            <button type="submit">Add Product</button>
+    <main class="main-section">
+        <h1 class="main-section__heading">Please enter the new product name below..</h1>
+        <form class="product-form" action="/admin/product" method="POST">
+            <div class="form-control">
+                <label for="title">Title</label>
+                <input id="title" type="text" name="title" placeholder="Enter Title here..">
+            </div>
+            <button class="product-button" type="submit">Add Product</button>
         </form>
     </main>
 </body>
