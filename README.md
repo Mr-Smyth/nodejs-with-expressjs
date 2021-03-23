@@ -1,6 +1,41 @@
 # nodejs-with-expressjs
 Some examples and information on using Express JS with Node JS
 
+# Index
+
+- [nodejs-with-expressjs](#nodejs-with-expressjs)
+- [What is Express JS?](#what-is-express-js-)
+  * [Alternatives to ExpressJS](#alternatives-to-expressjs)
+- [Setup Express](#setup-express)
+  * [Installing Express JS](#installing-express-js)
+  * [To start using Express](#to-start-using-express)
+- [Middleware](#middleware)
+  * [Setting up Middleware](#setting-up-middleware)
+  * [Favicon issue](#favicon-issue)
+  * [Adding some response in the middleware](#adding-some-response-in-the-middleware)
+  * [Handling requests/routes with Express](#handling-requests-routes-with-express)
+    + [Add a default path of '/' to our first middleware](#add-a-default-path-of-----to-our-first-middleware)
+    + [How to add a form and extract data](#how-to-add-a-form-and-extract-data)
+- [Handling routing with Express JS](#handling-routing-with-express-js)
+  * [Grouping outsourced apps under an app name](#grouping-outsourced-apps-under-an-app-name)
+  * [Adding a 404 page](#adding-a-404-page)
+  * [Setting up Templates](#setting-up-templates)
+  * [Serving the templates](#serving-the-templates)
+    + [Creating a path helper function](#creating-a-path-helper-function)
+  * [Serving up Static or Public files](#serving-up-static-or-public-files)
+    + [How to make our Css available](#how-to-make-our-css-available)
+- [Glossary of Terms](#glossary-of-terms)
+- [Useful links:](#useful-links-)
+
+
+
+---
+<br>
+<br>
+<br>
+<br>
+<br>
+
 # What is Express JS?
 
 ExpressJs is a light-weight web application framework to help organize your web application into an MVC architecture on the server side. It is by far the most popular(at time of writing) and therefore there are numerous 3rd party packages which can be pulled in for various applications.
@@ -11,6 +46,8 @@ ExpressJs is a light-weight web application framework to help organize your web 
 + Adonis.js
 + Koa
 + Sailis.js
+
+[<< Back to Index ..](#index)
 
 # Setup Express 
 
@@ -36,6 +73,9 @@ ExpressJs is a light-weight web application framework to help organize your web 
 `app.listen(3000`) [This shows you how express already does this for us.](https://github.com/expressjs/express/blob/508936853a6e311099c9985d4c11a4b1b8f6af07/lib/application.js#L616)   
 + This also means we do not have to import the http method either.
 
+[<< Back to Index ..](#index)
+
+
 # Middleware
 
 **middleware functions are executed sequentially - so the order matters**
@@ -44,6 +84,9 @@ This means that any incomming request is automatically funnelled through a bunch
 There can be multiple blocks of this and this allows for the plugable nature of expressjs - where we can easily add other 3rd party packages to give various functionalities.
 
 **Request** => **Middleware**( (req, res, next) => { ... } ) => next() **Middleware**( (req, res, next) => { ... } ) => res.send() => **Response**.
+
+[<< Back to Index ..](#index)
+
 
 ## Setting up Middleware
 + In the server app, after we define the app object, but before we create the server - add the following line: `app.use((req, res, next) => {});`.
@@ -75,6 +118,7 @@ app.use((req, res, next) => {
 const server = http.createServer(app);
 server.listen(3000);
 ```   
+[<< Back to Index ..](#index)
 
 
 ## Favicon issue
@@ -87,6 +131,9 @@ app.get('/favicon.ico', (req, res) => {
 });
 ```
 
+[<< Back to Index ..](#index)
+
+
 ## Adding some response in the middleware
 
 We can still use the setHeader and write, but express gives us .send();
@@ -95,6 +142,9 @@ We can still use the setHeader and write, but express gives us .send();
 
 Enter the following for example:   
 `res.send(<h1>This is the send method</h1>)`
+
+
+[<< Back to Index ..](#index)
 
 
 ## Handling requests/routes with Express
@@ -134,6 +184,9 @@ app.use('/', (req, res) => {
 
 app.listen(3000);
 ```
+
+[<< Back to Index ..](#index)
+
 
 ### How to add a form and extract data
 
@@ -176,6 +229,9 @@ app.post('/product', (req, res, next) => {
 });
 ```
 
+[<< Back to Index ..](#index)
+
+
 # Handling routing with Express JS
 
 This is known as outsourcing your routes - (modularization)
@@ -211,6 +267,8 @@ Inside the router related file.
 
 + Remember to take care with the order these miidleware imports are called in the app.js file - get and post will save most problems and keep everything in order, but it is better to behave like every middleware is using a use();
 
+[<< Back to Index ..](#index)
+
 
 ## Grouping outsourced apps under an app name
 
@@ -234,6 +292,9 @@ And add the `/admin` to the app.js file:
 app.use('/admin', adminRoutes);
 ```
 
+[<< Back to Index ..](#index)
+
+
 ## Adding a 404 page
 
 If we change our default '/' page to a get - then unknown url paths will result in a cannot find page, so now we will setup a 404.   
@@ -244,6 +305,9 @@ app.use((req, res, next) => {
     res.status(404).send('Sorry but we cannot find that page<br><a href="/"><button>Back to safety..</button></a>')
 });
 ```
+
+[<< Back to Index ..](#index)
+
 
 ## Setting up Templates
 For this project - 
@@ -274,6 +338,9 @@ app.use((req, res, next) => {
 
 Notice that we do not need to go up a level here, as app.js is in the base of the project directory anyway.
 But we can also do this a different way, by creating a helper function to get us the path directly.
+
+[<< Back to Index ..](#index)
+
 
 ### Creating a path helper function
 
@@ -310,6 +377,9 @@ res.sendFile(path.join(findDir, 'views', 'shop.html'));
 ```
 NOTE: The import path will change depending on what the relative path is, so app.js imports from'./utility/path', instead of '../utility/path'
 
+[<< Back to Index ..](#index)
+
+
 ## Serving up Static or Public files
 
 ### How to make our Css available
@@ -328,6 +398,9 @@ by the express router or other middleware but instead directly forwarded to the 
 This tells express to goto the public folder when it gets any link to find  .css or .js files, this says to look in the public folder, so our link to the css file within the html page should be from the public folder.
 + Inside our template add the link to the css file: `<link rel="stylesheet" href="/css/main.css">`
 
+**This method can also be used for serving images too.**
+
+[<< Back to Index ..](#index)
 
 
 ---
@@ -347,6 +420,8 @@ This tells express to goto the public folder when it gets any link to find  .css
 + .send():   Used to send a response uses default header text/html - (`res.send(<h1>This is the send method</h1>)`) [More Info](https://github.com/expressjs/express/blob/508936853a6e311099c9985d4c11a4b1b8f6af07/lib/response.js#L107)   
 ---
 
+[<< Back to Index ..](#index)
+
 
 # Useful links:
 
@@ -357,4 +432,6 @@ This tells express to goto the public folder when it gets any link to find  .css
 [More about the Node.js Event Loop:](https://nodejs.org/en/docs/guides/event-loop-timers-and-nexttick/)
 
 [Blocking and Non-Blocking Code:](https://nodejs.org/en/docs/guides/dont-block-the-event-loop/)
+
+[<< Back to Index ..](#index)
 
