@@ -256,17 +256,59 @@ For this project -
 + Then we send a file with the join() method.
 + Join will give us a path by concatinating the followin segments:    
     + **__dirname**: a global variable which holds the absolute path on our operating system to the folder its being called from.
-    + **'../':** Tells the path to go up one level - out of the routes folder - then we will find views which is a sibling folder.
+    + **'..':** Tells the path to go up one level - out of the routes folder - then we will find views which is a sibling folder. by not using '../' we are not making any assumptions about operating syatems, so '..' is a cleaner way to do it.
     + **"views":** the name of the folder we want to get to
     + **shop.html:** or whatever the filename is
 
 It is important not to use slashes here, path.join will construct the path in a way that works on widows or linux, as the path slashes are different on these - no one size fits all solution. If slashes were the same we could just construct it manually using join and slashes.
 
-So the finished code should look like this:   
-`res.sendFile(path.join(__dirname, '../', 'views', 'shop.html'));`
++   So the finished code should look like this:   
+`res.sendFile(path.join(__dirname, '..', 'views', 'shop.html'));`
 
++ Also setup the 404 and serve from app.js
+```
+app.use((req, res, next) => {
+    res.status(404).sendFile(path.join(__dirname, 'views', '404.html'));
+});
+```
 
+Notice that we do not need to go up a level here, as app.js is in the base of the project directory anyway.
+But we can also do this a different way, by creating a helper function to get us the path directly.
 
+### Creating a path helper function
+
++ Create a folder for the function, call it utility
++ Create a file called path.js and add following:
+```
+const path = require('path');
+
+/**
+ * dirname returns the directory name of a path
+ * 
+ * 
+ * Since v14.0.0, mainModule is deprecated.
+ * So instead of:
+ * 
+ *      module.exports = path.dirname(process.mainModule.filename)
+ * 
+ *  Now, you can achieve * the same thing just by writing the following line:
+ * 
+ *      module.exports = path.dirname(require.main.filename);
+ * 
+ */
+module.exports = path.dirname(require.main.filename);
+```
+
+Then import this into our routes:
+```
+// import
+const findDir = require('../utility/path');
+
+// add to response
+res.sendFile(path.join(findDir, 'views', 'shop.html'));
+
+```
+NOTE: The import path will change depending on what the relative path is, so app.js imports from'./utility/path', instead of '../utility/path'
 
 
 

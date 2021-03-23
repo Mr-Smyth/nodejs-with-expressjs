@@ -1,12 +1,14 @@
 const path = require('path');
 
+const findDir = require('../utility/path');
+
 const express = require('express');
 
 const router = express.Router();
 
 router.get('/add-product', (req, res, next) => {
     console.log("Im the add-product page");
-    res.sendFile(path.join(__dirname, '../', 'views', 'admin.html'))
+    res.sendFile(path.join(findDir, 'views', 'admin.html'))
 });
 
 /**
