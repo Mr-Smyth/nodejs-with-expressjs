@@ -6,7 +6,7 @@
 - [Create our views](#create-our-views)
   * [Creating a path helper function](#creating-a-path-helper-function)
 - [Serving Static CSS files](#serving-static-css-files)
-- [Detailed Walkthrough](#docs\detailed-walkthrough.md)
+- [Detailed Walkthrough](https://github.com/Mr-Smyth/nodejs-with-expressjs/blob/main/docs/detailed-walkthrough.md)
 
 
 
