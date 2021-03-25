@@ -8,13 +8,13 @@ const router = express.Router();
 
 router.get('/add-product', (req, res, next) => {
     console.log("Im the add-product page");
-    res.sendFile(path.join(findDir, 'views', 'admin.html'))
+    res.sendFile(path.join(findDir, 'views', 'add-product.html'))
 });
 
 /**
  * Adding .post restricts the middleware to only post requests
  */
-router.post('/product', (req, res, next) => {
+router.post('/add-product', (req, res, next) => {
     // get the body of the incoming request to extract what was sent
     // using bodyParser
     console.log(req.body);
