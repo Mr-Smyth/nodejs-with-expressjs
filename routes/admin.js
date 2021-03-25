@@ -6,6 +6,8 @@ const express = require('express');
 
 const router = express.Router();
 
+const products = [];
+
 router.get('/add-product', (req, res, next) => {
     console.log("Im the add-product page");
     res.sendFile(path.join(findDir, 'views', 'add-product.html'))
@@ -18,8 +20,14 @@ router.post('/add-product', (req, res, next) => {
     // get the body of the incoming request to extract what was sent
     // using bodyParser
     console.log(req.body);
+    
+    // push the returned data to the products array
+    products.push({ title: req.body.title });
+    console.log('admin.js', products);
     // redirect to / page
     res.redirect('/');
 });
 
-module.exports = router;
+// add content to our exports
+exports.routes = router;
+exports.products = products;
