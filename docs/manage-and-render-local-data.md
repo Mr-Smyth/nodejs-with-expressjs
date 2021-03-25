@@ -2,7 +2,7 @@
 
 ## Handle storing of returned data from from
 
-### Saving data to a variable and sharing accross files
+### Saving data to a variable and sharing across files
 
 +   In admin.js
 +   Add a product variable equal to an empty array. `const products = []`
@@ -27,7 +27,7 @@
 +   Now in shop.js - we want to import this data: `const adminData = require('./admin');`
 +   Now we can check if the data is coming through, so add: `console.log(adminData.products);` in the route and run app to check.
 
-This should now give us Shared data accross users and accross browsers - not usually what we want to do, but an example of how it can be done simply.
+This should now give us Shared data across users and across browsers - not usually what we want to do, but an example of how it can be done simply.
 
 ---
 
@@ -51,13 +51,13 @@ This should now give us Shared data accross users and accross browsers - not usu
 
 +   Goto App.js
 
-+   *Tell app.js that we are going to use an express conforming templating engine and we want to use it. so we use [app.set()](http://expressjs.com/en/5x/api.html#app.set). - set() can be used for many applications including sharing data accross an application. But we are going to use the built in views-engine property to tell express where to find our dynamic template views.*
++   *Tell app.js that we are going to use an express conforming templating engine and we want to use it. so we use [app.set()](http://expressjs.com/en/5x/api.html#app.set). - set() can be used for many applications including sharing data across an application. But we are going to use the built in views-engine property to tell express where to find our dynamic template views.*
 
 +   After we define our app = express, add: `app.set('view engine', 'pug');`
 
 **NOTE** *You <ins>***CANNOT***</ins> enter just anything in the 2nd arg, it must be pug. Pug is shipped with auto express support and registers itself as pug.*
 
-+   You can also specify a path for the location of the views. We dont really need to here as the default location for views is /views - which is where they are. But this is how you would do it: `app.set('views', 'views');
++   You can also specify a path for the location of the views. We don't really need to here as the default location for views is /views - which is where they are. But this is how you would do it: `app.set('views', 'views');
 
 #### Tell our route about PUG
 + Instead of sending a result with the path tou our html, we can just use the res.render() method. This will use the default templating engine, which we have set as pug in app.js above. We do not need to specify a path, because we have already specified that in app.js also (even though they are in the default location anyway).
@@ -89,6 +89,15 @@ html(lang="en")
                         a(href="/admin/add-product") Add Product
         h1 This is a pug file
 ```
-In a .pug file - the syntax is different and relies on indentation to set siblin/parent/child status in the dom. The file is then compiled into html code and sent to the browser.
+In a .pug file - the syntax is different and relies on indentation to set sibling/parent/child status in the Dom. The file is then compiled into html code and sent to the browser.
+
+
+
+#### Pass data to the template
+
++ Inside our shop route - get the products out of the adminData: `const products = adminData.products;`
++ Now to pass it to the template we can simply add a 2nd arg to the render method: `res.render('shop', {products: products});`
++ You can also add more key, value pairs to this object - such as a title: `res.render('shop', {products: products, title: 'Shop Page'});`
++ 
 
 ** PUG SETUP COMPLETE **
