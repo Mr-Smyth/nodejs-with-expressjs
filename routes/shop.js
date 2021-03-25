@@ -8,9 +8,7 @@ const express = require('express');
 const router = express.Router();
 
 router.get('/', (req, res) => {
-    console.log("Im the '/' Middleware page");
-    console.log('shop.js', adminData.products);
-    res.sendFile(path.join(findDir, 'views', 'shop.html'));
+    res.render('shop');
 });
 
 module.exports = router;

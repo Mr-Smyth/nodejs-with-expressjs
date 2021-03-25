@@ -5,6 +5,8 @@ const bodyParser = require('body-parser');
 const findDir = require('./utility/path');
 
 const app = express();
+// setup pug
+app.set('view engine', 'pug');
 
 const adminData = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
