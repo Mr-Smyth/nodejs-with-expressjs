@@ -163,8 +163,37 @@ block content
 ```
 
 #### Add code to check if on active page
+ To do this we can simpy add a key:value pair to the response like : `res.render('shop', {products: products, pageTitle: 'Shopping page', path :'/' });` and then check the path with a Ternary in the base.html nav area : 
+ ```
+ li.main-header__item
+    a(href="/", class=(path === '/' ? 'active' : '')) Shop
+li.main-header__item
+    a(href="/admin/add-product", class=(path === '/admin/add-product' ? 'active' : '')) Add Product
+```
 
+#### Learn more about PUG
 
 Want to learn more about Pug? Check out their official docs: [Click Here..](https://pugjs.org/api/getting-started.html)
 
 ** ----------------  PUG (sample) SETUP COMPLETE  ---------------- **
+
+### Handlebars Setup
+
+***Due to a (temporary) breaking change introduced by the library authors (of the package we'll install in the next lecture), make sure you run npm install --save express-handlebars@3.0 before you start using that package in the next lecture.***
+
++   Goto app.js
++   We need to set the default engine.
++   First we import handlebars - `const expressHbs = require('express-handlebars');`
++   Now we need to call .engine() to setup a default name and to initialize it. We did not have to do this with pug - because that part of pug is already built into express. So the first arg is the chosen name and the 2nd is a call to initialize it.
++   To Initialize handlebars: `app.engine('hbs', expressHbs());`
++   Now take the name we used to initialize it - and add that to the view-engine setting: `app.set('view engine', 'hbs');`
+
+Now that we have registered handlebars with our chosen name, we must use this chosen name as our template file extension, so `index.hbs` in this case, for example.
+
+#### Setup our Routes
+
+The method in which we pass data to a template does not change and is the same with all engines. See the pug section on setup for passing data to templates.
+
+#### Setup our Templates
+
+A Handlebars template uses normal html, with the slight difference of calling data variables with `{{ variable_name }}`
