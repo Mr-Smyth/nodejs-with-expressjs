@@ -96,8 +96,75 @@ In a .pug file - the syntax is different and relies on indentation to set siblin
 #### Pass data to the template
 
 + Inside our shop route - get the products out of the adminData: `const products = adminData.products;`
-+ Now to pass it to the template we can simply add a 2nd arg to the render method: `res.render('shop', {products: products});`
-+ You can also add more key, value pairs to this object - such as a title: `res.render('shop', {products: products, title: 'Shop Page'});`
-+ 
 
-** PUG SETUP COMPLETE **
++ Now to pass it to the template we can simply add a 2nd arg to the render method: `res.render('shop', {products: products});`
+
++ You can also add more key, value pairs to this object - such as a title: `res.render('shop', {products: products, title: 'Shop Page'});`
+
++ We can now use this in our pug template:
+
+  ```
+  <!DOCTYPE html>
+  html(lang="en")
+      head
+          meta(charset="UTF-8")
+          meta(name="viewport", content="width=device-width, initial-scale=1.0")
+          meta(http-equiv="X-UA-Compatible", content="ie=edge")
+          title #{ docTitle }
+          link(rel="stylesheet", href="/css/main.css")
+          link(rel="stylesheet", href="/css/product.css")
+      body
+          header.main-header
+              nav.main-header__nav
+                  ul.main-header__item-list
+                      li.main-header__item
+                          a.active(href="/") Shop
+                      li.main-header__item
+                          a(href="/admin/add-product") Add Product
+          main
+              if products.length > 0
+                  .grid
+                      each product in products
+                          article.card.product-item
+                              header.card__header
+                                  h1.product__title #{ product.title }
+                              .card__image
+                                  img(src="https://cdn.pixabay.com/photo/2016/03/31/20/51/book-			 1296045_960_720.png", alt="A Book")
+                              .card__content
+                                  h2.product__price €19.99
+                                  p.product__description #{ product.title } is a very interesting book about so many even more interesting things!
+                              .card__actions
+                                  button.btn Add to Cart
+              else 
+                  h1 No Books yet..
+  
+  ```
+
+#### Using Base Template Layouts
+You can also use a base template with pug.
+
++   Create a base pug file example: `base.pug`
++   Add in hooks where we can inject data for a particular page: `block content` or `block styles` for example.
++   Then in the extended files add in the code that extends the base: 
+```
+extends base.pug
+
+block styles
+    link(rel="stylesheet", href="/css/forms.css")
+    link(rel="stylesheet", href="/css/product.css")
+
+block content
+    main
+        form.product-form(action="/admin/add-product", method="POST")
+            .form-control
+                label(for="title") Title
+                input(type="text", name="title")#title
+            button.btn(type="submit") Add Product
+```
+
+#### Add code to check if on active page
+
+
+Want to learn more about Pug? Check out their official docs: [Click Here..](https://pugjs.org/api/getting-started.html)
+
+** ----------------  PUG (sample) SETUP COMPLETE  ---------------- **
