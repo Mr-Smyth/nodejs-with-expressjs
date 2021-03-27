@@ -179,6 +179,8 @@ Want to learn more about Pug? Check out their official docs: [Click Here..](http
 
 ### Handlebars Setup
 
+Handlebars has a philosophy which forces users to put logic where it belongs - in the route files. It has the benefit of forcing the user to keep the templates lean and focused on rendering rather thn heavy with logic.
+
 ***Due to a (temporary) breaking change introduced by the library authors (of the package we'll install in the next lecture), make sure you run npm install --save express-handlebars@3.0 before you start using that package in the next lecture.***
 
 +   Goto app.js
@@ -196,4 +198,56 @@ The method in which we pass data to a template does not change and is the same w
 
 #### Setup our Templates
 
+##### About if's in handlebars
+
+Handlebars can only handle a check for true or false, any more complex logic must be first calculated to a true or false in the route first, then passed to the template. So if we want to check `{{ #if products.length > 0 }}` - we cannot do this in the template. Instead, in this example we would have to calculate it and then return it from the route, which in this case could be done simply in the response: `('shop', {products: products.length > 0})`.   
+
+So with this passed to the template, we then just go `{{ #if products }}`
+
+
+The syntax for an if is:
+
++ {{#if }} = open an if block
++ {{else }} = insert an else into if block
++ {{/if }} = closes an if block
+
+##### About looping through data with handlebars
+
+There is no for in etc like in other engines, you simply use #each and this
+
++   {{#each objectName }} = opens a loop over objectName
++   {{ this.title }} = refers to the title key in objectName 
++   {{ this.address }} = refers to the address key in objectName etc...
++   {{/each }} = Closes loop ove objectName
 A Handlebars template uses normal html, with the slight difference of calling data variables with `{{ variable_name }}`
+
+Here is a n example from the shop page that displays the data we have stored locally in a variable products:
+
+```
+<main>
+    {{#if hasProducts }}
+    <h1>My Products</h1>
+    <div class="grid">
+        {{#each products  }}
+        <article class="card product-item">
+            <header class="card__header">
+                <h1 class="product__title">{{ this.title }}</h1>
+            </header>
+            <div class="card__image">
+                <img src="https://cdn.pixabay.com/photo/2016/03/31/20/51/book-1296045_960_720.png" alt="A Book">
+            </div>
+            <div class="card__content">
+                <h2 class="product__price">$19.99</h2>
+                <p class="product__description">A very interesting book about so many even more interesting things!</p>
+            </div>
+            <div class="card__actions">
+                <button class="btn">Add to Cart</button>
+            </div>
+        </article>
+        {{/each  }}
+    </div>
+    {{else }}
+        <h1>No Products exist yet..</h1>
+    {{/if }}
+</main>
+```
