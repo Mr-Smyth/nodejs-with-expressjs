@@ -28,7 +28,7 @@ app.use(shopRoutes);
 
 // add a 404
 app.use((req, res, next) => {
-    res.render('404', {pageTitle: 'Error - 404' });
+    res.render('404', {pageTitle: 'Error - 404', path: '/admin' });
     // res.status(404).sendFile(path.join(findDir, 'views', '404.html'));
 });
 

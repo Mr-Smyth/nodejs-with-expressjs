@@ -360,3 +360,42 @@ EJS is a mixture of PUG and Handlebars
 You will notice that it is just vanilla js inside the brackets, which is really useful
 
 #### Using Partials instead of Layouts
+
+The idea here is that you have some code blocks which you reuse in different parts of your templates and you can therefore just share them across your templates, so it's a bit like the opposite of a layout, instead of having one master layout where you put your individual view parts into, you have a couple of separated shared view parts which you can merge into the views you're creating
+
+
+
+##### Setting up  includes
+
++ Create a new folder within views called includes
+
++ Then create 3 partial files:
+
+  + head.ejs - containing only the head section
+  + end.ejs - containing the body
+  + navigation.ejs - containing the nav section.
+
++ Insert the appropriate markup into the 3 new files
+
++ In the file where we want to use these snippets use the includes command. This must be preceded by a - instead of the = we use to render variables . This is because the = will render the value of a file or variable in text form, this is for security, but we can override this by using -.
+
++ The path is also entered and it is the relative path from the current file.
+
+  Examples:
+
+  `<%- include('includes/head.ejs') %>` - pulls in the head content
+
+  `<%- include('includes/navigation.ejs') %>`- pulls in the navigation content
+
++ We can use a ternary in the navigation to check a path variable that we can pass in from the response.
+
+  Example:
+
+  ```
+  <ul class="main-header__item-list">
+              <li class="main-header__item"><a class="<%= path === '/' ? 'active' : '' %>" href="/">Shop</a></li>
+              <li class="main-header__item"><a class="<%= path === '/admin/add-product' ? 'active' : '' %>" href="/admin/add-product">Add Product</a></li>
+          </ul>
+  ```
+
++ 
