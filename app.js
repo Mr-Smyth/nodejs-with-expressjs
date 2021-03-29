@@ -10,7 +10,10 @@ const app = express();
 
 // setup Handlebars - because not built in we use engine() here..
 // give it a name, then initialize in 2nd arg
-app.engine('hbs', expressHbs());
+app.engine('hbs', expressHbs({
+    layoutsDir: 'views/layouts/',
+    defaultLayout: 'main-layout',
+    extname: 'hbs'}));
 
 // now setup the default template engine
 app.set('view engine', 'hbs');

@@ -9,7 +9,14 @@ const router = express.Router();
 const products = [];
 
 router.get('/add-product', (req, res, next) => {
-    res.render('add-product', {products: products, pageTitle: 'Admin Page', path: '/admin/add-product' });
+    res.render('add-product',{
+        products: products,
+        pageTitle: 'Admin Page',
+        path: '/admin/add-product',
+        activeAddProduct: true,
+        productCSS: true,
+        formsCSS: true
+    });
     // res.sendFile(path.join(findDir, 'views', 'add-product.html'))
 });
 

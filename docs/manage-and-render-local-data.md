@@ -169,7 +169,7 @@ block content
     a(href="/", class=(path === '/' ? 'active' : '')) Shop
 li.main-header__item
     a(href="/admin/add-product", class=(path === '/admin/add-product' ? 'active' : '')) Add Product
-```
+ ```
 
 #### Learn more about PUG
 
@@ -251,3 +251,50 @@ Here is a n example from the shop page that displays the data we have stored loc
     {{/if }}
 </main>
 ```
+
+#### Using Base Template Layouts
+You can also use a base template with Handlebars - works a bit differently to pug.
+
++ Go to app.js - to where we initialize handlebars `app.engine('hbs', expressHbs());`
+
++ Here we add in some options that tell handlebars where and what the default layout is. Click into the brackets and add curley braces {} and you can hit ctrl and space to see available options. 
+
++ Add the following: (note we are using the default location so there is no real need to specify the layoutsDir- but this is an example)
+
+  `app.engine('hbs', expressHbs({layoutsDir: 'views/layouts/',   defaultLayout: 'main-layout',   extname: 'hbs'}));`
+
+  **Note** In this case - where we setup the main-layout - we must also tell it to use the extension name we use, by default it expects the extension of the main-layout file to be `.handlebars`
+
++ Create the main-layout.hbs
+
++ To allow files extending this to insert content we add the `{{{ body }}}`
+
++ To allow other files own css files, we have to check for a variable passed in:
+
+  ```
+  {{#if formsCSS}}
+          <link rel="stylesheet" href="/css/forms.css">
+      {{/if}}
+      {{#if productCSS}}
+          <link rel="stylesheet" href="/css/product.css">
+      {{/if}}
+  ```
+
++ To check for an active link, we again check for a variable passed in:
+
+  ```
+  <ul class="main-header__item-list">
+                  <li class="main-header__item"><a class="{{#if activeShop }}active{{/if}}" href="/">Shop</a></li>
+                  <li class="main-header__item"><a class="{{#if activeAddProduct }}active{{/if}}" href="/admin/add-product">Add Product</a></li>
+              </ul>
+  ```
+
++ You setup these variables and set them to true, then pass them in the response. You only need to pass them if you need them to be true, otherwise absence will = false.
++ Then in each template file remove everything not required.
++ **Templates are now ready**
+
+### EJS Setup
+
+Ejs is supported out of the box with express, so once installed - we do not need to inistialise or register the engine as we had to with handlebars, so in this way it is like PUG.
+
+#### Initial EJS setup:
