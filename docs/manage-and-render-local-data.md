@@ -297,4 +297,66 @@ You can also use a base template with Handlebars - works a bit differently to pu
 
 Ejs is supported out of the box with express, so once installed - we do not need to inistialise or register the engine as we had to with handlebars, so in this way it is like PUG.
 
+
+
+EJS is a mixture of PUG and Handlebars
+
++ It allows you to use logic in the templates - like PUG
++ It Uses ordinary HTML - like Handlebars.
++ EJS - Does **NOT** support layouts - but you can implement it in other ways.
+
 #### Initial EJS setup:
+
++ In app.js
++ Just set the view engine to ejs: `app.set('view engine', 'ejs');`.
+
+
+
+#### Template setup
+
++ Create your template files with an ejs extension.
+
++ Insert the html required
+
+  
+
+  ##### Syntax for inserting Data
+
+  + **<%= variable_name %>** = is how to insert a value.
+  + **<% _IN_HERE_JUST_WRITE_VANILLA_JS_CODE_%>**
+
+**Example of an if and a for with EJS:**
+
+```
+<main>
+        <h1>My Products</h1>
+        <!-- Add the if check for products with ejs -->
+        <% if (products.length > 0) { %>
+        <div class="grid">
+            <% for (product of products) { %>
+                <article class="card product-item">
+                    <header class="card__header">
+                        <h1 class="product__title"><%= product.title %></h1>
+                    </header>
+                    <div class="card__image">
+                        <img src="https://cdn.pixabay.com/photo/2016/03/31/20/51/book-1296045_960_720.png" alt="A Book">
+                    </div>
+                    <div class="card__content">
+                        <h2 class="product__price">$19.99</h2>
+                        <p class="product__description">A very interesting book about so many even more interesting things!</p>
+                    </div>
+                    <div class="card__actions">
+                        <button class="btn">Add to Cart</button>
+                    </div>
+                </article>
+            <% } %>
+        </div>
+        <% } else { %>
+            <h1>No Products Yet!!</h1>
+        <% } %>
+    </main>
+```
+
+You will notice that it is just vanilla js inside the brackets, which is really useful
+
+#### Using Partials instead of Layouts

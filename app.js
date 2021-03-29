@@ -1,22 +1,14 @@
 const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
-const expressHbs = require('express-handlebars');
 
 // helper - to get dir
 const findDir = require('./utility/path');
 
 const app = express();
 
-// setup Handlebars - because not built in we use engine() here..
-// give it a name, then initialize in 2nd arg
-app.engine('hbs', expressHbs({
-    layoutsDir: 'views/layouts/',
-    defaultLayout: 'main-layout',
-    extname: 'hbs'}));
-
 // now setup the default template engine
-app.set('view engine', 'hbs');
+app.set('view engine', 'ejs');
 
 const adminData = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
