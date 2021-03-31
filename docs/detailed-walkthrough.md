@@ -119,7 +119,7 @@ app.use((req, res, next) => {
 
 const server = http.createServer(app);
 server.listen(3000);
-```   
+```
 [<< Back to Index ..](#index)
 
 
@@ -241,7 +241,7 @@ This is known as outsourcing your routes - (modularization)
 + Create a folder called routes. (conventional name)
 + Inside this folder it is conventional to create files which handle the various routes in our project.
 + Create the following files - for a shop example: 
-    + admin.js: would handle the admin page/management funtionality.
+    + admin.js: would handle the admin page/management functionality.
     + shop.js: What the user will see.
 + Now in each of these files import express.
 + Now we can use the Router feature - `const router = express.Router();` add this to each new file.
@@ -408,7 +408,7 @@ This tells express to goto the public folder when it gets any link to find  .css
 ---
 ---
 ---
----   
+---
 <br>
 <br>
 <br>

@@ -4,15 +4,26 @@
 
 ### Saving data to a variable and sharing across files
 
-+   In admin.js
-+   Add a product variable equal to an empty array. `const products = []`
-+   change our exports from `module.exports = router;` to `exports.routes = router` this adds our router to our exports object.
-+   We then add products to it also: `exports.products = products` So it equals the products array.
-+   Now inside our post /add-product route add the returned data to the products array: `products.push({ title: req.body.title });`
-+   ---
-+   In app.js
-+   We now need to change how we import our routes.
-+   Rename adminRoutes to adminData to reflect the change to an actual data object
++ In admin.js
+
++ Add a product variable equal to an empty array. `const products = []`
+
++ change our exports from `module.exports = router;` to `exports.routes = router` this adds our router to our exports object.
+
++ We then add products to it also: `exports.products = products` So it equals the products array.
+
++ Now inside our post /add-product route add the returned data to the products array: `products.push({ title: req.body.title });`
+
++ **Remember we will have imported body-parser in app.js to make this work**
+
++ ---
+
++ In app.js
+
++ We now need to change how we import our routes.
+
++ Rename adminRoutes to adminData to reflect the change to an actual data object
+
 +   Where we use the adminRoutes, also change the name and use dot notation to get to the routes
     ```
     const adminData = require('./routes/admin');
@@ -23,8 +34,11 @@
     app.use('/admin', adminData.routes);
     app.use(shopRoutes);
     ```
-+   ---
-+   Now in shop.js - we want to import this data: `const adminData = require('./admin');`
+    
++ ---
+
++ Now in shop.js - we want to import this data: `const adminData = require('./admin');`
+
 +   Now we can check if the data is coming through, so add: `console.log(adminData.products);` in the route and run app to check.
 
 This should now give us Shared data across users and across browsers - not usually what we want to do, but an example of how it can be done simply.
@@ -399,3 +413,17 @@ The idea here is that you have some code blocks which you reuse in different par
   ```
 
 + 
+
+# Resources
+
+Useful Resources & Links
+
+Attached, you find the source code for this section.
+
+When using my source code, make sure to run `npm install` in the extracted folder!
+
+Useful resources:
+
+- Pug Docs: https://pugjs.org/api/getting-started.html
+- Handlebars Docs: https://handlebarsjs.com/
+- EJS Docs: http://ejs.co/#docs
