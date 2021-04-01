@@ -4,14 +4,14 @@ const express = require('express');
 
 const router = express.Router();
 
-const productsController = require('../controllers/products');
+const adminController = require('../controllers/admin');
 
 // we now pull the logic for this route from controllers.products
 // The add product page
-router.get('/add-product', productsController.getAddProduct);
+router.get('/add-product', adminController.getAddProduct);
 
 // Handles posting of data from add product page
-router.post('/add-product', productsController.postAddProduct);
+router.post('/add-product', adminController.postAddProduct);
 
 // view products in admin page
 router.get('/products',);
