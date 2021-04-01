@@ -304,4 +304,7 @@ exports.getProducts = (req, res) => {
 };
 ```
 
+# MVC wrap up
+Useful resources:
 
+More on MVC: https://developer.mozilla.org/en-US/docs/Glossary/MVC

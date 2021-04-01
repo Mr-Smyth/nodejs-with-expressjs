@@ -10,7 +10,7 @@
 const Product = require('../models/product');
 
 exports.getAddProduct = (req, res, next) => {
-    res.render('add-product', {
+    res.render('admin/add-product', {
         pageTitle: 'Admin Page',
         path: '/admin/add-product',
         activeAddProduct: true,
@@ -32,7 +32,7 @@ exports.getProducts = (req, res) => {
     // we add in an anonymous function that will be a cb in the fetchAll
     Product.fetchAll((products) => {
         // once all products have been read - this function is called from within fetchAll
-        res.render('shop', {
+        res.render('shop/product-list', {
             products: products,
             pageTitle: 'Shopping page',
             path :'/',
