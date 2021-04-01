@@ -14,6 +14,6 @@ router.get('/add-product', adminController.getAddProduct);
 router.post('/add-product', adminController.postAddProduct);
 
 // view products in admin page
-router.get('/products',);
+router.get('/products', adminController.getProducts);
 
 module.exports = router;
