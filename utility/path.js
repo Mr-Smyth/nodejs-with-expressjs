@@ -1,7 +1,7 @@
 const path = require('path');
 
 /**
- * dirname returns the directory name of a path
+ * GETS THE ROOT DIRECTORY
  * 
  * 
  * Since v14.0.0, mainModule is deprecated.

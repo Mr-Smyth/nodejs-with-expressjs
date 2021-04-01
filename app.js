@@ -2,9 +2,6 @@ const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 
-// helper - to get dir
-const findDir = require('./utility/path');
-
 const app = express();
 
 // now setup the default template engine

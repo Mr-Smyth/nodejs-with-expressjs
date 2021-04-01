@@ -1,24 +1,50 @@
 /**
  * This model will represent a product.
  */
-const products = [];
+const fs = require('fs');
+const path = require('path');
+// import utility to get the root directory
+const getRoot = require('../utility/path');
+const fPath = path.join(getRoot, 'data', 'products.json');
+
+/**
+ * Helper Function
+ * 
+ * @param {Anonymous function from products.js constructor} cb 
+ */
+const getProductsFromFile = (cb) => {
+    // read the file - code will not wait for this response as its asynchronous - hence we will call back
+    fs.readFile(fPath, (err, fileData) => {
+        if (err) {
+            // call the callback function in the controller with a blank array
+            return cb([]);
+        }
+        // otherwise call the callback function in the controller with the read data
+        cb(JSON.parse(fileData));
+    });
+}
+
 
 module.exports = class Product {
-    constructor(t) {
+    constructor(title) {
         // create a property in this class and assign title.
-        this.title = t;
+        this.title = title;
     }
-    // a basic way to save the data to a simple array
+
     save() {
-        products.push(this);
+        // now we call the helper funtion to get the products - we include a callback 
+        // the call back is an anonymous function that will write to the file with the read data
+        getProductsFromFile(products => {
+            // because either an existing or a blank array is returned in the products variable we can push to it.
+            products.push(this);
+            fs.writeFile(fPath, JSON.stringify(products), err => {
+                console.log(err);
+            });
+        });
     }
-
-    // retrieve all the products
-    // make it static because we are not calling it on an instance of the class, like we would with save - myProducts.save() for example
-    // but we are calling it from outside to fetch all the products, so we need to use static.
-
-    // static means that we can call the function on the class itself, and not on an instanciated object of the class.
-    static fetchAll() {
-        return products;
+    // use static as we are not calling an instance - but the Product class
+    static fetchAll(cb) {
+        // call the helper function to read the products
+        getProductsFromFile(cb);
     }
 }

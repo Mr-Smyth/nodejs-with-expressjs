@@ -175,4 +175,133 @@ app.listen(3000);
 
 ---
 
-## Some m
+## Models
+
+Simple example of a model for a product with just a title:
+
++   Create a models folder
++   Inside this folder for this example create a model file called product.js - because the model will represent an instance of one product.
+*   create an export of a class, here we call the class Product
++   Create the constructor function inside and pass in the title of the product
++   Then inside the constructor we make the created instance title property equal whatever title is. This means that if we go newProd = new Product, then inside this newProd object, will be a title property, and we want to make that equal to title.
++   At this stage it should look like this:
+    ```
+    module.exports = class Product {
+        constructor(title) {
+            this.title = title;
+        }
+    
+    }
+    ```
++   Next we need a way to call save on the created instance, so we add a save function. First we will just create a global array to hold the data for now and call it products.
++   Next inside the save method we will push the instance to the array. It should look like this:
+    ```
+    save() {
+        products.push(this);
+    }
+    ```
++   Next we need a way to get all the data from this object, so we create a function called fetchAll(). But because we do not call this on an instance of the class, but instead we want to get everything, we add static before it. 
+    ```
+    static fetchAll() {
+        return products;
+    }
+    ```
+
+### Saving the Products to a File
+
+We are using a json file
+
++   JSON.parse = takes json data and turns it into a js array
++   JSON.stringify = takes a js array and turns it into json data
+
+
++   We get the root path and setup a variable that has the path to the file we want to read and write to.
++   We create a blank products array - this is so we can push data to it, if current data does not exist
++   Then we check if there is any current info in the file, if there is we parse it into a js array
++   Then we push the object into the array, whichever one it is blank or existing
++   Then convert it back to json data using stringify
++   Then write it to file
+
+Example save method:
+```
+save() {
+    // create a path to the storage file
+    const fPath = path.join(getRoot, 'data', 'products.json');
+
+    // now we want to read the file in
+    // We want to do something when we have finished reading it in. either we get an error or we get data in buffer form
+    // So we make an arow function here as we want this data to persist until we can resolve it.
+    fs.readFile(fPath, (err, fileData) => {
+
+        // initially setup products as an empty array
+        let products = [];
+
+        // then we check if we have had NO error, - this means data was read from file
+        if (!err) {
+            // then we can parse the data into a js array. - JSON.parse does this.
+            products = JSON.parse(fileData);
+        }
+
+        // so now we either have an epty products array, or one containing existing products from the file
+        // so now we can push to it - push this, as we are still within the arrow function
+        products.push(this);
+
+        // and finally we save it back into the file - by first converting products array back to json and writing the products to file
+        //JSON.stringify turns it back into a json string
+        // Also include an err
+        fs.writeFile(fPath, JSON.stringify(products), (err) => {
+            console.log(err);
+        });
+    });
+}
+```
+
+### Fetching the data from the file
+
+**Problem** readFile is asychronous code, and the logic within the readFile will be missed if we deal with it synchronously, therefore we need a callback.
+
+What we will do is:
++   add a 'cb' into fetchAll
++   this callback refers to an anonymous function within the fetchAll call in the products.js controller.
++   This cb will be called from within the readFile function (which is asynchronous) and it will be called with the response to the readFile data
++   This garuntees the response and essentially the code will be rendered to the template from within the cb function in the products.js controller.
+
+Example from code:
+
+The fetchAll Method:
+```
+static fetchAll(cb) {
+        const fPath = path.join(getRoot, 'data', 'products.json');
+
+        // read the file - code will not wait for this response as its asynchronous - hence we will call back
+        fs.readFile(fPath, (err, fileData) => {
+            if (err) {
+                // call the callback function in the controller with a blank array
+                return cb([]);
+            }
+            // otherwise call the callback function in the controller with the read data
+            cb(JSON.parse(fileData));
+        });
+    }
+```
+
+The products.js controller:
+```
+// Display our products controller
+exports.getProducts = (req, res) => {
+    // we add in an anonymous function that will be a cb in the fetchAll
+    Product.fetchAll((products) => {
+        // once all products have been read - this function is called from within fetchAll
+        res.render('shop', {
+            products: products,
+            pageTitle: 'Shopping page',
+            path :'/',
+            hasProducts: products.length > 0,
+            activeShop: true,
+            productCSS: true
+        });
+    });
+};
+```
+
+
