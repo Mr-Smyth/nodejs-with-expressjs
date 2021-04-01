@@ -7,16 +7,16 @@ const router = express.Router();
 const shopController = require('../controllers/shop');
 
 // Landing page
-router.get('/', shopController.getProducts);
+router.get('/', shopController.getIndex);
 
 // Product List page
-router.get('/product-list',);
+router.get('/product-list', shopController.getProducts);
 
 // Shopping Cart page
-router.get('/cart',);
+router.get('/cart', shopController.getCart);
 
 // Checkout page
-router.get('/checkout',);
+router.get('/checkout', shopController.getCheckout);
 
 module.exports = router;
 
