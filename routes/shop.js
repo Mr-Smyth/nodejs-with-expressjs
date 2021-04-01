@@ -12,5 +12,11 @@ router.get('/', productsController.getProducts);
 // Product List page
 router.get('/product-list',);
 
+// Shopping Cart page
+router.get('/cart',);
+
+// Checkout page
+router.get('/checkout',);
+
 module.exports = router;
 
