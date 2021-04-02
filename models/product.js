@@ -30,8 +30,8 @@ module.exports = class Product {
         // create our constructor properties
         this.title = title;
         this.imageUrl = imageUrl;
-        this.description = description;
         this.price = price;
+        this.description = description;
     }
 
     save() {
