@@ -42,3 +42,11 @@ exports.getCheckout = (req, res, next) => {
         path :'/checkout',
     });
 };
+
+// Display our Checkout controller
+exports.getOrders = (req, res, next) => {
+    res.render('shop/orders', {
+        pageTitle: 'Your Orders',
+        path :'/orders',
+    });
+};

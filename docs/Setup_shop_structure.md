@@ -74,3 +74,7 @@ Example with ejs:
         <% } %>
     </main>
 ```
+## Setup edit and delete functionality
+
++   Add the 2 buttons to our html
++   
