@@ -14,6 +14,22 @@ exports.getProducts = (req, res, next) => {
     });
 };
 
+// Display a products Details controller
+exports.getProductDetails = (req, res, next) => {
+    // we can access params in the req using express params object
+    // this allows us to get productID which is the name we choose in the routes
+    const prodId = req.params.productId;
+    
+    // call the static method to find one product
+    Product.fetchOne(prodId, product => {
+        res.render('shop/product-details', {
+            product: product,
+            pageTitle: 'Product Details Page',
+            path: '/product-details'
+        });
+    });
+};
+
 // Display our Home Page controller
 exports.getIndex = (req, res, next) => {
     // we add in an anonymous function that will be a cb in the fetchAll

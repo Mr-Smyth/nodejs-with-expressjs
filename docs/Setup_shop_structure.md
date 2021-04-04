@@ -74,7 +74,56 @@ Example with ejs:
         <% } %>
     </main>
 ```
+
+## Setup a products details page
+
++   Make sure we have a product id in our model. if just using a file, add some sort of id to the save method, like this `this.id = (Math.floor(Math.random()*10000)).toString();`
++   Setup a link to point at the product details route and add it to the product in the product list page.
++   Now we add the product id of the current product: `<a href="/product-details/<%= product.id %>" class="btn">Details</a>`
++   Now we need to make sure we can extract this id from the url - in the routes. 
++   In the routes - add another route in this case the same as product-list, but in place of the expected incomming data which in this case is the product id - place a : then a variable name to store this data in. example: `router.get('/product-list/:productId', shopController.getProducts);`
++   To add this  dynamic route you will need to be aware that a path like /product/:productId - could fire for any url that starts with /products/. So /products/delete would never be reached if it was placed below one of these dynamic routes.
++   Next we add on a controller, that gets the information out of the url
++   We extract this by using the express params object in the request: `const prodId = req.params.productId;`.   
+
+### in our model - setup to find one product
++   In our product model, we now need to add another static method to extract one product only
++   As at this stage of the example we are only using a JSON file to act as a db, we will have to load all products and do a search.
++   The js find() method will work well here. With find() - it takes in a function, and will keep running that function until true is returned.
++   We will loop over the products array and check if the products id we pass in, matches the current product. If it does our function within find will return true.
++   Then we can execute our callbacck, which is the code in the controller function passed into fetchOne.
+
+Example of the code:
+
+```
+static fetchOne(id, cb) {
+
+    // We want to get the products first as we are just dealing with a json file in this example
+    getProductsFromFile(products => {
+
+        // now we have all the products we can use normal js
+        // use the default js find() method to search an array for a value
+        // This will execute a function passed to find - on every element in the array
+        // and will ultimately return the element for which the function returns true
+
+        const product = products.find(prod => {
+            // REMEMBER FIND WILL ONLY RETURN TRUE
+            return prod.id === id;
+        });
+        // note, above can be written: const product = products.find(prod => prod.id === id); 
+        // because in single statement arrow functions, return is implied
+
+        cb(product); // execute the callback code in the controller
+    });
+}
+```
+
+
 ## Setup edit and delete functionality
 
-+   Add the 2 buttons to our html
+This will involve passing a product ID as part of the url
+
+### Edit button
+
++   Create a link that points to the edit route: `<a href="/admin/edit-product" class="btn">Edit</a>`
 +   

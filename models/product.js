@@ -38,6 +38,7 @@ module.exports = class Product {
         // now we call the helper funtion to get the products - we include a callback 
         // the call back is an anonymous function that will write to the file with the read data
         getProductsFromFile(products => {
+            this.id = (Math.floor(Math.random()*10000)).toString();
             // because either an existing or a blank array is returned in the products variable we can push to it.
             products.push(this);
             fs.writeFile(fPath, JSON.stringify(products), err => {
@@ -49,5 +50,29 @@ module.exports = class Product {
     static fetchAll(cb) {
         // call the helper function to read the products
         getProductsFromFile(cb);
+    }
+
+    // Extract one product, 
+    /**
+     * 
+     * @param {*} id of the product
+     * @param {*} cb Callback to get the actual data
+     */
+    static fetchOne(id, cb) {
+        // We want to get the products first as we are just dealing with a json file in this example
+        getProductsFromFile(products => {
+            // now we have all the products we can use normal js
+            // use the default js find() method to search an array for a value
+            // This will execute a function passed to find - on every element in the array
+            // and will ultimately return the element for which the function returns true
+
+            const product = products.find(prod => {
+                // REMEMBER FIND WILL ONLY RETURN TRUE
+                return prod.id === id;
+            });
+            // note, above can be written: const product = products.find(prod => prod.id === id); 
+            // because in single statement arrow functions, return is implied
+            cb(product);
+        });
     }
 }
