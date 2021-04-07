@@ -185,6 +185,95 @@ Here we will do something similar, we dont need a visable input, instead we will
 
 Note: We could pass this by using the url also, just as we do to get to the product detail page, with the correct product. But we dont need to do it that way in this case, instead we will use the request body.
 
+### In the Models
+We want to have a cart that holds all the products that we added and we also want to group products by id and increase their quantity 
+in case we add a product more than once. We dont want to use a constructor here because we dont really create a cart, the cart should always be there we just need to add to it.
+
++   Create a new file in models called cart.js
++   create model  as per example structure below:
+    ```
+    module.exports = class Cart {
+        static addProduct(id) {
+            // First fetch the previous cart //////////////////////////////////////////////////////////////////////////////////////////////////
+            // Analyze the cart, see if product being added is an existing product in cart ////////////////////////////////////////////////////
+            // Add new product / increase the qty /////////////////////////////////////////////////////////////////////////////////////////////
+        }
+    }
+    ```
++   Import fs and path
++   construct a path to our json file that will act as our database
++   Here is the commented code working with file storage
+    ```
+    const path = require('path');
+    // import utility to get the root directory
+    const getRoot = require('../utility/path');
+    const fPath = path.join(getRoot, 'data', 'cart.json');
+
+
+    /* We want to have a cart that holds all the products that we added
+    and we also want to group products by id and increase their quantity 
+    in case we add a product more than once. 
+
+    Dont want to use a constructor here because we dont really create a cart, 
+    the cart should always be there we just need to add to it.*/
+    module.exports = class Cart {
+        static addProduct(id, productPrice) {
+            // First fetch the previous cart //////////////////////////////////////////////////////////////////////////////////////////
+
+            // try to read the file - we will either get an err or the file content
+            fs.readFile(fPath, (err, filecontent) => {
+                // our cart equals a new cart by default.
+                const cart = { products: [], totalPrice: 0 } 
+                // if we DONT have an error - the cart exists so we redefine cart
+                if (!err) {
+                    // reassign cart with the data from the read file
+                    cart = JSON.parse(fileContent);
+                }
+
+                // Analyze the cart, see if product being added is an existing product in cart ///////////////////////////////////////
+
+                // see if product exists using findIndex - we use findIndex here instead of find because 
+                // we will use the index to replace any existing product with an updated one
+                const existingProductIndex = cart.products.findIndex(prod => prod.id === id);
+                const existingProduct = cart.products[existingProductIndex];
+
+                // now a product from the products model does not have a qty field - so we create a new product from existing product or 
+                // if no existing product in cart, then we use it to make a new object for product
+                let updatedProduct;
+
+                // Add new product / increase the qty ///////////////////////////////////////////////////////////////////////////////
+                
+                // now we check if the product exists already in our cart
+                if (existingProduct) {
+                    // then we want to increase the qty - but we use updatedProduct to make a copy of existing product
+                    // Use spread to create a new object
+                    updatedProduct = { ...existingProduct };
+                    // then we can increment the qty - assuming for now, we can only add 1 each time
+                    updatedProduct.qty = updatedProduct.qty + 1;
+                    // now we use the index we got above to replace the existing product with our updated one
+                    cart.products = [...cart.products];
+                    cart.products[existingProductIndex] = updatedProduct;
+                }
+                // now if product is not existing in the cart
+                else {
+                    updatedProduct = { id: id, qty: 1 };
+                    // now update the cart - here we can simply add the product
+                    cart.products = [...cart.products, updatedProduct];
+                }
+
+                // now we need to update the price - reference the cart object - the + converts it to a number
+                cart.totalPrice = cart.totalPrice + +productPrice;
+
+                // Now lastly we write the data back into the file. - use stringify to convert back to json
+                fs.writeFile(fPath, JSON.stringify(cart), (err) => {
+                    console.log(err);
+                });
+            });
+        }
+    }
+    ```
+
+
 ### In the routes
 +   Go to shop.js routes
 +   The getCart route, is the one to display the page, but as we are using a POST request to send the data - we need another route to handle the post request.
@@ -197,7 +286,24 @@ router.post('/cart', );
 ```
 
 ### Now Construct the controller for this post route 
-+   Go to controllers/ shop
++   Go to controllers/ shop.js
++   We need to get the Product id from the request body
++   We then get the correct product
++   We then call the cart static function to add the product id and the price to the cart
+
+```
+// Get post data for our cart
+exports.postToCart = (req, res, next) => {
+    // retrieve product id from req
+    const prodId = req.body.productId;
+    // now we get the product using Product model and the id - we get a product that we can use to update cart
+    Product.fetchOne(prodId, (product) => {
+        // Now we use the Cart model - calling the addProduct static function
+        Cart.addProduct(prodId, product.price)
+    });
+    res.redirect('/cart');
+};
+```
 
 
 

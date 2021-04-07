@@ -1,5 +1,6 @@
 // import model
 const Product = require('../models/product');
+const Cart = require('../models/cart');
 
 // Display our products controller
 exports.getProducts = (req, res, next) => {
@@ -47,7 +48,11 @@ exports.getIndex = (req, res, next) => {
 exports.postToCart = (req, res, next) => {
     // retrieve product id from req
     const prodId = req.body.productId;
-    console.log(prodId);
+    // now we get the product using Product model and the id - we get a product that we can use to update cart
+    Product.fetchOne(prodId, (product) => {
+        // Now we use the Cart model - calling the addProduct static function
+        Cart.addProduct(prodId, product.price)
+    });
     res.redirect('/cart');
 };
 

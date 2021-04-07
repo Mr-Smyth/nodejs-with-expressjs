@@ -29,10 +29,11 @@
                                 </div>
                                 <div class="card__actions">
                                     <a href="/product-details/<%= product.id %>" class="btn">Details</a>
-                                    <form action="/cart" method="POST">
-                                        <button class="btn">Add to Cart</button>
-                                        <input type="hidden" name="productId" value="<%= product.id %>">
-                                    </form>
+                                    
+                                <!-- use an include, but the code within the include may need the product passed to it
+                                we add it as a 2nd arg 
+                                example: <%- include('../includes/add-to-cart.ejs', {product: product}) %>-->
+                                <%- include('../includes/add-to-cart.ejs', {product: product}) %>
                                 </div>
                             </article>
                             <% } %>
