@@ -24,7 +24,7 @@ exports.getProductDetails = (req, res, next) => {
     Product.fetchOne(prodId, product => {
         res.render('shop/product-details', {
             product: product,
-            pageTitle: 'Product Details Page',
+            pageTitle: product.title, // dynamically set page header to name of product
             path: '/product-details'
         });
     });
@@ -41,6 +41,14 @@ exports.getIndex = (req, res, next) => {
             path :'/index',
         });
     });
+};
+
+// Get post data for our cart
+exports.postToCart = (req, res, next) => {
+    // retrieve product id from req
+    const prodId = req.body.productId;
+    console.log(prodId);
+    res.redirect('/cart');
 };
 
 // Display our Cart controller
