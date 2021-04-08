@@ -316,5 +316,68 @@ This will involve passing a product ID as part of the url
 
 ### Edit button
 
+We could reuse the add-product page here and combine both into one template called edit-product, but for clarity here i will use seperate template files
+
+#### HTML
++   Add the same markup as the add product page for now
 +   Create a link that points to the edit route: `<a href="/admin/edit-product" class="btn">Edit</a>`
-+   
++   Make sure the action goes to edit-product
+
++   Once the routes and controllers are set up we can pre populate our form using the value property and point it at our passed in product object 
+
+#### Routes
++   Add the route to handle edit product - but takes in the product id in the url.   
+`router.get('/edit-product/:productId', adminController.getEditProduct);`
+
+#### Controllers
++   Add a controller for the edit-product route
++   We need to get the products, but first check the optional use of query params in next section.
++   Once you have checked query params we can construct our controller to get the product to be edited from the product id passed in the url as follows:
+```
+exports.getEditProduct = (req, res, next) => {
+    const editMode = req.query.edit;
+    if (!(editMode === 'true')) {
+        return res.redirect('/');
+    }
+
+    // now we need the product id that was passed in the url
+    const prodId = req.params.productId;
+    // call the static method to find one product - this passes the returned product into the template
+    Product.fetchOne(prodId, product => {
+        // add a check in case product does not exist
+        if (!product) {
+            return res.redirect('/');
+            // could also pass an error in here
+        }
+        res.render('admin/edit-product', {
+            pageTitle: 'Edit Product Page',
+            path: '/admin/edit-product',
+            editing: editMode,
+            product: product
+        });
+    });
+};
+```
+
+#### Using optional Query Params
+
+For this purpose it is redundant, but as an example we can pass an optional query param in the url from the html link that we can also check for and act on accordingly. the query object is produced and managed by express,  So in this example i will add a query param as follows
+
++   In the link that sends a user to the edit page add in `?edit = true`
++   In the controller for edit-product add the following param: `editing: editMode`. this allows us to check for editing in the template itself, redundant here but useful if you aree sharing a template with add-product perhaps, in that case you can check this parameter to possibly change a button name or action.
++   Then in the same controller, check this param and act accordingly, if it does not exist return user to home page, you must check if it is equal to the string 'true', as true will be a string in the url.
+    ```
+    exports.getEditProduct = (req, res, next) => {
+        const editMode = req.query.edit;
+        if (!(editMode === 'true')) {
+            return res.redirect('/');
+        }
+        res.render('admin/edit-product', {
+            pageTitle: 'Edit Product Page',
+            path: '/admin/edit-product',
+            editing: editMode
+        });
+    };
+    ```
+
+    So now we will only enter edit mode if the edit param is true and present in the url.

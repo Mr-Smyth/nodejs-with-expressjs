@@ -20,6 +20,30 @@ exports.postAddProduct = (req, res, next) => {
     res.redirect('/');
 };
 
+exports.getEditProduct = (req, res, next) => {
+    const editMode = req.query.edit;
+    if (!(editMode === 'true')) {
+        return res.redirect('/');
+    }
+
+    // now we need the product id that was passed in the url
+    const prodId = req.params.productId;
+    // call the static method to find one product - this passes the returned product into the template
+    Product.fetchOne(prodId, product => {
+        // add a check in case product does not exist
+        if (!product) {
+            return res.redirect('/');
+            // could also pass an error in here
+        }
+        res.render('admin/edit-product', {
+            pageTitle: 'Edit Product Page',
+            path: '/admin/edit-product',
+            editing: editMode,
+            product: product
+        });
+    });
+};
+
 exports.getProducts = (req, res, next) => {
     // we add in an anonymous function that will be a cb in the fetchAll
     Product.fetchAll((products) => {
