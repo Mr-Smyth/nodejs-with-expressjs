@@ -380,4 +380,46 @@ For this purpose it is redundant, but as an example we can pass an optional quer
     };
     ```
 
-    So now we will only enter edit mode if the edit param is true and present in the url.
+So now we will only enter edit mode if the edit param is true and present in the url.
+
+### Post our edited product
+
+#### In routes
+
+Add a post route for edit product: `router.post('/edit-product', adminController.postGetEditProduct);`
+
+
+#### In the Product Model
++   As the product we get from the edit-product will already have an id, we can therefore accept an id in the constructor. now because this is the same constructor that add-product will use, we will need to set a 'null' arg for id, when we call this constructor to create a new item.
++   Now we can add `this.id = id` to the constructor.
++   Next then in the save method, we will have to add a check to see if the id already exists, before one is created, so we will ad an if to check inside the callback and also add the current product id create code below the check
++   Now what we want to do is find the product being edited, so we can do all this inside the if check for a product id, because if there is already a product id that means the call is coming from edit product.
++   So we use findIndex to find the product idex of the product we want to edit, product in this function is an array that is retrieved from the helper function.
++   From this we will use a function on each product in the array to check if prod.id === the id we are looking for: `const existingProductIndex = products.findIndex(prod => prod.id === this.id);`
++   Make a new array called updatedProducts = to the current products array.
++   Then update the new array at the correct index - with this, as this represents all the data from our edited product, and will be passed by the controller.:
+    ```
+    save() {
+        getProductsFromFile(products => {
+            if (this.id) {
+                const existingProductIndex = products.findIndex(prod => prod.id === this.id);
+                const updatedProducts = [...products];
+                updatedProducts[existingProductIndex] = this;
+            }
+            else {
+                this.id = (Math.floor(Math.random()*10000)).toString();
+                // because either an existing or a blank array is returned in the products variable we can push to it.
+                products.push(this);
+                fs.writeFile(fPath, JSON.stringify(products), err => {
+                    console.log(err);
+                });
+            }
+        });
+    }
+    ```
+
+#### In controllers
+
++   Add null as a first arg in the `postAddProduct` controller.
++   Add a new controller to handle the post edited product. Use the name we used in the route above, so - `postGetEditProduct`:
++   Now we want to get the information from the edit-product template and pass it to the model. Because we used post, we can get  this data from the request body

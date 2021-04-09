@@ -16,6 +16,9 @@ router.post('/add-product', adminController.postAddProduct);
 // Handles edit product page - takes in the product id in the url
 router.get('/edit-product/:productId', adminController.getEditProduct);
 
+// handle the post from the edit-product page
+router.post('/edit-product');
+
 // view products in admin page
 router.get('/products', adminController.getProducts);
 
