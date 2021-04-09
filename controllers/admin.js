@@ -45,8 +45,17 @@ exports.getEditProduct = (req, res, next) => {
 };
 
 exports.postGetEditProduct = (req, res, next) => {
-
+    //we dont need to get the product Headers, we just want the values from the edit form
+    const prodId = req.body.productId;
+    const updatedTitle = req.body.title;
+    const updatedPrice = req.body.price;
+    const updatedImageUrl = req.body.imageUrl;
+    const updatedDescription = req.body.description;
+    const updatedProduct = new Product(prodId, updatedTitle, updatedImageUrl, updatedPrice, updatedDescription);
+    updatedProduct.save();
+    return res.redirect('/admin/products');
 };
+
 
 exports.getProducts = (req, res, next) => {
     // we add in an anonymous function that will be a cb in the fetchAll

@@ -45,7 +45,13 @@ module.exports = class Product {
                 // make a copy of the current products array for us to edit 
                 const updatedProducts = [...products];
                 // update it with this, which is the data we want to use.
+                console.log(`Index is ==== ${existingProductIndex}`);
+                console.log(`updatedProducts is ==== ${updatedProducts}`);
                 updatedProducts[existingProductIndex] = this;
+                // finally save the array to the json file
+                fs.writeFile(fPath, JSON.stringify(updatedProducts), err => {
+                    console.log(err);
+                });
             }
             else {
                 this.id = (Math.floor(Math.random()*10000)).toString();

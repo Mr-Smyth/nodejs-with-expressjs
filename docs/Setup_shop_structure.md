@@ -384,6 +384,9 @@ So now we will only enter edit mode if the edit param is true and present in the
 
 ### Post our edited product
 
+#### In Template
+Make sure in the edit-product template that we have a hidden input to send the product.id.
+
 #### In routes
 
 Add a post route for edit product: `router.post('/edit-product', adminController.postGetEditProduct);`
@@ -405,6 +408,9 @@ Add a post route for edit product: `router.post('/edit-product', adminController
                 const existingProductIndex = products.findIndex(prod => prod.id === this.id);
                 const updatedProducts = [...products];
                 updatedProducts[existingProductIndex] = this;
+                fs.writeFile(fPath, JSON.stringify(updatedProducts), err => {
+                    console.log(err);
+                });
             }
             else {
                 this.id = (Math.floor(Math.random()*10000)).toString();
@@ -422,4 +428,17 @@ Add a post route for edit product: `router.post('/edit-product', adminController
 
 +   Add null as a first arg in the `postAddProduct` controller.
 +   Add a new controller to handle the post edited product. Use the name we used in the route above, so - `postGetEditProduct`:
-+   Now we want to get the information from the edit-product template and pass it to the model. Because we used post, we can get  this data from the request body
++   Now we want to get the information from the edit-product template and pass it to the model. Because we used post, we can get  this data from the request body: 
+```
+exports.postGetEditProduct = (req, res, next) => {
+    //we dont need to get the product Headers, we just want the values from the edit form
+    const prodId = req.body.productId;
+    const updatedTitle = req.body.title;
+    const updatedPrice = req.body.price;
+    const updatedTImageUrl = req.body.imageUrl;
+    const updatedDescription = req.body.description;
+    const updatedProduct = new Product(prodId, updatedTitle, updatedTImageUrl, updatedPrice, updatedDescription);
+    updatedProduct.save();
+    return res.redirect('/admin/products');
+};
+```
