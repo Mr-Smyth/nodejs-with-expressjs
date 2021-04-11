@@ -56,6 +56,12 @@ exports.postGetEditProduct = (req, res, next) => {
     return res.redirect('/admin/products');
 };
 
+exports.postDeleteProduct = (req, res, next) => {
+    let prodId = req.body.productId;
+    Product.deleteOne(prodId);
+    return res.redirect('/');
+};
+
 
 exports.getProducts = (req, res, next) => {
     // we add in an anonymous function that will be a cb in the fetchAll

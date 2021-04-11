@@ -45,8 +45,6 @@ module.exports = class Product {
                 // make a copy of the current products array for us to edit 
                 const updatedProducts = [...products];
                 // update it with this, which is the data we want to use.
-                console.log(`Index is ==== ${existingProductIndex}`);
-                console.log(`updatedProducts is ==== ${updatedProducts}`);
                 updatedProducts[existingProductIndex] = this;
                 // finally save the array to the json file
                 fs.writeFile(fPath, JSON.stringify(updatedProducts), err => {
@@ -63,6 +61,7 @@ module.exports = class Product {
             }
         });
     }
+
     // use static as we are not calling an instance - but the Product class
     static fetchAll(cb) {
         // call the helper function to read the products
@@ -90,6 +89,18 @@ module.exports = class Product {
             // note, above can be written: const product = products.find(prod => prod.id === id); 
             // because in single statement arrow functions, return is implied
             cb(product);
+        });
+    }
+
+    static deleteOne(id) {
+        // get the products from the file
+        getProductsFromFile(products => {
+            // Create a new list using filter -  filter takes a funtion to return everything except our id item
+            let updatedProducts = products.filter(prod => prod.id !== id);
+            //Write our list back into file.
+            fs.writeFile(fPath, JSON.stringify(updatedProducts), err => {
+                console.log(err);
+            });
         });
     }
 }

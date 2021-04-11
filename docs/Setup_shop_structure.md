@@ -442,3 +442,17 @@ exports.postGetEditProduct = (req, res, next) => {
     return res.redirect('/admin/products');
 };
 ```
+**Basic Edit Functionality done**
+
+### Delete functionality
+
++   In the template use a form to post the products id via a hidden input
++   Create a new route for this path, imake it a post route: `router.post('/delete-product', adminController.postDeleteProduct);`
++   Create a controller called postDeleteProduct, in the controller get the product id we want to delete from the req.body
++   Create a static method in the model, that takes in the productId and then creates an updated list of all products - excluding the product with the product id we want to delete - do this simply with filter()
++   rewrite to our json file
++   Call the static method from the controller
++   redirect to a template.
+
+
+### Delete from cart functionality
