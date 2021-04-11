@@ -57,10 +57,35 @@ module.exports = class Cart {
             }
 
             // now we need to update the price - reference the cart object - the + converts it to a number
-            cart.totalPrice = cart.totalPrice + Number(productPrice);
+            cart.totalPrice = cart.totalPrice + +(productPrice);
 
             // Now lastly we write the data back into the file. - use stringify to convert back to json
             fs.writeFile(fPath, JSON.stringify(cart), (err) => {
+                console.log(err);
+            });
+        });
+    }
+
+    static deleteProduct (id, productPrice) {
+        // try to read the cart file
+        fs.readFile(fPath, (err, fileContent) => {
+            if (err) {
+                return;
+            }
+            const updatedCart = { ...JSON.parse(fileContent) };
+
+            // lets see how many times we have the product to be deleted in the cart
+            const toBeDeleted = updatedCart.products.find(prod => prod.id === id);
+            const toBeDeletedQty = toBeDeleted.qty;
+
+            // Update the file - the products key
+            updatedCart.products = updatedCart.products.filter(prod => prod.id !== id);
+
+            // so we can adjust price
+            updatedCart.totalPrice = updatedCart.totalPrice - productPrice*toBeDeletedQty;
+
+            // write to file
+            fs.writeFile(fPath, JSON.stringify(updatedCart), (err) => {
                 console.log(err);
             });
         });

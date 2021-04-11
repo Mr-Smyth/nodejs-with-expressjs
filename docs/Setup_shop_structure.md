@@ -444,6 +444,45 @@ exports.postGetEditProduct = (req, res, next) => {
 ```
 **Basic Edit Functionality done**
 
+
+### Delete from cart functionality
+
+#### in the cart.js model
++   Here we need to create a new static method that we can call from the delete method in the products model
++   It must take in the id and the products price, so we can reduce the cart total.
++   It must get the current carts products
++   Create a copy of the cart for us to edit
++   It must get the product we want to delete and extract the qty
++   create an update products array excluding the product to be deleted - using filter
++   Update the cart total - using products price X qty
++   Write back to file.
+```
+static deleteProduct (id, productPrice) {
+    // try to read the cart file
+    fs.readFile(fPath, (err, fileContent) => {
+        if (err) {
+            return;
+        }
+        const updatedCart = { ...JSON.parse(fileContent) };
+
+        // lets see how many times we have the product to be deleted in the cart
+        const toBeDeleted = updatedCart.products.find(prod => prod.id === id);
+        const toBeDeletedQty = toBeDeleted.qty;
+
+        // Update the file - the products key
+        updatedCart.products = updatedCart.products.filter(prod => prod.id !== id);
+
+        // so we can adjust price
+        updatedCart.totalPrice = updatedCart.totalPrice - productPrice*toBeDeletedQty;
+
+        // write to file
+        fs.writeFile(fPath, JSON.stringify(updatedCart), (err) => {
+            console.log(err);
+        });
+    });
+}
+```
+
 ### Delete functionality
 
 +   In the template use a form to post the products id via a hidden input
@@ -451,8 +490,24 @@ exports.postGetEditProduct = (req, res, next) => {
 +   Create a controller called postDeleteProduct, in the controller get the product id we want to delete from the req.body
 +   Create a static method in the model, that takes in the productId and then creates an updated list of all products - excluding the product with the product id we want to delete - do this simply with filter()
 +   rewrite to our json file
-+   Call the static method from the controller
++   Import the cart model and call the cart.deleteProduct from inside the write function, passing in the id and the product price - ***(This will require getting the product first at the top of the method)***.
++   Call the static method from the controller - a callback should be used - but will be added later.
 +   redirect to a template.
 
-
-### Delete from cart functionality
+```
+static deleteOne(id) {
+    // get the products from the file
+    getProductsFromFile(products => {
+        const toBeDeleted = products.find(prod => prod.id === id);
+        // Create a new list using filter -  filter takes a funtion to return everything except our id item
+        let updatedProducts = products.filter(prod => prod.id !== id);
+        //Write our list back into file.
+        fs.writeFile(fPath, JSON.stringify(updatedProducts), err => {
+            if (!err) {
+                Cart.deleteProduct(id, toBeDeleted.price)
+            }
+            console.log(err);
+        });
+    });
+}
+```

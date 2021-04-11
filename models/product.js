@@ -7,6 +7,9 @@ const path = require('path');
 const getRoot = require('../utility/path');
 const fPath = path.join(getRoot, 'data', 'products.json');
 
+// get cart model
+const Cart = require('./cart');
+
 /**
  * Helper Function
  * 
@@ -95,10 +98,14 @@ module.exports = class Product {
     static deleteOne(id) {
         // get the products from the file
         getProductsFromFile(products => {
+            const toBeDeleted = products.find(prod => prod.id === id);
             // Create a new list using filter -  filter takes a funtion to return everything except our id item
             let updatedProducts = products.filter(prod => prod.id !== id);
             //Write our list back into file.
             fs.writeFile(fPath, JSON.stringify(updatedProducts), err => {
+                if (!err) {
+                    Cart.deleteProduct(id, toBeDeleted.price)
+                }
                 console.log(err);
             });
         });
