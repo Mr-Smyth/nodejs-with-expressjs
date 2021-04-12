@@ -306,6 +306,37 @@ exports.postToCart = (req, res, next) => {
 ```
 
 
+### Display items in Cart Template
+Here we need to get all products, that we have in the cart. So first we need to get the products that are listed in the cart along with the total. Then we need to get all products, so we have the full products details. After that we can build a list of products that are in the cart.
+
+#### Templates
++   Setup Template.
+
+#### models
++   Goto the cart model
++   Add a new static funtion to get contents of the cart
++   get the data from the file and call a callback to act on it
+```
+/**
+* get the cart contents from the file
+* @param {*CallBack} cb 
+*/
+static getCart(cb) {
+    fs. readFile(fPath, (err, fileContent) => {
+        const cart = JSON.parse(fileContent);
+        //run the callback on the data in the file
+        if (err) {
+            cb (null);
+        }
+        else {
+            cb(cart);   
+        }
+    });
+}
+```
+
+#### Controllers
++   Go to getCart controller
 
 
 

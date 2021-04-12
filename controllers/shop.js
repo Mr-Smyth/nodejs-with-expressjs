@@ -58,9 +58,27 @@ exports.postToCart = (req, res, next) => {
 
 // Display our Cart controller
 exports.getCart = (req, res, next) => {
-    res.render('shop/cart', {
-        pageTitle: 'Shopping Cart',
-        path :'/cart',
+    Cart.getCart(cart => {
+        // need to get the information for the products in the cart - get this from the product model
+        Product.fetchAll(products => {
+            // declare our empty list to contain all product data for the template
+            const cartProducts = [];
+            // loop over products so we can check if a products id is in the cart
+            for (product in products) {
+                // create a list of products that have a matching id in the cart
+                const cartProductData = cart.products.find(prod => prod.id === product.id);
+                // check if there is any data - then push it to the cartProducts.
+                if (cartProductData) {
+                    cartProducts.push({productData: product, qty: cartProductData.qty});
+                }
+            }
+            const productsFromCart = cart.products.find
+            const productsInCart = productDetails.filter(prod => prod.id)
+        });
+        res.render('shop/cart', {
+            pageTitle: 'Shopping Cart',
+            path :'/cart',
+        });
     });
 };
 

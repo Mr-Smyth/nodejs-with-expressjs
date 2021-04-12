@@ -90,4 +90,21 @@ module.exports = class Cart {
             });
         });
     }
+
+    /**
+     * get the cart contents from the file
+     * @param {*CallBack} cb 
+     */
+    static getCart(cb) {
+        fs. readFile(fPath, (err, fileContent) => {
+            const cart = JSON.parse(fileContent);
+            //run the callback on the data in the file
+            if (err) {
+                cb (null);
+            }
+            else {
+                cb(cart);   
+            }
+        });
+    }
 }
