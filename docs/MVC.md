@@ -1,6 +1,17 @@
 # MVC - Model View Controleer
 
-Seperation of concerns
+[Return to Readme](https://github.com/Mr-Smyth/nodejs-with-expressjs/blob/main/README.md)
+
+# Index
+- [MVC - Model View Controleer](#mvc---model-view-controleer)
+  * [Seperation of concerns](#seperation-of-concerns)
+  * [CONTROLLERS](#controllers)
+  * [Models](#models)
+    + [Saving the Products to a File](#saving-the-products-to-a-file)
+    + [Fetching the data from the file](#fetching-the-data-from-the-file)
+- [MVC wrap up](#mvc-wrap-up)
+
+## Seperation of concerns
 +   MODELS
     + REPRESENT YOUR DATA IN YOUR CODE
     + WORK WITH YOUR DATA (e.g save, fetch)
@@ -12,6 +23,8 @@ Seperation of concerns
 +   CONTROLLERS - (ROUTES - CAN HANDLE THIS - BUT WE WILL USE CONTROLLERS TO SEPERATE IT OUT)
     + CONNECTING YOUR MODELS AND VIEWS
     + CONTAINS THE IN BETWEEN LOGIC
+
+[<< Back to Index](#index)
 
 ## CONTROLLERS
 All of the code required to act as a controller can all be contained within the route. But this quickly becomes messy in large applications. Therefore we use a controllers folder
@@ -172,6 +185,7 @@ app.use(errorController.get404);
 
 app.listen(3000);
 ```
+[<< Back to Index](#index)
 
 ---
 
@@ -206,6 +220,8 @@ Simple example of a model for a product with just a title:
         return products;
     }
     ```
+
+[<< Back to Index](#index)
 
 ### Saving the Products to a File
 
@@ -256,6 +272,8 @@ save() {
 }
 ```
 
+[<< Back to Index](#index)
+
 ### Fetching the data from the file
 
 **Problem** readFile is asychronous code, and the logic within the readFile will be missed if we deal with it synchronously, therefore we need a callback.
@@ -303,8 +321,11 @@ exports.getProducts = (req, res) => {
     });
 };
 ```
+[<< Back to Index](#index)
 
 # MVC wrap up
 Useful resources:
 
 More on MVC: https://developer.mozilla.org/en-US/docs/Glossary/MVC
+
+[<< Back to Index](#index)

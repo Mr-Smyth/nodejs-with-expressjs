@@ -1,5 +1,46 @@
 # Setting up the shop structure
 
+[Return to Readme](https://github.com/Mr-Smyth/nodejs-with-expressjs/blob/main/README.md)
+
+## Index
+- [Setting up the shop structure](#setting-up-the-shop-structure)
+  * [Setting up our views](#setting-up-our-views)
+  * [Adding some fields to the form](#adding-some-fields-to-the-form)
+  * [Display this new Data in the Template](#display-this-new-data-in-the-template)
+  * [Setup a products details page](#setup-a-products-details-page)
+    + [In models](#in-models)
+    + [In Html](#in-html)
+    + [In our routes.](#in-our-routes)
+    + [In our Controllers](#in-our-controllers)
+    + [Back to our model - setup to find one product](#back-to-our-model---setup-to-find-one-product)
+  * [Setup Add to Cart Functionality](#setup-add-to-cart-functionality)
+    + [In the html](#in-the-html)
+    + [In the Models](#in-the-models)
+    + [In the routes](#in-the-routes)
+    + [Now Construct the controller for this post route](#now-construct-the-controller-for-this-post-route)
+    + [Display items in Cart Template](#display-items-in-cart-template)
+      - [Templates](#templates)
+      - [models](#models)
+      - [Controllers](#controllers)
+      - [Delete items in Cart](#delete-items-in-cart)
+  * [Setup Product edit and delete functionality](#setup-product-edit-and-delete-functionality)
+    + [Edit button](#edit-button)
+      - [HTML](#html)
+      - [Routes](#routes)
+      - [Controllers](#controllers-1)
+      - [Using optional Query Params](#using-optional-query-params)
+    + [Post our edited product](#post-our-edited-product)
+      - [In Template](#in-template)
+      - [In routes](#in-routes)
+      - [In the Product Model](#in-the-product-model)
+      - [In controllers](#in-controllers)
+    + [Delete from cart functionality](#delete-from-cart-functionality)
+      - [in the cart.js model](#in-the-cartjs-model)
+    + [Delete functionality](#delete-functionality)
+- [Resources](#resources)
+
+
+
 ## Setting up our views
 
 +   we want to add to our views so we will group them in sub folders of the views folder
@@ -7,6 +48,8 @@
 +   shop - contains all customer facing pages
 
 +   Setup all routes and controllers to suit new templates - this requires some refactoring of the code, for example we will split the controllers up into folders 1 for admin and 1 for shop. The routes will have to adjust the path of the imports to match these changes.
+
+[<< Back to Index](#index)
 
 ## Adding some fields to the form
 
@@ -39,6 +82,7 @@ module.exports = class Product {
     ```
 +   This should now be saving this new data to our file.
 
+[<< Back to Index](#index)
 
 ## Display this new Data in the Template
 
@@ -74,12 +118,15 @@ Example with ejs:
         <% } %>
     </main>
 ```
+[<< Back to Index](#index)
 
 ## Setup a products details page
 
 ### In models
 
 +   Make sure we have a product id in our model. This gives each product a unique identifier. if just using a file, add some sort of id to the save method, like this `this.id = (Math.floor(Math.random()*10000)).toString();`
+
+[<< Back to Index](#index)
 
 ### In Html
 +   Setup a link to point at the product details route and add it to the product in the product list page.
@@ -112,9 +159,13 @@ Example with ejs:
 </article>
 ```
 
+[<< Back to Index](#index)
+
 ### In our routes.
 +   In the routes - add another route in this case the same as product-list, but in place of the expected incomming data which in this case is the product id - place a : then a variable name to store this data in. example: `router.get('/product-list/:productId', shopController.getProducts);`
 +   To add this  dynamic route you will need to be aware that a path like /product/:productId - could fire for any url that starts with /products/. So /products/delete would never be reached if it was placed below one of these dynamic routes.
+
+[<< Back to Index](#index)
 
 ### In our Controllers
 +   Next we add on a controller, that gets the information out of the url
@@ -137,6 +188,8 @@ exports.getProductDetails = (req, res, next) => {
     });
 };
 ```
+
+[<< Back to Index](#index)
 
 ### Back to our model - setup to find one product
 +   In our product model, we now need to add another static method to extract one product only
@@ -169,6 +222,9 @@ static fetchOne(id, cb) {
     });
 }
 ```
+
+[<< Back to Index](#index)
+
 ## Setup Add to Cart Functionality
 
 ### In the html
@@ -184,6 +240,8 @@ Here we will do something similar, we dont need a visable input, instead we will
 ```
 
 Note: We could pass this by using the url also, just as we do to get to the product detail page, with the correct product. But we dont need to do it that way in this case, instead we will use the request body.
+
+[<< Back to Index](#index)
 
 ### In the Models
 We want to have a cart that holds all the products that we added and we also want to group products by id and increase their quantity 
@@ -273,7 +331,7 @@ in case we add a product more than once. We dont want to use a constructor here 
         }
     }
     ```
-
+[<< Back to Index](#index)
 
 ### In the routes
 +   Go to shop.js routes
@@ -285,6 +343,8 @@ router.get('/cart', shopController.getCart);
 // Product details to Shopping Cart Post handler
 router.post('/cart', );
 ```
+
+[<< Back to Index](#index)
 
 ### Now Construct the controller for this post route 
 +   Go to controllers/ shop.js
@@ -305,13 +365,17 @@ exports.postToCart = (req, res, next) => {
     res.redirect('/cart');
 };
 ```
-
+[<< Back to Index](#index)
 
 ### Display items in Cart Template
 Here we need to get all products, that we have in the cart. So first we need to get the products that are listed in the cart along with the total. Then we need to get all products, so we have the full products details. After that we can build a list of products that are in the cart.
 
+[<< Back to Index](#index)
+
 #### Templates
 +   Setup Template.
+
+[<< Back to Index](#index)
 
 #### models
 +   Goto the cart model
@@ -335,6 +399,8 @@ static getCart(cb) {
     });
 }
 ```
+
+[<< Back to Index](#index)
 
 #### Controllers
 + Go to getCart controller
@@ -377,7 +443,7 @@ static getCart(cb) {
   };
   ```
 
-
+[<< Back to Index](#index)
 
 #### Delete items in Cart
 
@@ -413,7 +479,7 @@ static getCart(cb) {
   };
   ```
 
-  
+  [<< Back to Index](#index)
 
 
 
@@ -427,6 +493,8 @@ This will involve passing a product ID as part of the url
 
 We could reuse the add-product page here and combine both into one template called edit-product, but for clarity here i will use seperate template files
 
+[<< Back to Index](#index)
+
 #### HTML
 +   Add the same markup as the add product page for now
 +   Create a link that points to the edit route: `<a href="/admin/edit-product" class="btn">Edit</a>`
@@ -434,9 +502,13 @@ We could reuse the add-product page here and combine both into one template call
 
 +   Once the routes and controllers are set up we can pre populate our form using the value property and point it at our passed in product object 
 
+[<< Back to Index](#index)
+
 #### Routes
 +   Add the route to handle edit product - but takes in the product id in the url.   
 `router.get('/edit-product/:productId', adminController.getEditProduct);`
+
+[<< Back to Index](#index)
 
 #### Controllers
 +   Add a controller for the edit-product route
@@ -468,6 +540,8 @@ exports.getEditProduct = (req, res, next) => {
 };
 ```
 
+[<< Back to Index](#index)
+
 #### Using optional Query Params
 
 For this purpose it is redundant, but as an example we can pass an optional query param in the url from the html link that we can also check for and act on accordingly. the query object is produced and managed by express,  So in this example i will add a query param as follows
@@ -491,15 +565,20 @@ For this purpose it is redundant, but as an example we can pass an optional quer
 
 So now we will only enter edit mode if the edit param is true and present in the url.
 
+[<< Back to Index](#index)
+
 ### Post our edited product
 
 #### In Template
 Make sure in the edit-product template that we have a hidden input to send the product.id.
 
+[<< Back to Index](#index)
+
 #### In routes
 
 Add a post route for edit product: `router.post('/edit-product', adminController.postGetEditProduct);`
 
+[<< Back to Index](#index)
 
 #### In the Product Model
 +   As the product we get from the edit-product will already have an id, we can therefore accept an id in the constructor. now because this is the same constructor that add-product will use, we will need to set a 'null' arg for id, when we call this constructor to create a new item.
@@ -532,6 +611,7 @@ Add a post route for edit product: `router.post('/edit-product', adminController
         });
     }
     ```
+[<< Back to Index](#index)
 
 #### In controllers
 
@@ -553,6 +633,7 @@ exports.postGetEditProduct = (req, res, next) => {
 ```
 **Basic Edit Functionality done**
 
+[<< Back to Index](#index)
 
 ### Delete from cart functionality
 
@@ -601,6 +682,8 @@ static deleteProduct (id, productPrice) {
     }
 ```
 
+[<< Back to Index](#index)
+
 ### Delete functionality
 
 +   In the template use a form to post the products id via a hidden input
@@ -629,3 +712,12 @@ static deleteOne(id) {
     });
 }
 ```
+
+[<< Back to Index](#index)
+
+
+# Resources
+
+Official Routing Docs: https://expressjs.com/en/guide/routing.html
+
+[<< Back to Index](#index)

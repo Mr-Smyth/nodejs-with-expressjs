@@ -1,5 +1,37 @@
 # Manage Data
 
+[Return to Readme](https://github.com/Mr-Smyth/nodejs-with-expressjs/blob/main/README.md)
+
+# Index
+- [Manage Data](#manage-data)
+  * [Handle storing of returned data from from](#handle-storing-of-returned-data-from-from)
+    + [Saving data to a variable and sharing across files](#saving-data-to-a-variable-and-sharing-across-files)
+  * [Using Templating Engines to inject data](#using-templating-engines-to-inject-data)
+    + [Some Available Templating Engines for use with Express](#some-available-templating-engines-for-use-with-express)
+    + [Install all 3 so we can look at them](#install-all-3-so-we-can-look-at-them)
+    + [PUG setup](#pug-setup)
+      - [tell our application about PUG](#tell-our-application-about-pug)
+      - [Tell our route about PUG](#tell-our-route-about-pug)
+      - [Create our PUG Template](#create-our-pug-template)
+      - [Pass data to the template](#pass-data-to-the-template)
+      - [Using Base Template Layouts](#using-base-template-layouts)
+      - [Add code to check if on active page](#add-code-to-check-if-on-active-page)
+      - [Learn more about PUG](#learn-more-about-pug)
+    + [Handlebars Setup](#handlebars-setup)
+      - [Setup our Routes](#setup-our-routes)
+      - [Setup our Templates](#setup-our-templates)
+        * [About if's in handlebars](#about-if-s-in-handlebars)
+        * [About looping through data with handlebars](#about-looping-through-data-with-handlebars)
+      - [Using Base Template Layouts](#using-base-template-layouts-1)
+    + [EJS Setup](#ejs-setup)
+      - [Initial EJS setup:](#initial-ejs-setup-)
+      - [Template setup](#template-setup)
+        * [Syntax for inserting Data](#syntax-for-inserting-data)
+      - [Using Partials instead of Layouts](#using-partials-instead-of-layouts)
+        * [Setting up  includes](#setting-up--includes)
+- [Resources](#resources)
+
+
 ## Handle storing of returned data from from
 
 ### Saving data to a variable and sharing across files
@@ -43,6 +75,7 @@
 
 This should now give us Shared data across users and across browsers - not usually what we want to do, but an example of how it can be done simply.
 
+[<< Back to Index](#index)
 ---
 
 ## Using Templating Engines to inject data
@@ -54,6 +87,8 @@ This should now give us Shared data across users and across browsers - not usual
 +   **PUG (Jade)**: Uses minimal html and custom template language: `p #{name}`
 
 +   **Handlebars**: Uses normal HTML and custom Template language: `<p>{{ name }}</p>`
+
+[<< Back to Index](#index)
 
 ### Install all 3 so we can look at them
 
@@ -73,10 +108,14 @@ This should now give us Shared data across users and across browsers - not usual
 
 +   You can also specify a path for the location of the views. We don't really need to here as the default location for views is /views - which is where they are. But this is how you would do it: `app.set('views', 'views');
 
+[<< Back to Index](#index)
+
 #### Tell our route about PUG
 + Instead of sending a result with the path tou our html, we can just use the res.render() method. This will use the default templating engine, which we have set as pug in app.js above. We do not need to specify a path, because we have already specified that in app.js also (even though they are in the default location anyway).
 
 + So our response for our shop route is: `res.render('shop')` - no need to put 'shop.pug' - as we have already told app.js we are using pug files in app.js in the line `app.set('view engine', 'pug');`
+
+[<< Back to Index](#index)
 
 #### Create our PUG Template
 
@@ -105,7 +144,7 @@ html(lang="en")
 ```
 In a .pug file - the syntax is different and relies on indentation to set sibling/parent/child status in the Dom. The file is then compiled into html code and sent to the browser.
 
-
+[<< Back to Index](#index)
 
 #### Pass data to the template
 
@@ -153,6 +192,7 @@ In a .pug file - the syntax is different and relies on indentation to set siblin
                   h1 No Books yet..
   
   ```
+[<< Back to Index](#index)
 
 #### Using Base Template Layouts
 You can also use a base template with pug.
@@ -176,6 +216,8 @@ block content
             button.btn(type="submit") Add Product
 ```
 
+[<< Back to Index](#index)
+
 #### Add code to check if on active page
  To do this we can simpy add a key:value pair to the response like : `res.render('shop', {products: products, pageTitle: 'Shopping page', path :'/' });` and then check the path with a Ternary in the base.html nav area : 
  ```
@@ -185,11 +227,15 @@ li.main-header__item
     a(href="/admin/add-product", class=(path === '/admin/add-product' ? 'active' : '')) Add Product
  ```
 
+ [<< Back to Index](#index)
+
 #### Learn more about PUG
 
 Want to learn more about Pug? Check out their official docs: [Click Here..](https://pugjs.org/api/getting-started.html)
 
 ** ----------------  PUG (sample) SETUP COMPLETE  ---------------- **
+
+[<< Back to Index](#index)
 
 ### Handlebars Setup
 
@@ -206,9 +252,13 @@ Handlebars has a philosophy which forces users to put logic where it belongs - i
 
 Now that we have registered handlebars with our chosen name, we must use this chosen name as our template file extension, so `index.hbs` in this case, for example.
 
+[<< Back to Index](#index)
+
 #### Setup our Routes
 
 The method in which we pass data to a template does not change and is the same with all engines. See the pug section on setup for passing data to templates.
+
+[<< Back to Index](#index)
 
 #### Setup our Templates
 
@@ -224,6 +274,8 @@ The syntax for an if is:
 + {{#if }} = open an if block
 + {{else }} = insert an else into if block
 + {{/if }} = closes an if block
+
+[<< Back to Index](#index)
 
 ##### About looping through data with handlebars
 
@@ -266,6 +318,8 @@ Here is a n example from the shop page that displays the data we have stored loc
 </main>
 ```
 
+[<< Back to Index](#index)
+
 #### Using Base Template Layouts
 You can also use a base template with Handlebars - works a bit differently to pug.
 
@@ -307,6 +361,8 @@ You can also use a base template with Handlebars - works a bit differently to pu
 + Then in each template file remove everything not required.
 + **Templates are now ready**
 
+[<< Back to Index](#index)
+
 ### EJS Setup
 
 Ejs is supported out of the box with express, so once installed - we do not need to inistialise or register the engine as we had to with handlebars, so in this way it is like PUG.
@@ -319,12 +375,14 @@ EJS is a mixture of PUG and Handlebars
 + It Uses ordinary HTML - like Handlebars.
 + EJS - Does **NOT** support layouts - but you can implement it in other ways.
 
+[<< Back to Index](#index)
+
 #### Initial EJS setup:
 
 + In app.js
 + Just set the view engine to ejs: `app.set('view engine', 'ejs');`.
 
-
+[<< Back to Index](#index)
 
 #### Template setup
 
@@ -332,7 +390,6 @@ EJS is a mixture of PUG and Handlebars
 
 + Insert the html required
 
-  
 
   ##### Syntax for inserting Data
 
@@ -373,11 +430,13 @@ EJS is a mixture of PUG and Handlebars
 
 You will notice that it is just vanilla js inside the brackets, which is really useful
 
+[<< Back to Index](#index)
+
 #### Using Partials instead of Layouts
 
 The idea here is that you have some code blocks which you reuse in different parts of your templates and you can therefore just share them across your templates, so it's a bit like the opposite of a layout, instead of having one master layout where you put your individual view parts into, you have a couple of separated shared view parts which you can merge into the views you're creating
 
-
+[<< Back to Index](#index)
 
 ##### Setting up  includes
 
@@ -412,7 +471,7 @@ The idea here is that you have some code blocks which you reuse in different par
           </ul>
   ```
 
-+ 
+[<< Back to Index](#index)
 
 # Resources
 
@@ -427,3 +486,5 @@ Useful resources:
 - Pug Docs: https://pugjs.org/api/getting-started.html
 - Handlebars Docs: https://handlebarsjs.com/
 - EJS Docs: http://ejs.co/#docs
+
+[<< Back to Index](#index)

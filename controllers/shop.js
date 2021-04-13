@@ -87,8 +87,8 @@ exports.deleteCartItem = (req, res, next) => {
     // get products so we have access to the price
     Product.fetchOne(prodId, product => {
         Cart.deleteProduct(prodId, product.price);
+        res.redirect('/cart');
     });
-    res.redirect('/cart');
 };
 
 // Display our Checkout controller

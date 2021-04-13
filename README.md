@@ -7,6 +7,9 @@
   * [Creating a path helper function](#creating-a-path-helper-function)
 - [Serving Static CSS files](#serving-static-css-files)
 - [Detailed Walkthrough](https://github.com/Mr-Smyth/nodejs-with-expressjs/blob/main/docs/detailed-walkthrough.md)
+- [Detailed Walkthrough](https://github.com/Mr-Smyth/nodejs-with-expressjs/blob/main/docs/manage-and-render-local-data.md)
+- [Detailed Walkthrough](https://github.com/Mr-Smyth/nodejs-with-expressjs/blob/main/docs/MVC.md)
+- [Detailed Walkthrough](https://github.com/Mr-Smyth/nodejs-with-expressjs/blob/main/docs/setup-shop-structure.md)
 
 
 
