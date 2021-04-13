@@ -64,7 +64,7 @@ exports.getCart = (req, res, next) => {
             // declare our empty list to contain all product data for the template
             const cartProducts = [];
             // loop over products so we can check if a products id is in the cart
-            for (product in products) {
+            for (product of products) {
                 // create a list of products that have a matching id in the cart
                 const cartProductData = cart.products.find(prod => prod.id === product.id);
                 // check if there is any data - then push it to the cartProducts.
@@ -72,12 +72,11 @@ exports.getCart = (req, res, next) => {
                     cartProducts.push({productData: product, qty: cartProductData.qty});
                 }
             }
-            const productsFromCart = cart.products.find
-            const productsInCart = productDetails.filter(prod => prod.id)
-        });
-        res.render('shop/cart', {
-            pageTitle: 'Shopping Cart',
-            path :'/cart',
+            res.render('shop/cart', {
+                pageTitle: 'Shopping Cart',
+                path :'/cart',
+                products: cartProducts
+            });
         });
     });
 };

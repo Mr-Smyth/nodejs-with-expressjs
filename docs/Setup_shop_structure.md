@@ -208,18 +208,19 @@ in case we add a product more than once. We dont want to use a constructor here 
     // import utility to get the root directory
     const getRoot = require('../utility/path');
     const fPath = path.join(getRoot, 'data', 'cart.json');
+    ```
 
 
     /* We want to have a cart that holds all the products that we added
     and we also want to group products by id and increase their quantity 
     in case we add a product more than once. 
-
+    
     Dont want to use a constructor here because we dont really create a cart, 
     the cart should always be there we just need to add to it.*/
     module.exports = class Cart {
         static addProduct(id, productPrice) {
             // First fetch the previous cart //////////////////////////////////////////////////////////////////////////////////////////
-
+    
             // try to read the file - we will either get an err or the file content
             fs.readFile(fPath, (err, filecontent) => {
                 // our cart equals a new cart by default.
@@ -229,18 +230,18 @@ in case we add a product more than once. We dont want to use a constructor here 
                     // reassign cart with the data from the read file
                     cart = JSON.parse(fileContent);
                 }
-
+    
                 // Analyze the cart, see if product being added is an existing product in cart ///////////////////////////////////////
-
+    
                 // see if product exists using findIndex - we use findIndex here instead of find because 
                 // we will use the index to replace any existing product with an updated one
                 const existingProductIndex = cart.products.findIndex(prod => prod.id === id);
                 const existingProduct = cart.products[existingProductIndex];
-
+    
                 // now a product from the products model does not have a qty field - so we create a new product from existing product or 
                 // if no existing product in cart, then we use it to make a new object for product
                 let updatedProduct;
-
+    
                 // Add new product / increase the qty ///////////////////////////////////////////////////////////////////////////////
                 
                 // now we check if the product exists already in our cart
@@ -260,10 +261,10 @@ in case we add a product more than once. We dont want to use a constructor here 
                     // now update the cart - here we can simply add the product
                     cart.products = [...cart.products, updatedProduct];
                 }
-
+    
                 // now we need to update the price - reference the cart object - the + converts it to a number
                 cart.totalPrice = cart.totalPrice + +productPrice;
-
+    
                 // Now lastly we write the data back into the file. - use stringify to convert back to json
                 fs.writeFile(fPath, JSON.stringify(cart), (err) => {
                     console.log(err);
@@ -336,8 +337,47 @@ static getCart(cb) {
 ```
 
 #### Controllers
-+   Go to getCart controller
++ Go to getCart controller
 
++ Get the cart :  `Cart.getCart(cart => {});`
+
++ Inside this function we also need to get the products :`Product.fetchAll(products => {}`
+
++ Now we can loop over the products and see if any of the products id's, match an id in the cart. If they do then push that product into cartProducts for our template
+
++ Include the qty for any products pushed, this will be available from the cart data
+
++ Now we just need to return cartProducts to the template
+
+  Completed function:
+
+  ```
+  exports.getCart = (req, res, next) => {
+      Cart.getCart(cart => {
+          // need to get the information for the products in the cart - get this from the product model
+          Product.fetchAll(products => {
+              // declare our empty list to contain all product data for the template
+              const cartProducts = [];
+              // loop over products so we can check if a products id is in the cart
+              for (product of products) {
+                  // create a list of products that have a matching id in the cart
+                  const cartProductData = cart.products.find(prod => prod.id === product.id);
+                  // check if there is any data - then push it to the cartProducts.
+                  if (cartProductData) {
+                      cartProducts.push({productData: product, qty: cartProductData.qty});
+                  }
+              }
+              res.render('shop/cart', {
+                  pageTitle: 'Shopping Cart',
+                  path :'/cart',
+                  products: cartProducts
+              });
+          });
+      });
+  };
+  ```
+
+  
 
 
 
