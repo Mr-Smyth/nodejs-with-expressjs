@@ -562,34 +562,43 @@ exports.postGetEditProduct = (req, res, next) => {
 +   It must get the current carts products
 +   Create a copy of the cart for us to edit
 +   It must get the product we want to delete and extract the qty
++   Run a check here to see if the product is in the cart, this will be important when we are calling this from the delete product functionality - in case the product we are trying to delete from the system is not actually in the cart.
 +   create an update products array excluding the product to be deleted - using filter
 +   Update the cart total - using products price X qty
 +   Write back to file.
 ```
 static deleteProduct (id, productPrice) {
-    // try to read the cart file
-    fs.readFile(fPath, (err, fileContent) => {
-        if (err) {
-            return;
-        }
-        const updatedCart = { ...JSON.parse(fileContent) };
+        // try to read the cart file
+        fs.readFile(fPath, (err, fileContent) => {
+            if (err) {
+                return;
+            }
+            const updatedCart = { ...JSON.parse(fileContent) };
 
-        // lets see how many times we have the product to be deleted in the cart
-        const toBeDeleted = updatedCart.products.find(prod => prod.id === id);
-        const toBeDeletedQty = toBeDeleted.qty;
+            // lets get the product to be deleted in the cart
+            const toBeDeleted = updatedCart.products.find(prod => prod.id === id);
 
-        // Update the file - the products key
-        updatedCart.products = updatedCart.products.filter(prod => prod.id !== id);
+            // add a check here - we want to check if the product passed in is actually in the cart
+            // if it isnt, then just return - we cant remove a product from the cart if its not there
+            if (!toBeDeleted) {
+                return;
+            }
+            // get how many times it is in the cart
+            const toBeDeletedQty = toBeDeleted.qty;
 
-        // so we can adjust price
-        updatedCart.totalPrice = updatedCart.totalPrice - productPrice*toBeDeletedQty;
+            // Update the file - the products key with every item that does not match the id of the 
+            // item we are removing
+            updatedCart.products = updatedCart.products.filter(prod => prod.id !== id);
 
-        // write to file
-        fs.writeFile(fPath, JSON.stringify(updatedCart), (err) => {
-            console.log(err);
+            // now we can adjust price
+            updatedCart.totalPrice = updatedCart.totalPrice - productPrice*toBeDeletedQty;
+
+            // write to file
+            fs.writeFile(fPath, JSON.stringify(updatedCart), (err) => {
+                console.log(err);
+            });
         });
-    });
-}
+    }
 ```
 
 ### Delete functionality

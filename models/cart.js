@@ -74,14 +74,21 @@ module.exports = class Cart {
             }
             const updatedCart = { ...JSON.parse(fileContent) };
 
-            // lets see how many times we have the product to be deleted in the cart
+            // lets get the product to be deleted in the cart
             const toBeDeleted = updatedCart.products.find(prod => prod.id === id);
+
+            // add a check here - we want to check if the product passed in is actually in the cart
+            // if it isnt, then just return - we cant remove a product from the cart if its not already there
+            if (!toBeDeleted) {
+                return;
+            }
+            // get how many times it is in the cart
             const toBeDeletedQty = toBeDeleted.qty;
 
-            // Update the file - the products key
+            // Update the file - the products key with every item that does not match the id of the item we are removing
             updatedCart.products = updatedCart.products.filter(prod => prod.id !== id);
 
-            // so we can adjust price
+            // now we can adjust price
             updatedCart.totalPrice = updatedCart.totalPrice - productPrice*toBeDeletedQty;
 
             // write to file
