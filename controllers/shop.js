@@ -81,6 +81,16 @@ exports.getCart = (req, res, next) => {
     });
 };
 
+exports.deleteCartItem = (req, res, next) => {
+    // get the product id from the request
+    const prodId = req.body.productId;
+    // get products so we have access to the price
+    Product.fetchOne(prodId, product => {
+        Cart.deleteProduct(prodId, product.price);
+    });
+    res.redirect('/cart');
+};
+
 // Display our Checkout controller
 exports.getCheckout = (req, res, next) => {
     res.render('shop/checkout', {

@@ -377,11 +377,49 @@ static getCart(cb) {
   };
   ```
 
+
+
+#### Delete items in Cart
+
++ Add a button with a form that points to /cart-delete-item route.
+
++ Add a hidden input to pass the product id of the item we would like to remove
+
++ Setup same route in shop routes. `router.post('/cart-delete-item', shopController.deleteCartItem);`
+
++ Setup a corresponding  controller, redirect to cart
+
+  ```
+  exports.deleteCartItem = (req, res, next) => {
+      res.redirect('/cart');
+  };
+  ```
+
++ Inside the controller get the product id from the request body.
+
++ Then we want to access the cart delete function, which requires the id and the price, so we will first call the fetchOne from the products model, then execute the call to the cart delete function from inside that, so we will have the price of the item we are deleting
+
++ So then call the deleteProduct method in Cart model - *(see the delete section below, where we set that up.)*, then redirect back to cart.
+
+  ```
+  exports.deleteCartItem = (req, res, next) => {
+      // get the product id from the request
+      const prodId = req.body.productId;
+      // get products so we have access to the price
+      Product.fetchOne(prodId, product => {
+          Cart.deleteProduct(prodId, product.price);
+          res.redirect('/cart');
+      });
+  };
+  ```
+
   
 
 
 
-## Setup edit and delete functionality
+
+
+## Setup Product edit and delete functionality
 
 This will involve passing a product ID as part of the url
 

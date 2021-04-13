@@ -11,7 +11,13 @@
             <h1>Your Cart Items:</h1>
             <ul>
                 <% products.forEach(prodSet => { %>
-                    <li><%= prodSet.productData.title %>: (<%= prodSet.qty %>)</li>
+                    <li>
+                        <p><%= prodSet.productData.title %>: (<%= prodSet.qty %>)</p>
+                        <form action="/cart-delete-item" method="POST">
+                            <input type="hidden" name="productId" value="<%= prodSet.productData.id %>">
+                            <button class="btn" type="submit">Delete</button>
+                        </form>
+                    </li>
                 <% }); %>
             </ul>
         <% } else { %>
