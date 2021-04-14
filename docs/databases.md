@@ -142,16 +142,161 @@ Now we can import the database connection pool
 
 + `const db = require('./utility/database');`
 
+[<< Back to Index](#index)
 
 
-**Now we can test this with a little sample** 
+
+### Setup a Table Using Workbench
+
+in Mysql Workbench - Setup some dummy data:
+
+
 
 + Firstly we will go back to our mysql workbench and add something
+
 + Right click on Tables and select create table
-+ Give the table the name of products
-+ 
+
++ Give the table the name of `products`
+
++ Now there is a table design page and we can define the fields we will use in our table by clicking on them.
+
++ So the first field we will give a column name of id
+
++ Datatype can be INT - as id will be a number.
+
++ Option (tick boxes) :
+
+  + PK = means the table can be identified by the pk and make this field the primary key
+  + NN = means contents must not be null
+  + UQ = means contents must be unique
+  + BN = should hold binary data
+  + UN = Unsigned - tick if the field holds no negative values
+  + ZF = means is it its zero fill
+  + AI = means is it auto incrementing
+  + G = 
+
++ Enter the following fields with the settings shown:
+
+  + column: id, Datatype:INT, options: PK, NN, UQ, UN, AI
+  + column: title , Datatype:VARCHAR(255), options: NN
+  + column:price , Datatype:DOUBLE, options: NN - double is for the 2 decimal places.
+  + column:description , Datatype:TEXT, options: NN
+  + column:imageUrl , Datatype:VARCHAR(255), options: NN
+
++ Now click apply in bottom right
+
++ It then shows the sql statement it will execute, this code could be executed in node, and it would create the table.
+
+  ```
+  CREATE TABLE `node-complete`.`products` (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `title` VARCHAR(255) NOT NULL,
+    `price` DOUBLE NOT NULL,
+    `description` TEXT NOT NULL,
+    `imageUrl` VARCHAR(255) NOT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE);
+  ```
+
+  
+
++ Click apply
+
++ Click Finish
+
++ Now double click on Tables in the left Navigator - and we will see the new table.
+
++ If we hover over it we have 3 icons on the right of it - 2nd is settings and the 3rd allows adding of data - click the 3rd option
+
++ Add a dummy product - then save and apply - the id will be automatically added when applied if you do not enter it.
+
+  
+
+### Node - Using .then() and .catch() to retrieve data
+
+.then and .catch are functions we can chain onto the result of the execute call, and they well act on whatever the response is. That response is known as a promise.
+
+A promise is a basic js object that allows us to work with Asynchronous code. It is an alternative to using callbacks and allows the writing of more structured code.
+
+**For example**: this: `db.execute('SELECT * FROM products', cb => {.... some code here});` includes a nested anonymous function as a callback.   
+
+But instead we can use a .then() function block, which will then get the anonymous function to execute. So instead it would look like this: 
+
+```
+// test sql database query
+db.execute('SELECT * FROM products')
+// then execute an anonymous function
+.then(() => {})
+// this executes in case of an error
+.catch(err => {
+    console.log(err);
+});
+```
+
+which is much more readable.
+
++ In app.js.
+
++ Add the above query with .then and catch blocks:
+
++ We can give a name to the argument received by the then function, we will call it result for now.
+
++ We can then console.log the result:
+
+  ```
+  .then(result => {
+      console.log(result);
+  })
+  ```
+
++ What we get back is a nested array, with the first part being our data and the 2nd nested array being some meta data, so result[0] is what we want
+
+
+
+So now this :
+
+```
+// test sql database query
+db.execute('SELECT * FROM products')
+// then execute an anonymous function
+.then(result => {
+    console.log(result[0]);
+})
+// this executes in case of an error
+.catch(err => {
+    console.log(err);
+});
+```
+
+
+
+gives us this in the console:
+
+```
+[
+  BinaryRow {
+    id: 1,
+    title: 'Databases for Dummies',
+    price: 26.99,
+    description: 'A complete guide to starting on databases',
+    imageUrl: 'image url here '
+  }
+]
+```
+
+
 
 [<< Back to Index](#index)
+
+
+
+### Using Models to interact with our data
+
+
+
+[<< Back to Index](#index)
+
+
 
 # NoSql
 

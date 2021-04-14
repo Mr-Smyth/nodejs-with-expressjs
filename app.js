@@ -19,7 +19,15 @@ app.get('/favicon.ico', (req, res) => {
 });
 
 // test sql database query
-db.execute('');
+db.execute('SELECT * FROM products')
+// then execute an anonymous function
+.then(result => {
+    console.log(result[0]);
+})
+// this executes in case of an error
+.catch(err => {
+    console.log(err);
+});
 
 app.use(bodyParser.urlencoded({extended: false}));
 // this tells express to look into the public folder to serve up css files
