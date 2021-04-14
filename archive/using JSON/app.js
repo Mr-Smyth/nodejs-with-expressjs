@@ -10,18 +10,13 @@ app.set('view engine', 'ejs');
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const errorController = require('./controllers/errors.js')
-// get our database connection
-const db = require('./utility/database');
 
 app.get('/favicon.ico', (req, res) => {
     res.status(204);
     res.end();
 });
 
-// test sql database query
-db.execute('');
-
-app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.urlencoded({extended: true}));
 // this tells express to look into the public folder to serve up css files
 app.use(express.static(path.join(__dirname, 'public')));
 
