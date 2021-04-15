@@ -99,7 +99,7 @@ MySQL is free for the basic version and is what we will use
 ### Connecting Node to the sql database
 
 + Install mysql2 using --save as it is a dependency for any project: `npm install --save mysql2`
-+ This allows us to write sql code and interact with sql from Node
++ This allows us to **write sql code and interact with sql from Node**
 + In the utility folder create a new js file called database.js - for example
 
 #### In database.js
@@ -212,7 +212,7 @@ in Mysql Workbench - Setup some dummy data:
 
   
 
-### Node - Using .then() and .catch() to retrieve data
+### Node - Retrieve data using node with SQL commands
 
 .then and .catch are functions we can chain onto the result of the execute call, and they well act on whatever the response is. That response is known as a promise.
 
@@ -380,6 +380,137 @@ module.exports = class Product {
 
 
 
+#### Setting up ability to add products
+
+##### models
+
++ Go to the save method in the product method.
+
++ We need this to reach out to the db and save the data 
+
++ We must define the field names to match the database, followed by the values.
+
++ To avoid sql injection attack - use ? - followed by an array containing the data we want to inject into the database - the data pattern must match the ?'s:
+
+  ```
+  return db.execute(
+          'INSERT INTO products (title, price, imageUrl, description) VALUES (?, ?, ?, ?)',
+          [this.title, this.price, this.imageUrl, this.description]
+          );
+  ```
+
++ make sure to return this, as we are returning the promise to execute this.
+
+##### controllers
+
++ In our postAddProduct page we can now call our save method which will create the product.
+
++ We add .then code to perform the redirecting after the inserting of new products
+
+  ```
+  exports.postAddProduct = (req, res, next) => {
+      // push the returned data to the products array
+      const title = req.body.title;
+      const imageUrl = req.body.imageUrl;
+      const price = req.body.price;
+      const description = req.body.description;
+      const product = new Product(null, title, imageUrl, price, description);
+      product.save().then(() => {
+          res.redirect('/');
+      })
+      .catch(err => {
+          console.log(err);
+      });
+  };
+  ```
+
+  
+
+[<< Back to Index](
+
+
+
+#### Setting up ability to get product details for 1 particular product
+
+##### models
+
++ Goto the fetchOne method
++ Here execute a query to get the item whose id is passed in.
++ `return db.execute('SELECT * FROM products WHERE products.id = ?', [id]);`
+
+##### controllers
+
++ In the controller for getProductDetails, we will use destructuring with .then.catch to render the data.
+
++ We only need product, so we dont need to bother taking in the meta data.
+
++ `.then(([product]) => {` will retrieve an array with the product object inside.
+
++ Because the template is expecting an object in this case we need to render element 0 of this array, so we are just sending the object: `product: product[0]`
+
++ finished working controller:
+
+  ```
+  exports.getProductDetails = (req, res, next) => {
+      // we can access params in the req using express params object
+      // this allows us to get productID which is the name we choose in the routes
+      const prodId = req.params.productId;
+      
+      // call the static method to find one product
+      Product.fetchOne(prodId)
+      
+      // use destructuring to get the data
+      .then(([product]) => {
+          res.render('shop/product-details', {
+              product: product[0],
+              pageTitle: product.title,
+              path: '/product-details'
+          });
+      })
+      .catch(err => {
+          console.log(err)
+      });
+  };
+  ```
+
+  
+
+[<< Back to Index](#index)
+
+
+
+## Using Sequelize
+
+Sequelize lets us write and concentrate on js code and objects, and it handles the SQL queries.
+
+
+
+[<< Back to Index](#index)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # NoSql
 
 **Example: Mongodb**
@@ -407,5 +538,14 @@ Means adding more servers, and composing code to spread and read data across the
 Means Upgrading existing hardware. So in effect this method is limited, only so much cpu power you can fit into a machine.
 
 + Vertical scaling is also very possible with NoSql
+
+[<< Back to Index](#index)
+
+
+
+# Resources
+
++ Learn more about MySQL/ SQL in General: https://www.w3schools.com/sql/
++ Learn more about the Node MySQL Package: https://github.com/sidorares/node-mysql2
 
 [<< Back to Index](#index)
