@@ -10,14 +10,16 @@ exports.getAddProduct = (req, res, next) => {
 
 // now handle the logic for the post from the form in add-products
 exports.postAddProduct = (req, res, next) => {
-    // push the returned data to the products array
-    const title = req.body.title;
-    const imageUrl = req.body.imageUrl;
-    const price = req.body.price;
-    const description = req.body.description;
-    const product = new Product(null, title, imageUrl, price, description);
-    product.save().then(() => {
-        res.redirect('/');
+    // push the returned data into an object inside create()
+    Product.create({
+        title:  req.body.title,
+        imageUrl:  req.body.imageUrl,
+        price:  req.body.price,
+        description:  req.body.description,
+    })
+    .then(response => {
+        console.log(response);
+        res.redirect('/admin/add-product');
     })
     .catch(err => {
         console.log(err);

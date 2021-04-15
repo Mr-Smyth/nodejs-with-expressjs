@@ -586,11 +586,53 @@ Sequelize lets us write and concentrate on js code and objects, and it handles t
 
 
 
+#### Using - creating a product using sequelize
+
+##### Controllers - admin.js
+
++ goto the postAddProduct controller
+
++ We will use the product model here with the create method. create both creates a new object based in the model and immediately stores it. build on the other hand - is another option, except it creates a js object, but does not store it in the db
+
++ create takes an object containing the fields and values:
+
+  ```
+  exports.postAddProduct = (req, res, next) => {
+      // push the returned data into an object inside create()
+      Product.create({
+          title:  req.body.title,
+          imageUrl:  req.body.imageUrl,
+          price:  req.body.price,
+          description:  req.body.description,
+      })
+      .then(response => {
+          console.log(response);
+          res.redirect('/admin/add-product');
+      })
+      .catch(err => {
+          console.log(err);
+      });
+  };
+  ```
+
+[<< Back to Index](#index)
 
 
 
+####  Using - Finding and fetching Data
 
+**<u>Note</u>** 
 
+With Sequelize v5, `findById()` was replaced by `findByPk()`.
+
+##### controllers - shop
+
+We want to get all our products for the index page
+
++ goto getIndex controller
++ Use the findAll() method - which will retrieve all data - it can take options where you could use WHERE - to filter the data we receive - but in this case we just want all the data.
+
+[<< Back to Index](#index)
 
 
 
