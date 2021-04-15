@@ -481,9 +481,87 @@ module.exports = class Product {
 
 ## Using Sequelize
 
-Sequelize lets us write and concentrate on js code and objects, and it handles the SQL queries.
+<u>**Sequelize is an ORM - Object Relational Mapping Library**</u>
+
+Sequelize lets us write and concentrate on js code and objects, and it handles the SQL queries. it does all the heavy lifting, all the SQL code behind the scenes for us and maps it into JavaScript objects with convenience methods which we can call to execute that behind the scenes SQL code so that we never have to write SQL code on our own.
+
+### Install sequelize
+
+**<u>Sequelize requires having mysql2 already installed</u>**
+
++ `npm install --save sequelize`
+
+### Using Sequelize
+
+#### In Workbench
+
++ Go into workbench - node-complete database and drop the products table - as we want sequelize to manage the tables now.
+
+#### In database.js - for our connection
+
++ We use sequelize to create a new instance and pass in (database name, username, password, {options})
+
+  ```
+  // This gives us a constructor called Sequelize
+  const Sequelize = require('sequelize');
+  
+  // create a new instance and pass in (database name, username, password, {options})
+  const sequelize = new Sequelize('node-complete', 'root', 'Birgu@2011', {dialect: 'mysql', 'host': localhost});
+  
+  module.exports = sequelize;
+  ```
+
+#### In models
+
++ We create a product model, by using sequelize.define.
+
++ This takes in the name of the model in lowercase
+
++ It also takes in an object of the structure of our model/database.
+
+  ```
+  // This gives us a constructor called Sequelize
+  const Sequelize = require('sequelize');
+  
+  const sequelize = require('../utility/database');
+  
+  // define a model - managed by sequelize
+  // define takes (model name in lowercase, {define the structure - the fields our model should have})
+  const product = sequelize.define(product, {
+      id: {
+          type: Sequelize.INTEGER,
+          autoIncrement: true,
+          allowNull: false,
+          primaryKey: true
+      },
+      // define the title using shorthand, to only set the type (example)
+      title: Sequelize.STRING,
+      price: {
+          type: Sequelize.DOUBLE,
+          allowNull: false
+      },
+      imageUrl: {
+          type: Sequelize.STRING,
+          allowNull: false
+      },
+      description: {
+          type: Sequelize.STRING,
+          allowNull: false
+      }
+  });
+  
+  module.exports = Product;
+  ```
+
+  
 
 
+
+#### step 2 - connect to the database
+
+
+
++ 
 
 [<< Back to Index](#index)
 
