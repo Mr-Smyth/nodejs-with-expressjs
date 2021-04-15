@@ -138,7 +138,7 @@ MySQL is free for the basic version and is what we will use
 
 #### In app.js
 
-Now we can import the database connection pool
+For test purposes we can import the database connection pool
 
 + `const db = require('./utility/database');`
 
@@ -235,7 +235,7 @@ db.execute('SELECT * FROM products')
 
 which is much more readable.
 
-+ In app.js.
++ In app.js - for testing purposes
 
 + Add the above query with .then and catch blocks:
 
@@ -278,8 +278,8 @@ gives us this in the console:
     id: 1,
     title: 'Databases for Dummies',
     price: 26.99,
-    description: 'A complete guide to starting on databases',
-    imageUrl: 'image url here '
+    description: 'A complete guide to a fool starting on databases',
+    imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSoDXr4is7-bVjWtE-TI4q-l0jHX0SPN4_4Uw&usqp=CAU'
   }
 ]
 ```
@@ -292,7 +292,89 @@ gives us this in the console:
 
 ### Using Models to interact with our data
 
+base model code:
 
+```
+// get the database pool
+const db = require('../utility/database');
+
+// get cart model
+const Cart = require('./cart');
+
+module.exports = class Product {
+    constructor(id, title, imageUrl, price, description) {
+        // create our constructor properties
+        this.id = id;
+        this.title = title;
+        this.imageUrl = imageUrl;
+        this.price = price;
+        this.description = description;
+    }
+
+    save() {}
+
+    static fetchAll() {}
+
+    static fetchOne(id) {}
+
+    static deleteOne(id) {}
+```
+
+
+
+#### Setting up fetchAll()
+
+##### models
+
++ In the product model, inside the fetchAll method - return a promise of a query to select all products inside the database.
+
+  ```
+  static fetchAll() {
+      // return the promise so we can use it somewhere else.
+      return db.execute('SELECT * FROM products')
+  }
+  ```
+
+#### controllers
+
++ In any of the controllers in which we call all products, instead of passing in a function as a callback, as we did when using a json file for a db.
+
++ Instead, here we can add our .then and .catch
+
+  ```
+  Product.fetchAll()
+  .then(response => {
+  	res.render('shop/index', {
+      products: response[0],
+      pageTitle: 'Home page',
+      path :'/index',
+      });
+  })
+  .catch(err => {
+  	console.log(err)
+  });
+  
+  ```
+
++ But a nicer way to do this is using destructuring - we know the response is a 2 part nested array containing the first part - our data and the 2nd part - metaData:
+
+  ```
+  exports.getIndex = (req, res, next) => {
+      Product.fetchAll()
+      .then(([rows, fieldData]) => {
+          res.render('shop/index', {
+              products: rows,
+              pageTitle: 'Home page',
+              path :'/index',
+          });
+      })
+      .catch(err => {
+          console.log(err)
+      });
+  };
+  ```
+
++ Repeat this for any of the controllers needing to fetch all products.
 
 [<< Back to Index](#index)
 
