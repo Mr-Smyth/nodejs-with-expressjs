@@ -4,19 +4,18 @@ const Cart = require('../models/cart');
 
 // Display our products controller
 exports.getProducts = (req, res, next) => {
-    // we add in an anonymous function that will be a cb in the fetchAll
-    Product.fetchAll()
-    .then(([rows, fieldData]) => {
+    Product.findAll()
+    // we should then have our products
+    .then(products => {
         res.render('shop/product-list', {
-            products: rows,
+            products: products,
             pageTitle: 'All Products',
             path :'/product-list',
         });
     })
     .catch(err => {
-        console.log(err)
-    });
-    
+        console.log(err);
+    });    
 };
 
 // Display a products Details controller
@@ -42,14 +41,11 @@ exports.getProductDetails = (req, res, next) => {
 
 // Display our Home Page controller
 exports.getIndex = (req, res, next) => {
-    // we add in an anonymous function that will be a cb in the fetchAll
-    Product.fetchAll()
-    // instead of using response here we can use destructuring. because we already know the response is a 2 part nested array
-    // rows will represent the data because it is the first nested element and 
-    // fieldDat will represent the metaData
-    .then(([rows, fieldData]) => {
+    Product.findAll()
+    // we should then have our products
+    .then(products => {
         res.render('shop/index', {
-            products: rows,
+            products: products,
             pageTitle: 'Home page',
             path :'/index',
         });

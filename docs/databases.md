@@ -627,10 +627,30 @@ With Sequelize v5, `findById()` was replaced by `findByPk()`.
 
 ##### controllers - shop
 
-We want to get all our products for the index page
+We want to get all our products for the index page and the products page
 
 + goto getIndex controller
+
 + Use the findAll() method - which will retrieve all data - it can take options where you could use WHERE - to filter the data we receive - but in this case we just want all the data.
+
+  ```
+  exports.getIndex = (req, res, next) => {
+      Product.findAll()
+      // we should then have our products
+      .then(products => {
+          res.render('shop/index', {
+              products: products,
+              pageTitle: 'Home page',
+              path :'/index',
+          });
+      })
+      .catch(err => {
+          console.log(err)
+      });
+  };
+  ```
+
+  
 
 [<< Back to Index](#index)
 
