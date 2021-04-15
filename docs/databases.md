@@ -493,11 +493,11 @@ Sequelize lets us write and concentrate on js code and objects, and it handles t
 
 ### Using Sequelize
 
-#### In Workbench
+#### Setup - In Workbench
 
 + Go into workbench - node-complete database and drop the products table - as we want sequelize to manage the tables now.
 
-#### In database.js - for our connection
+#### Setup - In database.js - for our connection
 
 + We use sequelize to create a new instance and pass in (database name, username, password, {options})
 
@@ -506,12 +506,12 @@ Sequelize lets us write and concentrate on js code and objects, and it handles t
   const Sequelize = require('sequelize');
   
   // create a new instance and pass in (database name, username, password, {options})
-  const sequelize = new Sequelize('node-complete', 'root', 'Birgu@2011', {dialect: 'mysql', 'host': localhost});
+  const sequelize = new Sequelize('node-complete', 'root', 'Birgu@2011', {dialect: 'mysql', 'host': 'localhost'});
   
   module.exports = sequelize;
   ```
 
-#### In models
+#### Setup - In models
 
 + We create a product model, by using sequelize.define.
 
@@ -527,7 +527,7 @@ Sequelize lets us write and concentrate on js code and objects, and it handles t
   
   // define a model - managed by sequelize
   // define takes (model name in lowercase, {define the structure - the fields our model should have})
-  const product = sequelize.define(product, {
+  const product = sequelize.define('product', {
       id: {
           type: Sequelize.INTEGER,
           autoIncrement: true,
@@ -557,13 +557,32 @@ Sequelize lets us write and concentrate on js code and objects, and it handles t
 
 
 
-#### step 2 - connect to the database
+#### Setup - Create a product table in our database
 
++ In app.js
 
++ here we need to make sure that all our models are transferred to tables, if a table already exists - we dont want to overwrite them - although this can be done. If a table does not exist we want it created.
 
-+ 
++ make sure we have sequelize object : `const sequelize = require('./utility/database');`
 
-[<< Back to Index](#index)
++ Then near the bottom of the file use the sync method - this looks at all the models we defined, and creates tables for them, and also any relations if they are setup: 
+
++ We use .then to listen to the result of sync and we can actually start our server from inside this 
+
+  ```
+  sequelize.sync()
+  .then(response => {
+      console.log(response); // optional to view response
+      app.listen(3000);
+  })
+  .catch(err => {
+      console.log(err);
+  });
+  ```
+
++ Running the above will log out what happens - and it shows that each time the server is started the product model table is checked for and if not present - it is created.
+
++ [<< Back to Index](#index)
 
 
 

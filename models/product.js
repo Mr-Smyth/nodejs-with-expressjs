@@ -5,7 +5,7 @@ const sequelize = require('../utility/database');
 
 // define a model - managed by sequelize
 // define takes (model name in lowercase, {define the structure - the fields our model should have})
-const product = sequelize.define(product, {
+const product = sequelize.define('product', {
     id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
@@ -28,4 +28,4 @@ const product = sequelize.define(product, {
     }
 });
 
-module.exports = Product;
+module.exports = product;
