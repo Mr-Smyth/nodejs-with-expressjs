@@ -23,20 +23,34 @@ exports.getProductDetails = (req, res, next) => {
     // we can access params in the req using express params object
     // this allows us to get productID which is the name we choose in the routes
     const prodId = req.params.productId;
-    
-    // call the static method to find one product
-    Product.fetchOne(prodId)
-    // use destructuring to get the data
-    .then(([product]) => {
+    // option A:
+    // use the sequelize method findByPk() - it returns a single product
+    Product.findByPk(prodId)
+    .then(product => {
         res.render('shop/product-details', {
-            product: product[0], // because product is still an array, qith 1 object - we pass the first and only element of that array
-            pageTitle: product.title, // dynamically set page header to name of product
+            product: product, 
+            pageTitle: product.title,
             path: '/product-details'
         });
     })
     .catch(err => {
         console.log(err)
     });
+
+
+    // option B:
+    // use the findAll method - which will find all occurances - note where in lowercase
+    // Product.findAll({ where: {id: prodId } })
+    // .then(products => {
+    //     res.render('shop/product-details', {
+    //         product: products[1], 
+    //         pageTitle: products[0].title,
+    //         path: '/product-details'
+    //     });
+    // })
+    // .catch(err => {
+    //     console.log(err)
+    // });
 };
 
 // Display our Home Page controller

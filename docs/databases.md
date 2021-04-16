@@ -511,7 +511,7 @@ Sequelize lets us write and concentrate on js code and objects, and it handles t
   module.exports = sequelize;
   ```
 
-#### Setup - In models
+#### Setup sequelize - In models
 
 + We create a product model, by using sequelize.define.
 
@@ -557,7 +557,7 @@ Sequelize lets us write and concentrate on js code and objects, and it handles t
 
 
 
-#### Setup - Create a product table in our database
+#### Setup sequelize - Create a product table in our database
 
 + In app.js
 
@@ -586,7 +586,7 @@ Sequelize lets us write and concentrate on js code and objects, and it handles t
 
 
 
-#### Using - creating a product using sequelize
+#### Using sequelize - creating a product using sequelize
 
 ##### Controllers - admin.js
 
@@ -619,7 +619,7 @@ Sequelize lets us write and concentrate on js code and objects, and it handles t
 
 
 
-####  Using - Finding and fetching Data
+####  Using sequelize - Finding and fetching Data
 
 **<u>Note</u>** 
 
@@ -642,6 +642,53 @@ We want to get all our products for the index page and the products page
               products: products,
               pageTitle: 'Home page',
               path :'/index',
+          });
+      })
+      .catch(err => {
+          console.log(err)
+      });
+  };
+  ```
+
+
+
+**To find just one product - as you do for finding a products details we have 2 main options : `findByPk()`** & **findAll({})**
+
+##### controllers
+
++ Goto the getProductDetails controller.
+
++ Both options A and B are shown below - option b returns an array as there could be more than 1 result, thats why in this case we use index 0 - as we know there is only 1 match for an id.
+
+  ```
+  exports.getProductDetails = (req, res, next) => {
+      // we can access params in the req using express params object
+      // this allows us to get productID which is the name we choose in the routes
+      const prodId = req.params.productId;
+      
+      // option A:
+      // use the sequelize method findByPk() - it returns a single product
+      Product.findByPk(prodId)
+      .then(product => {
+          res.render('shop/product-details', {
+              product: product, 
+              pageTitle: product.title,
+              path: '/product-details'
+          });
+      })
+      .catch(err => {
+          console.log(err)
+      });
+  
+  
+      // option B:
+      // use the findAll method - which will find all occurances - note where in lowercase
+      Product.findAll({ where: {id: prodId } })
+      .then(products => {
+          res.render('shop/product-details', {
+              product: products[1], 
+              pageTitle: products[0].title,
+              path: '/product-details'
           });
       })
       .catch(err => {
