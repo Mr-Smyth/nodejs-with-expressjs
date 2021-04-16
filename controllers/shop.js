@@ -56,7 +56,7 @@ exports.getProductDetails = (req, res, next) => {
 // Display our Home Page controller
 exports.getIndex = (req, res, next) => {
     Product.findAll()
-    // we should then have our products
+    // we should then have our products in an object
     .then(products => {
         res.render('shop/index', {
             products: products,
