@@ -809,11 +809,71 @@ We want to get all our products for the index page and the products page
 
 
 
+## Setting up users with sequelize
+
++   Create a basic user model
+    ```
+    // require the sequelize constructor class
+    const Sequelize = require('sequelize');
+
+    // import our own sequelize object
+    const sequelize = require('../utility/database');
+
+    const user = sequelize.define('user', {
+        id: {
+            type: Sequelize.INTEGER,
+            autoIncrement: true,
+            allowNull: false,
+            primaryKey: true
+        },
+        username: {
+            type: Sequelize.STRING,
+            allowNull: false
+        },
+        email: {
+            type: Sequelize.STRING,
+            allowNull: false
+        }
+    });
+
+    module.exports = user;
+    ```
 
 
+### Creating associations/ relations
 
++   a product can belong to many carts as each user can add the same product to their own carts- so its a one to many relationship
++   a product can belong to many orders as each user can add the same product to their own carts, therefore it will also be in their order- so its a one to many relationship
++   a user has only one shopping cart - so its a one to one relationship
++   a user can have multiple orders - so its a one to many relationship
++   a user technically could create a product on the system, and a user could create many products therfore a one to many
 
+---
 
++   Import both models into the app.js file - we can now relate them
+    ```
+    // relate our models - CASCADE IT SO ANY PRODUCTS BELONGING TO A DELETED USER ARE ALSO DELETED
+    Product.belongsTo(User, {constraints: true, onDelete: 'CASCADE' });
+    // THIS IS OPTIONAL - AND COULD ALSO BE USED INSTEAD OF ABOVE BELONGSTO, WE ARE ADDING IT HERE TO BE CLEAR ABOUT THE RELATIONSHIP
+    User.hasMany(Product);
+    ```
++    sequelize sync will not just create tables for our models but also define the relations in our database as we define them in the app.js file above.
++   Here a slight problem is that we already have a products table, and therefore it will not override it with the new information.
++   we can get around this in this case by using `{ force: true }` - inside the sync method call. This will force the overwriting and creating of the required new fields: `sequelize.sync({ force: true })`
++   Restart and in console we will get:
+    ```
+    Executing (default): DROP TABLE IF EXISTS `products`;
+    Executing (default): DROP TABLE IF EXISTS `users`;
+    Executing (default): DROP TABLE IF EXISTS `users`;
+    Executing (default): CREATE TABLE IF NOT EXISTS `users` (`id` INTEGER NOT NULL auto_increment , `username` VARCHAR(255) NOT NULL, `email` VARCHAR(255) NOT NULL, `createdAt` DATETIME NOT NULL, `updatedAt` DATETIME NOT NULL, PRIMARY KEY (`id`)) ENGINE=InnoDB;
+    Executing (default): SHOW INDEX FROM `users`
+    Executing (default): DROP TABLE IF EXISTS `products`;
+    Executing (default): CREATE TABLE IF NOT EXISTS `products` (`id` INTEGER NOT NULL auto_increment , `title` VARCHAR(255), `price` DOUBLE PRECISION NOT NULL, `imageUrl` VARCHAR(255) 
+    NOT NULL, `description` VARCHAR(255) NOT NULL, `createdAt` DATETIME NOT NULL, `updatedAt` DATETIME NOT NULL, `userId` INTEGER, PRIMARY KEY (`id`), FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE) ENGINE=InnoDB;
+    Executing (default): SHOW INDEX FROM `products`
+    ```
+
+We now have the updated relational fields in the products table, and the new users table.
 
 
 
