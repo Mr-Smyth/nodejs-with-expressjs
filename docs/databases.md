@@ -877,6 +877,33 @@ We now have the updated relational fields in the products table, and the new use
 
 
 
+#### Create a sample user in app.js
+
++   This is simply  to hardcode in a test user for our database.
+```
+sequelize.sync()
+.then(() => {
+    return User.findByPk(1);
+})
+.then(user => {
+    if (!user) {
+        return User.create({ username: 'Eamonn', email: 'eamonn@test.com'});
+    }
+    return user;
+    // .then blocks always return a promise - so we know here we are returning a promise in either case
+})
+.then(user => {
+    console.log(user);
+    app.listen(3000);
+})
+.catch(err => {
+    console.log(err);
+});
+```
+
+Using npm start - which starts the server and runs the sequelize code within - basically the code in the snippit above, will create a default user now every time we run it - if no user is already present.   
+What we need to do now is register a new middleware - middleware takes care of the requests, and we need to include the default user in the request
+
 
 
 
