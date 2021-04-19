@@ -10,7 +10,7 @@ exports.getAddProduct = (req, res, next) => {
 
 // now handle the logic for the post from the form in add-products
 exports.postAddProduct = (req, res, next) => {
-    // push the returned data into an object inside create()
+    // push the returned data into an object inside req.user.createProduct()
     req.user.createProduct({
         title:  req.body.title,
         imageUrl:  req.body.imageUrl,
@@ -36,9 +36,10 @@ exports.getEditProduct = (req, res, next) => {
 
     // now we need the product id that was passed in the url
     const prodId = req.params.productId;
-    // call the static method to find one product - this passes the returned product into the template
-    Product.findByPk(prodId)
-    .then(product => {
+    // call the method inside user object - this returns an array
+    req.user.getProducts({ where: { id: prodId }})
+    .then(products => {
+        const product = products[0];
         // add a check in case product does not exist
         if (!product) {
             return res.redirect('/');
@@ -102,7 +103,10 @@ exports.postDeleteProduct = (req, res, next) => {
 
 exports.getProducts = (req, res, next) => {
     // we add in an anonymous function that will be a cb in the fetchAll
-    Product.findAll()
+    // Product.findAll()
+
+    // use the user method
+    req.user.getProducts()
     .then(products => {
         res.render('admin/products', {
             products: products,

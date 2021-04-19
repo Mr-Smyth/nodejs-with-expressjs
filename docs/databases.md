@@ -955,9 +955,58 @@ User.hasMany(Product);
 
   
 
+#### Fetching associated products
 
+We could set up the edit product functionality to only edit products that the logged in user has created
 
++ We can do this also by using the magic methods stored inside the user sequelize object we created above in app.js
 
++ So what was this:
+
+  ```
+  Product.findByPk(prodId)
+      .then(product => {
+          // add a check in case product does not exist
+          if (!product) {
+              return res.redirect('/');
+              // could also pass an error in here
+          }
+          res.render('admin/edit-product', {
+              pageTitle: 'Edit Product Page',
+              path: '/admin/edit-product',
+              editing: editMode,
+              product: product
+          });
+      })
+      .catch(err => {
+          console.log(err);
+      });
+  ```
+
++ Becomes this:
+
+  ```
+      req.user.getProducts({ where: { id: prodId }})
+      .then(products => {
+          const product = products[0];
+          // add a check in case product does not exist
+          if (!product) {
+              return res.redirect('/');
+              // could also pass an error in here
+          }
+          res.render('admin/edit-product', {
+              pageTitle: 'Edit Product Page',
+              path: '/admin/edit-product',
+              editing: editMode,
+              product: product
+          });
+      })
+      .catch(err => {
+          console.log(err);
+      });
+  ```
+
+  
 
 
 
