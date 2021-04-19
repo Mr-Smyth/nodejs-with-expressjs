@@ -16,6 +16,8 @@ const sequelize = require('./utility/database');
 // importing both models so we can relate them
 const Product = require('./models/product');
 const User = require('./models/user');
+const Cart = require('./models/cart');
+const CartItem = require('./models/cart-item');
 
 app.get('/favicon.ico', (req, res) => {
     res.status(204);
@@ -44,10 +46,24 @@ app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 app.use(errorController.get404);
 
+// --------------------------------------------------------------------------------------------- //
+// ------------------------------------  Associations  ----------------------------------------- //
+
 // relate our models - CASCADE IT SO ANY PRODUCTS BELONGING TO A DELETED USER ARE ALSO DELETED
 Product.belongsTo(User, {constraints: true, onDelete: 'CASCADE' });
 // THIS IS OPTIONAL - AND COULD ALSO BE USED INSTEAD OF ABOVE BELONGSTO, WE ARE ADDING IT HERE TO BE CLEAR ABOUT THE RELATIONSHIP
 User.hasMany(Product);
+
+// either of these 2 will add a user id to the cart
+User.hasOne(Cart);
+Cart.belongsTo(User);
+
+// this only works with an intermediary table which connects them - in this case that is the cart-items table.
+// so we will tell sequelize where these connections should be stored - in the CartItem model
+Cart.belongsToMany(Product, { through: CartItem });
+Product.belongsToMany(Cart, { through: CartItem });
+
+// -------------------------------------------------------------------------------------------- //
 
 // sequelize.sync({ force: true })
 sequelize.sync()

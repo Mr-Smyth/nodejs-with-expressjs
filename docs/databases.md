@@ -1008,9 +1008,79 @@ We could set up the edit product functionality to only edit products that the lo
 
   
 
+### Setup the cart with sequelize
 
+A cart should belong to a user, and a user should have only one cart
 
+We will scrap our old cart model here, and start from scratch and create a couple of new models to handle cart
 
++ Create a model called cart - The cart table should hold the different carts for the different users - this will be called cart
+
++ We create another cart called cart-Items. This will hold the quantity of the product and the product. It will also hold a cart Id - which will reference which cart from the cart table it belongs. 
+
+  ```
+  // require the sequelize constructor class
+  const Sequelize = require('sequelize');
+  
+  // import our own sequelize object
+  const sequelize = require('../utility/database');
+  
+  const cart = sequelize.define('cart', {
+      id: {
+          type: Sequelize.INTEGER,
+          autoIncrement: true,
+          allowNull: false,
+          primaryKey: true
+      }
+  });
+  
+  module.exports = cart;
+  ```
+
+  and:
+
+  ```
+  // require the sequelize constructor class
+  const Sequelize = require('sequelize');
+  
+  // import our own sequelize object
+  const sequelize = require('../utility/database');
+  
+  const cartItem = sequelize.define('cartItem', {
+      id: {
+          type: Sequelize.INTEGER,
+          autoIncrement: true,
+          allowNull: false,
+          primaryKey: true
+      },
+      quantity: Sequelize.INTEGER
+  });
+  
+  module.exports = cartItem;
+  ```
+
+  
+
++ The cart ID and the Product Id will be auto added and managed by sequelize, by way of setting up the relationship between cart and products -  and we shall add this code into app.js:
+
+  ```
+  const Cart = require('./models/cart');
+  const CartItem = require('./models/cart-item');
+  .......
+  .......
+  .......
+  
+  // either of these 2 will add a user id to the cart
+  User.hasOne(Cart);
+  Cart.belongsTo(User);
+  
+  // this only works with an intermediary table which connects them - in this case that is the cart-items table.
+  // so we will tell sequelize where these connections should be stored - in the CartItem model
+  Cart.belongsToMany(Product, { where: { through: CartItem }});
+  Product.belongsToMany(Cart, { where: { through: CartItem }});
+  ```
+
+  
 
 
 
