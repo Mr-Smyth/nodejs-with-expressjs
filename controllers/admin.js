@@ -16,6 +16,7 @@ exports.postAddProduct = (req, res, next) => {
         imageUrl:  req.body.imageUrl,
         price:  req.body.price,
         description:  req.body.description,
+        userId: req.user.id
     })
     .then(response => {
         console.log(response);
