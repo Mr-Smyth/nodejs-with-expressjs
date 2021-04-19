@@ -11,12 +11,11 @@ exports.getAddProduct = (req, res, next) => {
 // now handle the logic for the post from the form in add-products
 exports.postAddProduct = (req, res, next) => {
     // push the returned data into an object inside create()
-    Product.create({
+    req.user.createProduct({
         title:  req.body.title,
         imageUrl:  req.body.imageUrl,
         price:  req.body.price,
         description:  req.body.description,
-        userId: req.user.id
     })
     .then(response => {
         console.log(response);

@@ -904,6 +904,91 @@ sequelize.sync()
 Using npm start - which starts the server and runs the sequelize code within - basically the code in the snippit above, will create a default user now every time we run it - if no user is already present.   
 What we need to do now is register a new middleware - middleware takes care of the requests, and we need to include the default user in the request
 
+```	
+Product.belongsTo(User, {constraints: true, onDelete: 'CASCADE' });
+User.hasMany(Product);
+```
+
+
+
+
+
+#### Add a new product that has the user linked.
+
++ This can be done quite simply by adding the id to the controller and continue to use the Product.create() method:
+
+  ```
+  Product.create({
+          title:  req.body.title,
+          imageUrl:  req.body.imageUrl,
+          price:  req.body.price,
+          description:  req.body.description,
+          userId: req.user.id
+      })
+      .then(response => {
+          console.log(response);
+          res.redirect('/admin/products');
+      })
+      .catch(err => {
+          console.log(err);
+      });
+  ```
+
++ Or we can use the fact we have set up an association of one to many and the functionality that now lives inside the user sequelize object - The .createProduct method. This method is created within the user object when we setup the user object in app.js.
+
+  ```
+  // push the returned data into an object inside req.user.createProduct()
+      req.user.createProduct({
+          title:  req.body.title,
+          imageUrl:  req.body.imageUrl,
+          price:  req.body.price,
+          description:  req.body.description,
+      })
+      .then(response => {
+          console.log(response);
+          res.redirect('/admin/products');
+      })
+      .catch(err => {
+          console.log(err);
+      });
+  ```
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
