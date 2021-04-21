@@ -75,10 +75,21 @@ sequelize.sync()
         return User.create({ username: 'Eamonn', email: 'eamonn@test.com'});
     }
     return user;
-    // .then blocks always return a promise - so we know here we are returning a promise in either case
 })
 .then(user => {
-    console.log(user);
+
+    // need a nested block here to check for existing cart
+    user.getCart()
+    .then(cart => {
+        // if there is a cart - return it
+        if (cart) {
+            return cart;
+        }
+        // otherwise create one
+        return user.createCart();
+    })
+})
+.then(cart => {
     app.listen(3000);
 })
 .catch(err => {

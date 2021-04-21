@@ -1010,6 +1010,10 @@ We could set up the edit product functionality to only edit products that the lo
 
 ### Setup the cart with sequelize
 
+
+
+#### Relationships
+
 A cart should belong to a user, and a user should have only one cart
 
 We will scrap our old cart model here, and start from scratch and create a couple of new models to handle cart
@@ -1080,13 +1084,54 @@ We will scrap our old cart model here, and start from scratch and create a coupl
   Product.belongsToMany(Cart, { where: { through: CartItem }});
   ```
 
++ We again need to restart the app, and force the rebuilding of our tables with `sequelize.sync({ force: true })` in our app.js file
+
+#### Creating a cart and fetching from cart
+
+We now want to use the cart associated with my existing user to get all the products in it and render them to the screen.
+
++ Firstly we will need to create a cart for our default user. - this will eventually be done when new users are created - but for this purpose we are creating both the user and the cart when the app is started.
+
++ We will also check here to make sure the cart does not already exist, before creating it.
+
++ So in app.js - add the following.
+
+  ```
+  sequelize.sync()
+  .then(() => {
+      return User.findByPk(1);
+  })
+  .then(user => {
+      if (!user) {
+          return User.create({ username: 'Eamonn', email: 'eamonn@test.com'});
+      }
+      return user;
+  })
+  .then(user => {
   
+      // need a nested block here to check for existing cart
+      user.getCart()
+      .then(cart => {
+          // if there is a cart - return it
+          if (cart) {
+              return cart;
+          }
+          // otherwise create one
+          return user.createCart();
+      })
+  })
+  .then(cart => {
+      app.listen(3000);
+  })
+  .catch(err => {
+      console.log(err);
+  });
+  ```
 
 
 
-
-
-
++ Now goto the getCart controller
++ 
 
 
 
