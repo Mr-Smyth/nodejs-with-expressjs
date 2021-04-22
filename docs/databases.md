@@ -1392,6 +1392,94 @@ We need to add a checkout button to the Cart - when this button is clicked - we 
 
   
 
+#### In app.js
+
++ Now we setup the relationships
+
++ Import the order models and set relationships as below:
+
+  ```
+  Order.belongsTo(User);
+  User.hasMany(Order);
+  
+  Order.belongsToMany(Product, { through: OrderItem });
+  Product.belongsToMany(Order, { through: OrderItem });
+  ```
+
++ NOTE This example shows both examples, basically opposite statements of the same thing - either or both will work.
+
+
+
+#### Create our checkout button functionality
+
++ Create the checkout button in the cart.ejs template:
+
+  ```
+  <hr>
+  <div class="centered">
+  	<form action="/create-order" method="POST">
+  		<button type="submit" class="btn">Proceed to Checkout</button>
+  	</form>
+  </div>
+  ```
+
++ Now lets take the action from the form we created and setup the creating an order functionality
+
++ In Shop.js - Setup a new middleware called postOrder.
+
+  This now needs to get all the cart items and move them into an Order.
+
++ So we get the cart
+
++ Then get the products in the cart
+
++ Once we have the products create an Order
+
++ Now we need to add all the products to the order.
+
++ Each product will require a special key to be understood by sequelize - so we can insert correct quantity. To do this we have to modify our products that we pass into addProducts using the map method. map runs on an array and will return an array with modified elements, so here we add a function into map to achieve this. The function adds a property to each product, which will contain the quantity gleaned from the `product.cartItem.quantity`
+
++ Now we need to create a new order and move all these products to it:
+
+  ```
+  exports.postOrder = (req, res, next) => {
+      res.redirect('/');
+  };
+  ```
+
++ In routes - Setup a new post route for the action in the form: 
+  `router.post('/create-order', shopController.postOrder);`
+
++ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

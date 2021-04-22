@@ -73,8 +73,8 @@ Product.belongsToMany(Order, { through: OrderItem });
 
 // -------------------------------------------------------------------------------------------- //
 
-sequelize.sync({ force: true })
-// sequelize.sync()
+// sequelize.sync({ force: true })
+sequelize.sync()
 .then(() => {
     return User.findByPk(1);
 })

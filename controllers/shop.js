@@ -1,6 +1,5 @@
 // import model
 const Product = require('../models/product');
-const Cart = require('../models/cart');
 
 // Display our products controller
 exports.getProducts = (req, res, next) => {
@@ -156,6 +155,40 @@ exports.getCheckout = (req, res, next) => {
         pageTitle: 'Checkout',
         path :'/checkout',
     });
+};
+
+// Handle creating an order from the cart
+exports.postOrder = (req, res, next) => {
+    // get all cart items
+    req.user.getCart()
+    .then(cart => {
+        // now we have the cart - now get all the products
+        return cart.getProducts()
+    })
+    .then(products => {
+        // create an order
+        return req.user.createOrder()
+        .then(order => {
+            // associate products to the order
+            // each product will require a special key to be understood by sequelize - so we can insert correct quantity
+            // to do this we have to modify our products that we pass into addProducts using the map method
+            // map runs on an array and will return an array with modified elements
+            // we add a function into map to achieve this
+            return order.addProducts(products.map(product => {
+                // we will add a property to the product, called exactly what we defined the OrderItem model as - so in this case - 'orderItem'
+                // we give the property a js object
+                product.orderItem = { quantity: product.cartItem.quantity}
+
+                // so now i have an array of products including the new quantity information we inserted
+                return product;
+            }));
+        })
+        .catch(err => console.log(err));
+    })
+    .then(result => {
+        res.redirect('/orders');
+    })
+    .catch(err => console.log(err));
 };
 
 // Display our Checkout controller
