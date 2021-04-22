@@ -1302,9 +1302,38 @@ We now want to use the cart associated with my existing user to get all the prod
   </main>
   ```
 
+#### Deleting a product from the cart
+
++ get the product id of the item to be deleted
+
++ get the cart, but only the item whose id matches the product we want to delete
+
++ then call destroy on the product.cartItem method = `return product.cartItem.destroy();`
+
++ redirect to cart
+
+  ```
+  exports.deleteCartItem = (req, res, next) => {
+      // get the product id from the request
+      const prodId = req.body.productId;
   
+      // get the cart for the user
+      req.user.getCart()
+      .then(cart => {
+          return cart.getProducts({ where: { id: prodId } });
+      })
+      .then(products => {
+          const product = products[0];
+          return product.cartItem.destroy();
+      })
+      .then(result => {
+          res.redirect('/cart');
+      })
+      .catch(err => console.log(err))
+  };
+  ```
 
-
+  
 
 
 

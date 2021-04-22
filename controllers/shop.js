@@ -72,13 +72,12 @@ exports.getIndex = (req, res, next) => {
 // Get post data for our cart
 exports.postToCart = (req, res, next) => {
 
-    // we want to make cart available in lower anonymous functions without passing it down
-    // also make newQuantity a higher lvl variable
+    // top lvl variables
     let fetchedCart
     let newQuantity = 1;
+    const prodId = req.body.productId;
 
     // retrieve product id from req
-    const prodId = req.body.productId;
     req.user.getCart()
     .then(cart => {
         fetchedCart = cart;
@@ -113,7 +112,6 @@ exports.postToCart = (req, res, next) => {
 };
 
 
-
 // Display our Cart controller
 exports.getCart = (req, res, next) => {
     req.user.getCart()
@@ -136,11 +134,20 @@ exports.getCart = (req, res, next) => {
 exports.deleteCartItem = (req, res, next) => {
     // get the product id from the request
     const prodId = req.body.productId;
-    // get products so we have access to the price
-    Product.fetchOne(prodId, product => {
-        Cart.deleteProduct(prodId, product.price);
+
+    // get the cart for the user
+    req.user.getCart()
+    .then(cart => {
+        return cart.getProducts({ where: { id: prodId } });
+    })
+    .then(products => {
+        const product = products[0];
+        return product.cartItem.destroy();
+    })
+    .then(result => {
         res.redirect('/cart');
-    });
+    })
+    .catch(err => console.log(err))
 };
 
 // Display our Checkout controller
