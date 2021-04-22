@@ -1094,6 +1094,8 @@ We now want to use the cart associated with my existing user to get all the prod
 
 + We will also check here to make sure the cart does not already exist, before creating it.
 
++ **We can use the so called magic methods - which are created within the user sequelize object, when we created the user within the app.js file. the magic methods are created in accordance with the relationships that we also create within app.js. So `User.hasOne(Cart);` or `Cart.belongsTo(User);` - gives us the user.createCart or getCart methods**
+
 + So in app.js - add the following.
 
   ```
@@ -1131,11 +1133,87 @@ We now want to use the cart associated with my existing user to get all the prod
 
 
 + Now goto the getCart controller
-+ 
 
++ We will use another magic method getProducts this time to get all the products from the cart
 
+  ```
+  exports.getCart = (req, res, next) => {
+      req.user.getCart()
+      .then(cart => {
+          // so here we grab the products using a magic method
+          return cart.getProducts()
+          .then(products => {
+              res.render('shop/cart', {
+                  pageTitle: 'Shopping Cart',
+                  path :'/cart',
+                  products: products
+              });
+          })
+      })
+      .catch(err => {
+          console.log(err);
+      });
+  };
+  ```
 
+  
 
+#### Posting Items to the cart
+
++ Here we need to firstly  get the products id that is being added to the cart
+
++ Then we check the cart to see if its already there 
+
++ If it is already there we add 1 to the quantity.
+
++ If it is not already in the cart then we get the product from products
+
++ Then we add it to the cart
+
+  ```
+  exports.postToCart = (req, res, next) => {
+  
+      // we want to make cart available in lower anonymous functions without passing it down
+      let fetchedCart
+  
+      // retrieve product id from req
+      const prodId = req.body.productId;
+      req.user.getCart()
+      .then(cart => {
+          fetchedCart = cart;
+          // first we need to check and see if the product is already in the cart
+          // getProducts will return an array, but our where will make this an array of just one item
+          return cart.getProducts({ where: { id: prodId }})
+      })
+      .then(products => {
+          // check if we get anything
+          let product;
+          if (products.length > 0) {
+              product = products[0];
+          }
+          let newQuantity = 1;
+          if (product) {
+              // if there is a product - we need to get the old qty and add new qty to it
+              // ... code here
+          }
+          // ----------------------------------------------------------------------------------//
+          // Now handle case where product does not already exist in the cart -
+          return Product.findByPk(prodId)
+          .then(product => {
+              // call another magic method on our copy of cart - fetchedCart
+              // we need to also tell sequelize that for our inbetween table we have some additional values that need to be stored
+              // in this case the quantity
+              return fetchedCart.addProduct(product, { through: { quantity: newQuantity } });
+          })
+          .catch(err => console.log(err));
+      }).then(() => {
+          res.redirect('/cart')
+      })
+      .catch(err => console.log(err));
+  };
+  ```
+
+  
 
 
 

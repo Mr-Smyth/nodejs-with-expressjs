@@ -59,7 +59,7 @@ User.hasOne(Cart);
 Cart.belongsTo(User);
 
 // this only works with an intermediary table which connects them - in this case that is the cart-items table.
-// so we will tell sequelize where these connections should be stored - in the CartItem model
+// so we will tell sequelize where these connections should be stored - in the CartItem model - the inbetween model
 Cart.belongsToMany(Product, { through: CartItem });
 Product.belongsToMany(Cart, { through: CartItem });
 

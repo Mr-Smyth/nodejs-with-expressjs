@@ -71,46 +71,65 @@ exports.getIndex = (req, res, next) => {
 
 // Get post data for our cart
 exports.postToCart = (req, res, next) => {
+
+    // we want to make cart available in lower anonymous functions without passing it down
+    let fetchedCart
+
     // retrieve product id from req
     const prodId = req.body.productId;
-    // now we get the product using Product model and the id - we get a product that we can use to update cart
-    Product.fetchOne(prodId, (product) => {
-        // Now we use the Cart model - calling the addProduct static function
-        Cart.addProduct(prodId, product.price)
-    });
-    res.redirect('/cart');
+    req.user.getCart()
+    .then(cart => {
+        fetchedCart = cart;
+        // first we need to check and see if the product is already in the cart
+        // getProducts will return an array, but our where will make this an array of just one item
+        return cart.getProducts({ where: { id: prodId }})
+    })
+    .then(products => {
+        // check if we get anything
+        let product;
+        if (products.length > 0) {
+            product = products[0];
+        }
+        let newQuantity = 1;
+        if (product) {
+            // if there is a product - we need to get the old qty and add new qty to it
+            // ... code here
+        }
+        // ----------------------------------------------------------------------------------//
+        // Now handle case where product does not already exist in the cart -
+        return Product.findByPk(prodId)
+        .then(product => {
+            // call another magic method on our copy of cart - fetchedCart
+            // we need to also tell sequelize that for our inbetween table we have some additional values that need to be stored
+            // in this case the quantity
+            return fetchedCart.addProduct(product, { through: { quantity: newQuantity } });
+        })
+        .catch(err => console.log(err));
+    }).then(() => {
+        res.redirect('/cart')
+    })
+    .catch(err => console.log(err));
 };
+
+
 
 // Display our Cart controller
 exports.getCart = (req, res, next) => {
     req.user.getCart()
     .then(cart => {
-        console.log(cart);
+        // so here we grab the products using a magic method
+        return cart.getProducts()
+        .then(products => {
+            res.render('shop/cart', {
+                pageTitle: 'Shopping Cart',
+                path :'/cart',
+                products: products
+            });
+        })
     })
     .catch(err => {
         console.log(err);
     });
-    // Cart.getCart(cart => {
-    //     // need to get the information for the products in the cart - get this from the product model
-    //     Product.fetchAll(products => {
-    //         // declare our empty list to contain all product data for the template
-    //         const cartProducts = [];
-    //         // loop over products so we can check if a products id is in the cart
-    //         for (product of products) {
-    //             // create a list of products that have a matching id in the cart
-    //             const cartProductData = cart.products.find(prod => prod.id === product.id);
-    //             // check if there is any data - then push it to the cartProducts.
-    //             if (cartProductData) {
-    //                 cartProducts.push({productData: product, qty: cartProductData.qty});
-    //             }
-    //         }
-    //         res.render('shop/cart', {
-    //             pageTitle: 'Shopping Cart',
-    //             path :'/cart',
-    //             products: cartProducts
-    //         });
-    //     });
-    // });
 };
 
 exports.deleteCartItem = (req, res, next) => {
