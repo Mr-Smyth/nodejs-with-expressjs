@@ -1335,9 +1335,62 @@ We now want to use the cart associated with my existing user to get all the prod
 
   
 
+### Orders
 
+We need to add a checkout button to the Cart - when this button is clicked - we want to clear out the cart and move it into orders. The order should be related to the products and a user. the first step will be to set up an order model.
 
+#### Setup the Order Model
 
++ So an order is basically an in-between table between the user to which the order belongs and multiple products which belong to the order.
+
++ So just like with cart - where we used an in-between table called cart-item - with orders we will also create orderItem.
+
++ Now The order table is similar to the cart except that it would probably need user address and contact information, delivery info etc, and that can be all added to the model, but there is also another difference in relationships, a User can have many Orders, but an order can only have on User. so its a one to many relationship
+
++ So order.js will look like:
+
+  ```
+  // require the sequelize constructor class
+  const Sequelize = require('sequelize');
+  
+  // import our own sequelize object
+  const sequelize = require('../utility/database');
+  
+  const Order = sequelize.define('order', {
+      id: {
+          type: Sequelize.INTEGER,
+          autoIncrement: true,
+          allowNull: false,
+          primaryKey: true
+      }
+  });
+  
+  module.exports = Order;
+  ```
+
++ And order-item.js will look like:
+
+  ```
+  // require the sequelize constructor class
+  const Sequelize = require('sequelize');
+  
+  // import our own sequelize object
+  const sequelize = require('../utility/database');
+  
+  const CartItem = sequelize.define('cartItem', {
+      id: {
+          type: Sequelize.INTEGER,
+          autoIncrement: true,
+          allowNull: false,
+          primaryKey: true
+      },
+      quantity: Sequelize.INTEGER
+  });
+  
+  module.exports = CartItem;
+  ```
+
+  
 
 
 
