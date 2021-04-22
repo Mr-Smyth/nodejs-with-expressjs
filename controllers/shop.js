@@ -73,7 +73,9 @@ exports.getIndex = (req, res, next) => {
 exports.postToCart = (req, res, next) => {
 
     // we want to make cart available in lower anonymous functions without passing it down
+    // also make newQuantity a higher lvl variable
     let fetchedCart
+    let newQuantity = 1;
 
     // retrieve product id from req
     const prodId = req.body.productId;
@@ -90,22 +92,21 @@ exports.postToCart = (req, res, next) => {
         if (products.length > 0) {
             product = products[0];
         }
-        let newQuantity = 1;
         if (product) {
             // if there is a product - we need to get the old qty and add new qty to it
-            // ... code here
+            // we use another magic method here cartItem - see section on displaying cart in readme for more details
+            const oldQuantity = product.cartItem.quantity;
+            newQuantity = oldQuantity + 1;
+            return product;
         }
-        // ----------------------------------------------------------------------------------//
         // Now handle case where product does not already exist in the cart -
-        return Product.findByPk(prodId)
-        .then(product => {
-            // call another magic method on our copy of cart - fetchedCart
-            // we need to also tell sequelize that for our inbetween table we have some additional values that need to be stored
-            // in this case the quantity
-            return fetchedCart.addProduct(product, { through: { quantity: newQuantity } });
-        })
-        .catch(err => console.log(err));
-    }).then(() => {
+        return Product.findByPk(prodId);
+    })
+    .then(product => {
+        // add it to the cart
+        return fetchedCart.addProduct(product, { through: { quantity: newQuantity } });
+    })
+    .then(result => {
         res.redirect('/cart')
     })
     .catch(err => console.log(err));

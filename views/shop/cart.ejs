@@ -1,5 +1,6 @@
 <%- include('../includes/head.ejs') %>
     <link rel="stylesheet" href="/css/product.css">
+    <link rel="stylesheet" href="/css/cart.css">
 </head>
 
 <body>
@@ -9,13 +10,16 @@
     <main>
         <% if (products.length > 0) { %>
             <h1>Your Cart Items: </h1>
-            <ul>
-                <% products.forEach(prodSet => { %>
-                    <li>
-                        <p><%= prodSet.productData.title %>: (<%= prodSet.qty %>)</p>
+            <ul class="cart__item-list">
+                <% products.forEach(product => { %>
+                    <li class="cart__item">
+                        <h1><%= product.title %></h1>
+                        <!-- The quantity is not part of the cart - but it is part of the related cart-item
+                        Sequelize gives us a way to access it using the cartItem key -->
+                        <h1>(<%= product.cartItem.quantity %>)</h1>
                         <form action="/cart-delete-item" method="POST">
-                            <input type="hidden" name="productId" value="<%= prodSet.productData.id %>">
-                            <button class="btn" type="submit">Delete</button>
+                            <input type="hidden" name="productId" value="<%= product.id %>">
+                            <button class="btn danger" type="submit">Delete</button>
                         </form>
                     </li>
                 <% }); %>

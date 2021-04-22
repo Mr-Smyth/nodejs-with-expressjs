@@ -1168,7 +1168,7 @@ We now want to use the cart associated with my existing user to get all the prod
 
 + If it is not already in the cart then we get the product from products
 
-+ Then we add it to the cart
++ Then we add it to the cart - Initial code:
 
   ```
   exports.postToCart = (req, res, next) => {
@@ -1194,15 +1194,21 @@ We now want to use the cart associated with my existing user to get all the prod
           let newQuantity = 1;
           if (product) {
               // if there is a product - we need to get the old qty and add new qty to it
-              // ... code here
+              // we use another magic method here cartItem - see section on displaying cart in readme for more details
+              const oldQuantity = product.cartItem.quantity;
+              newQuantity = oldQuantity + 1;
+  
+              // call another magic method on our copy of cart - fetchedCart
+              // we need to also tell sequelize that for our inbetween table we have some additional values that need to be stored
+              // in this case the quantity
+              return fetchedCart.addProduct(product, { through: { quantity: newQuantity } });
           }
           // ----------------------------------------------------------------------------------//
           // Now handle case where product does not already exist in the cart -
           return Product.findByPk(prodId)
           .then(product => {
-              // call another magic method on our copy of cart - fetchedCart
-              // we need to also tell sequelize that for our inbetween table we have some additional values that need to be stored
-              // in this case the quantity
+              
+              // add it to the cart
               return fetchedCart.addProduct(product, { through: { quantity: newQuantity } });
           })
           .catch(err => console.log(err));
@@ -1213,9 +1219,90 @@ We now want to use the cart associated with my existing user to get all the prod
   };
   ```
 
++ Refactored to slim down a bit:
+
+  ```
+  exports.postToCart = (req, res, next) => {
+  
+      // top lvl variables
+      let fetchedCart
+      let newQuantity = 1;
+      const prodId = req.body.productId;
+  
+      // retrieve product id from req
+      req.user.getCart()
+      .then(cart => {
+          fetchedCart = cart;
+          return cart.getProducts({ where: { id: prodId }})
+      })
+      .then(products => {
+          // check if we get anything
+          let product;
+          if (products.length > 0) {
+              product = products[0];
+          }
+          // if product - increment quantity
+          if (product) {
+              const oldQuantity = product.cartItem.quantity;
+              newQuantity = oldQuantity + 1;
+              return product;
+          }
+          // Now handle case where product does not already exist in the cart
+          return Product.findByPk(prodId);
+      })
+      .then(product => {
+          // add it to the cart
+          return fetchedCart.addProduct(product, { through: { quantity: newQuantity } });
+      })
+      .then(result => {
+          res.redirect('/cart')
+      })
+      .catch(err => console.log(err));
+  };
+  ```
+
   
 
 
+
+#### Displaying the cart
+
+- The products  is passed to the template as an object from the getCart controller
+
+- In that controller we grab the products from the ids stored in the cart, so this gives us an object of product files.
+
+- We can use this in the template to display name or price if we want to.
+
+- However the quantity is not stored in the product but in the inbetween table - **cart-items**. But sequelize gives us another magic method to access this - `cartItem`
+
+- cartItem - is named from what we called the model and it stores information about this in-between table and the entry that is related to this product there.
+
+- ```
+  <main>
+      <% if (products.length > 0) { %>
+          <h1>Your Cart Items: </h1>
+          <ul class="cart__item-list">
+              <% products.forEach(product => { %>
+                  <li class="cart__item">
+                      <h1><%= product.title %></h1>
+                      
+                      <!-- The quantity is not part of the cart - but it is part of the related cart-item
+                      Sequelize gives us a way to access it using the cartItem key -->
+                      <h1>(<%= product.cartItem.quantity %>)</h1>
+                      <form action="/cart-delete-item" method="POST">
+                          <input type="hidden" name="productId" value="<%= product.id %>">
+                          <button class="btn danger" type="submit">Delete</button>
+                      </form>
+                  </li>
+              <% }); %>
+          </ul>
+      <% } else { %>
+          <h1>Shopping Cart - Empty!</h1>
+      <% } %>
+  </main>
+  ```
+
+  
 
 
 
