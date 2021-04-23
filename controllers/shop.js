@@ -159,9 +159,11 @@ exports.getCheckout = (req, res, next) => {
 
 // Handle creating an order from the cart
 exports.postOrder = (req, res, next) => {
+    let fetchedCart;
     // get all cart items
     req.user.getCart()
     .then(cart => {
+        fetchedCart = cart;
         // now we have the cart - now get all the products
         return cart.getProducts()
     })
@@ -184,6 +186,9 @@ exports.postOrder = (req, res, next) => {
             }));
         })
         .catch(err => console.log(err));
+    })
+    .then(result => {
+        return fetchedCart.setProducts(null);
     })
     .then(result => {
         res.redirect('/orders');

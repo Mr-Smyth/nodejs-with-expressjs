@@ -1429,7 +1429,7 @@ We need to add a checkout button to the Cart - when this button is clicked - we 
 
   This now needs to get all the cart items and move them into an Order.
 
-+ So we get the cart
++ So  get the cart
 
 + Then get the products in the cart
 
@@ -1439,18 +1439,61 @@ We need to add a checkout button to the Cart - when this button is clicked - we 
 
 + Each product will require a special key to be understood by sequelize - so we can insert correct quantity. To do this we have to modify our products that we pass into addProducts using the map method. map runs on an array and will return an array with modified elements, so here we add a function into map to achieve this. The function adds a property to each product, which will contain the quantity gleaned from the `product.cartItem.quantity`
 
-+ Now we need to create a new order and move all these products to it:
++ Once the products have been added to the order we also want them to be removed from the cart
 
   ```
   exports.postOrder = (req, res, next) => {
-      res.redirect('/');
+      let fetchedCart;
+      // get all cart items
+      req.user.getCart()
+      .then(cart => {
+          fetchedCart = cart;
+          // now we have the cart - now get all the products
+          return cart.getProducts()
+      })
+      .then(products => {
+          // create an order
+          return req.user.createOrder()
+          .then(order => {
+          
+              // associate products to the order
+              // each product will require a special key to be understood by sequelize - 
+              // so we can insert correct quantity
+              // to do this we have to modify our products that we pass into addProducts using the map
+              // method
+              // map runs on an array and will return an array with modified elements
+              // we add a function into map to achieve this
+              
+              return order.addProducts(products.map(product => {
+              
+                  // we will add a property to the product, called exactly what we defined the OrderItem 
+                  // model as - so in this case - 'orderItem'
+                  // we give the property a js object
+                  
+                  product.orderItem = { quantity: product.cartItem.quantity}
+  
+                  // so now i have an array of products including the new quantity information we inserted
+                  
+                  return product;
+              }));
+          })
+          .catch(err => console.log(err));
+      })
+      .then(result => {
+          return fetchedCart.setProducts(null);
+      })
+      .then(result => {
+          res.redirect('/orders');
+      })
+      .catch(err => console.log(err));
   };
   ```
 
 + In routes - Setup a new post route for the action in the form: 
   `router.post('/create-order', shopController.postOrder);`
 
-+ 
+  
+  
 
 
 
