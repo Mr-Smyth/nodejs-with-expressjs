@@ -7,7 +7,25 @@
     
 
     <main>
-        <h1>Orders - No Orders as yet!</h1>
+        <% if(orders.length <= 0) {  %>
+            <h1>Orders - No Orders as yet!</h1>
+        <% } else { %>
+            <% orders.forEach(order => {  %>
+                <!-- Every order will have an ID -->
+                <h1>Order Number: <%= order.id %></h1>
+                <!-- We can now loop through the products that we associated with the order in the controller -->
+                <ul>
+                    <% order.products.forEach(product => { %>
+                    <li><%= product.title %>
+                        <ul>
+                            <li><%= product.description %></li>
+                            <li><%= product.price %></li>
+                        </ul>
+                    </li>
+                    <% }) %>
+                </ul>
+            <% }); %>
+        <% } %>
     </main>
     
 <%- include('../includes/end.ejs') %>

@@ -1492,10 +1492,60 @@ We need to add a checkout button to the Cart - when this button is clicked - we 
 + In routes - Setup a new post route for the action in the form: 
   `router.post('/create-order', shopController.postOrder);`
 
-  
-  
 
 
+#### Display our order on the orders page
+
++ Goto getOrders
+
++ get the orders by using the magic method getOrders() - now because orders does not hold an orderItems key, we cannot access it from the returned orders data alone. So we need to pass an object into getOrders, where we say to include products, we call it products with an 's' - because in the product model and in app.js we define the model as product - and sequelize pluralizes this for us, therefore - 'products' - a concept known as eager loading - where we say when u get all the orders - please also get all the products also.
+
++ So enter the following: `req.user.getOrders({ include: ['products'] })` - this will give us back an array for orders which will include an array for the products of that order - this only works because we set up a relationship between orders and products in app.js
+
++ So our controller looks like:
+
+  ```
+  exports.getOrders = (req, res, next) => {
+      req.user.getOrders({ include: ['products'] })
+      .then(orders => {
+          res.render('shop/orders', {
+              pageTitle: 'Your Orders',
+              path :'/orders',
+              orders: orders
+          });
+      })
+      .catch(err => console.log(err));
+  };
+  ```
+
++ And our Template looks like:
+
+  ```
+      <main>
+          <% if(orders.length <= 0) {  %>
+              <h1>Orders - No Orders as yet!</h1>
+          <% } else { %>
+              <% orders.forEach(order => {  %>
+                  <!-- Every order will have an ID -->
+                  <h1>Order Number: <%= order.id %></h1>
+                  <!-- We can now loop through the products that we associated with the 
+                  	 order in the controller -->
+                  <ul>
+                      <% order.products.forEach(product => { %>
+                      <li><%= product.title %>
+                          <ul>
+                              <li><%= product.description %></li>
+                              <li><%= product.price %></li>
+                          </ul>
+                      </li>
+                      <% }) %>
+                  </ul>
+              <% }); %>
+          <% } %>
+      </main>
+  ```
+
+  
 
 
 
