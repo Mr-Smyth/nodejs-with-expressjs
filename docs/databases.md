@@ -473,7 +473,10 @@ module.exports = class Product {
   };
   ```
 
-  
+
+
+
+Code relating to this section can be found in the Archive under - [**node using sql queries**](https://github.com/Mr-Smyth/nodejs-with-expressjs/tree/main/archive/node%20using%20sql%20queries)
 
 [<< Back to Index](#index)
 
@@ -839,6 +842,9 @@ We want to get all our products for the index page and the products page
     module.exports = user;
     ```
 
+[<< Back to Index](#index)
+
+
 
 ### Creating associations/ relations
 
@@ -875,6 +881,8 @@ We want to get all our products for the index page and the products page
 
 We now have the updated relational fields in the products table, and the new users table.
 
+[<< Back to Index](#index)
+
 
 
 #### Create a sample user in app.js
@@ -910,6 +918,8 @@ User.hasMany(Product);
 ```
 
 
+
+[<< Back to Index](#index)
 
 
 
@@ -953,7 +963,12 @@ User.hasMany(Product);
       });
   ```
 
-  
+
+
+
+[<< Back to Index](#index)
+
+
 
 #### Fetching associated products
 
@@ -1006,7 +1021,12 @@ We could set up the edit product functionality to only edit products that the lo
       });
   ```
 
-  
+
+
+
+[<< Back to Index](#index)
+
+
 
 ### Setup the cart with sequelize
 
@@ -1086,6 +1106,10 @@ We will scrap our old cart model here, and start from scratch and create a coupl
 
 + We again need to restart the app, and force the rebuilding of our tables with `sequelize.sync({ force: true })` in our app.js file
 
+[<< Back to Index](#index)
+
+
+
 #### Creating a cart and fetching from cart
 
 We now want to use the cart associated with my existing user to get all the products in it and render them to the screen.
@@ -1156,7 +1180,11 @@ We now want to use the cart associated with my existing user to get all the prod
   };
   ```
 
-  
+
+
+[<< Back to Index](#index)
+
+
 
 #### Posting Items to the cart
 
@@ -1261,7 +1289,7 @@ We now want to use the cart associated with my existing user to get all the prod
   };
   ```
 
-  
+[<< Back to Index](#index)
 
 
 
@@ -1302,6 +1330,10 @@ We now want to use the cart associated with my existing user to get all the prod
   </main>
   ```
 
+[<< Back to Index](#index)
+
+
+
 #### Deleting a product from the cart
 
 + get the product id of the item to be deleted
@@ -1333,7 +1365,11 @@ We now want to use the cart associated with my existing user to get all the prod
   };
   ```
 
-  
+
+
+[<< Back to Index](#index)
+
+
 
 ### Orders
 
@@ -1390,7 +1426,7 @@ We need to add a checkout button to the Cart - when this button is clicked - we 
   module.exports = CartItem;
   ```
 
-  
+  [<< Back to Index](#index)
 
 #### In app.js
 
@@ -1407,6 +1443,10 @@ We need to add a checkout button to the Cart - when this button is clicked - we 
   ```
 
 + NOTE This example shows both examples, basically opposite statements of the same thing - either or both will work.
+
+
+
+[<< Back to Index](#index)
 
 
 
@@ -1494,6 +1534,10 @@ We need to add a checkout button to the Cart - when this button is clicked - we 
 
 
 
+[<< Back to Index](#index)
+
+
+
 #### Display our order on the orders page
 
 + Goto getOrders
@@ -1532,7 +1576,7 @@ We need to add a checkout button to the Cart - when this button is clicked - we 
                   	 order in the controller -->
                   <ul>
                       <% order.products.forEach(product => { %>
-                      <li><%= product.title %>
+                      <li><%= product.title %>: <%= product.quantity %>
                           <ul>
                               <li><%= product.description %></li>
                               <li><%= product.price %></li>
@@ -1547,51 +1591,17 @@ We need to add a checkout button to the Cart - when this button is clicked - we 
 
   
 
+This completes the lesson on Sequelize - see the official docs on sequelize for more detailed info on interacting with MySql db's [Resources - Below](#resources)
 
+All code relating to this section can be found in the Archive under **[Sequelize](https://github.com/Mr-Smyth/nodejs-with-expressjs/tree/main/archive/sequelize)**
 
+[<< Back to Index](#index)
 
+---
 
+---
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+---
 
 
 
@@ -1632,5 +1642,6 @@ Means Upgrading existing hardware. So in effect this method is limited, only so 
 
 + Learn more about MySQL/ SQL in General: https://www.w3schools.com/sql/
 + Learn more about the Node MySQL Package: https://github.com/sidorares/node-mysql2
++ Sequelize Official Docs: http://docs.sequelizejs.com/
 
 [<< Back to Index](#index)
