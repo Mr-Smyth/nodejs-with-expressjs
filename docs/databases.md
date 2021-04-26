@@ -1638,6 +1638,158 @@ Means Upgrading existing hardware. So in effect this method is limited, only so 
 
 
 
+## What is Mongo Db
+
++ Humongous - for large scale databases without schemas - allows for easier growth
+
++ A database uses multiple collections - example user collection, products collection etc...
+
++ A Collection houses data in multiple Documents - example Paul Doe with all his address data etc
+
++ A document can have any structure in the form of a **BSON** document - which is basically a **JSON** format.
+
++ Example JSON(BSON) Data Format:
+
+  ```
+  {
+  	"name": "Eamonn",
+  	"age": 45,
+  	"address":
+  		{
+  			"city": "Monaghan"
+  		},
+  	"hobbies": [
+  		{ "name": "Swimming" },
+  		{ "name": "Astronomy" },
+  		{ "name": "History" },
+  	]
+  }
+  ```
+
+### Manage relations in Mongo
+
++ This can be done by either referencing another document, by its id for example. So an order may have a users ID embedded inside the order, so we know who the order is for.
++ Another method can simply be to take the data you need from one document and embed it inside the document that you need it to be in. For example in an orders document - you may want to embed the full users details which the order relates to.
++ Examples where data duplication may not work is where you have something like a customers fav books db, where each user has an embedded list of fav books - here several users will have the same fav book and this leads to a lot of duplication, and if you needed to update the details of these books, they would need to be updated in products and in each user who has the book embedded. In this case it would be better to store the reference to the book, rather than the book itself, that way you only need to update the book in one place.
+
+[<< Back to Index](#index)
+
+
+
+## Setup MongoDb
+
+### Initial setup - Cluster
+
++ You can either download and install MongoDB or just use it in the cloud (preferred) - **Atlas**
++ Go to mongodb.com and select cloud then select Atlas
++ Login or create a free account
++ Create a new project - if required and then go to clusters
++ Click to create a new cluster - a create cluster wizard will open - (A Cluster is, a cluster of servers that our Database will run on. Select Shared Cluster as it is the free option.)
++ Select AWS
++ Select Region - don’t select Ireland unless it says “Free Tier Available” as we don’t want to be paying for this project site. For now, select a North America Tier that says free. Normally though you would select the region closest to you
++ Select Cluster Tier - Select the tier that says free forever.
++ Select Cluster Name - Down at the bottom we can click on cluster name and give the cluster a name. 
++ Click create cluster.
+
+### Setup User
+
++ Click on Database Access under the Security sub heading on left of screen.
++ In Scram Authentication, add a user name and password.
++ Make sure they have read and write privileges - as this is the user that node will use to access the database
++ Click Add User.
+
+### IP Whitelist
+
+Here we see all the ip addresses that are allowed to connect to the mongoDB Server.
+
++ Click on Add IP Address
++ Click on Add Current IP Address. - this will allow our local node app to acess the DB, when deploying on another server this servers ip address will need to be added.
++ Optionally, clicking allow access from anywhere does exactly that.
+
+### Connect to our mongoDb server from inside our NodeJs app
+
+#### In Mongo
+
++ From the Clusters page in Mongo DB
++ Click on Connect
++ Choose the "Connect your Application" option
++ Select Driver as Node.js and the version - in my case 3.6 or later
+
+#### In Node - Install the MongoDb Driver
+
++ In the Terminal: `npm install --save mongodb` - This installs the draiver that lets us connect to mongoDB
+
+#### Connect to the database
+
++ If following on from Sequelize - Goto app.js and remove any sequelize related code, relationships etc..
+
++ Create a database.js file in the utility folder
+
+  ```
+  // connect to Mongo db
+  
+  const mongodb = require('mongodb'); // gives us access to the mongo db package
+  
+  const MongoClient = mongodb.MongoClient; // the mongo client constructor
+  
+  // now connect to the database - copy in the url from the mongo connect settings
+  // Make sure the correct username and password is included
+  // this will return a promise.
+  
+  MongoClient.connect('mongodb+srv://AcmeUser:kje78rych@myfirstcluster.ugdke.mongodb.net/myFirstDatabase?retryWrites=true&w=majority')
+  .then(result => {
+      console.log('Connection Successful')
+  })
+  .catch(err => console.log(err));
+  ```
+
++ As you will see in the example above we setup a client constructor, and call connect with the url provided from Mongo in the connect settings.
+
++ We now need to connect to the database when we connect to our server. To do this we will wrap the above code which connects to Mongo, inside a method. This method will take a callback allowing for direct access to the result - which will be a client object.
+
+  ```
+  // connect to Mongo db
+  
+  const mongodb = require('mongodb'); // gives us access to the mongo db package
+  
+  const MongoClient = mongodb.MongoClient; // the mongo client constructor
+  
+  // the url we connect to - get this from mongodb in the connect settings
+  const uri = 'mongodb+srv://AcmeUser:wir7nf7nd9@myfirstcluster.ugdke.mongodb.net/myNodeDb?retryWrites=true&w=majority';
+  
+  // now connect to the database - copy in the url from the mongo connect settings
+  // Make sure the correct username and password is included
+  // this will return a promise.
+  
+  // We will wrap this inside a method which we export
+  const mongoConnect = callback => {
+      MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
+      .then(result => {
+          console.log('Connection Successful');
+          callback(result);
+      })
+      .catch(err => console.log(err));
+  }
+  
+  // export our mongo connect method
+  module.exports = mongoConnect;
+  ```
+
++ Now in app.js - import this connection
+
++ Then we will call this connection - it is a function - and it expects a callback. This callback will give us the connection object.
+
+  ```
+  mongoConnect(client => {
+      console.log(client);
+      app.listen(3000);
+  });
+  ```
+
++ If following on from a sequelize setup - you may need to comment out all routes in app.js as they are still relying on sequelize in the routes and models and controllers - just so we can make sure our mongoDb connection is up and working - also make sure your ip is whitelisted.
+
++ Run server to test, we should get a client object in the terminal.
+
 # Resources
 
 + Learn more about MySQL/ SQL in General: https://www.w3schools.com/sql/
