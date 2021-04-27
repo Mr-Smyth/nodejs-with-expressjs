@@ -39,7 +39,7 @@ app.use((req, res, next) => {
 // outsourced routes
 app.use('/admin', adminRoutes);
 // app.use(shopRoutes);
-// app.use(errorController.get404);
+app.use(errorController.get404);
 
 // call our mongoConnect method in database.js
 mongoConnect(() => {

@@ -1820,7 +1820,7 @@ Here we see all the ip addresses that are allowed to connect to the mongoDB Serv
 
 
 
-### Setup Our routes to work with mongo
+### Creating Products
 
 #### Product model
 
@@ -1856,7 +1856,9 @@ Here we see all the ip addresses that are allowed to connect to the mongoDB Serv
           // now specify the collection in that db we want to use
           // select the insertOne operation
           // insert this - as this represents this instance
-          db.collection('products')
+  
+          // we will return this - so we can treat it overall as a promise in our controller
+          return db.collection('products')
           .insertOne(this)
           .then(result => {
               console.log(result)

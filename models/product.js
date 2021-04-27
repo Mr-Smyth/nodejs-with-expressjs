@@ -16,11 +16,12 @@ class Product {
         // now specify the collection in that db we want to use
         // select the insertOne operation
         // insert this - as this represents this instance
-        db.collection('products')
+
+        // we will return this - so we can treat it overall as a promise in our contoller
+        return db.collection('products')
         .insertOne(this)
         .then(result => {
             console.log(result)
-            
         })
         .catch(err => {
             console.log(err);
