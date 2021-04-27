@@ -1,32 +1,32 @@
-// require the sequelize constructor class
-const Sequelize = require('sequelize');
+// grab our getDb connection from our database.js file
+const getDb = require('../utility/database').getDb;
 
-// import our own sequelize object
-const sequelize = require('../utility/database');
-
-// define a model - managed by sequelize
-// define takes (model name in lowercase, {define the structure - the fields our model should have})
-const product = sequelize.define('product', {
-    id: {
-        type: Sequelize.INTEGER,
-        autoIncrement: true,
-        allowNull: false,
-        primaryKey: true
-    },
-    // define the title using shorthand, to only set the type (example)
-    title: Sequelize.STRING,
-    price: {
-        type: Sequelize.DOUBLE,
-        allowNull: false
-    },
-    imageUrl: {
-        type: Sequelize.STRING,
-        allowNull: false
-    },
-    description: {
-        type: Sequelize.STRING,
-        allowNull: false
+// our mongo db product model class
+class Product {
+    constructor(title, price, description, imageUrl) {
+        this.title = title;
+        this.price = price;
+        this.description = description;
+        this.imageUrl = imageUrl;
     }
-});
 
-module.exports = product;
+    save() {
+        // now tell mongo what db we want to use - in this case the default from our connection in database.js
+        const db = getDb();
+        // now specify the collection in that db we want to use
+        // select the insertOne operation
+        // insert this - as this represents this instance
+        db.collection('products')
+        .insertOne(this)
+        .then(result => {
+            console.log(result)
+            
+        })
+        .catch(err => {
+            console.log(err);
+        });
+    }
+}
+
+
+module.exports = Product;

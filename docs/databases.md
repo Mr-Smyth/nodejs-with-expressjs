@@ -1736,16 +1736,28 @@ Here we see all the ip addresses that are allowed to connect to the mongoDB Serv
   // Make sure the correct username and password is included
   // this will return a promise.
   
-  MongoClient.connect('mongodb+srv://AcmeUser:kje78rych@myfirstcluster.ugdke.mongodb.net/myFirstDatabase?retryWrites=true&w=majority')
+  MongoClient.connect('mongodb+srv://AcmeUser:kje78rych@myfirstcluster.ugdke.mongodb.net/shop?retryWrites=true&w=majority')
   .then(result => {
-      console.log('Connection Successful')
+      console.log('Connection Successful');
   })
   .catch(err => console.log(err));
   ```
 
 + As you will see in the example above we setup a client constructor, and call connect with the url provided from Mongo in the connect settings.
 
-+ We now need to connect to the database when we connect to our server. To do this we will wrap the above code which connects to Mongo, inside a method. This method will take a callback allowing for direct access to the result - which will be a client object.
++ The url will need to contain the database user and password and also include a db name - this name will make mongo db to connect to the database with a matching name, and if it does not exist, mongo will create it once data is written to it.
+
++ We now need to connect to the database when we connect to our server. 
+
++ So we will wrap the above code which connects to Mongo, inside a method, which will provide us with a connection client or object. We can then call this from inside our app.js
+
++ The problem at this stage is that if we call this connection directly from,  say a model or anywhere that needs access to mongo - this will simply force a new connection for every action required - and this is not good practice. The best way to do this is to setup our connection so it is always on, and then have another `getDb` method that will return a connection to whatever piece of code requires it.
+
++ To do this - firstly we will add another variable and call it `_db` - the underscore describes this as an internally used variable.
+
++ Then when we get the result back which is our connection client, we can grab the data base from this object and assign this database to the `_db` variable.
+
++ So our connection method with our new getDb method will look like this:
 
   ```
   // connect to Mongo db
@@ -1754,34 +1766,50 @@ Here we see all the ip addresses that are allowed to connect to the mongoDB Serv
   
   const MongoClient = mongodb.MongoClient; // the mongo client constructor
   
-  // the url we connect to - get this from mongodb in the connect settings
-  const uri = 'mongodb+srv://AcmeUser:wir7nf7nd9@myfirstcluster.ugdke.mongodb.net/myNodeDb?retryWrites=true&w=majority';
+  let _db;
+  
+  const uri = 'mongodb+srv://acmeUser:acmePassword@myfirstcluster.ugdke.mongodb.net/acmeDataBase?retryWrites=true&w=majority';
   
   // now connect to the database - copy in the url from the mongo connect settings
-  // Make sure the correct username and password is included
+  // Make sure the correct username and password is included and database name if known
   // this will return a promise.
   
   // We will wrap this inside a method which we export
   const mongoConnect = callback => {
       MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
-      .then(result => {
+      .then(client => {
           console.log('Connection Successful');
-          callback(result);
+          _db = client.db();
+          callback();
       })
-      .catch(err => console.log(err));
+      .catch(err => {
+          console.log(err);
+          // throw the error - so it is thrown again when it fails
+          throw err;
+      }); 
   }
   
-  // export our mongo connect method
-  module.exports = mongoConnect;
+  // gets the database connection if it exists
+  const getDb = () => {
+      if (_db) {
+          return _db;
+      }
+      throw ' No database found';
+  }
+  
+  // export our methods seperately
+  exports.mongoConnect = mongoConnect;
+  exports.getDb = getDb;
   ```
 
-+ Now in app.js - import this connection
++ Mongo will manage this behind the scenes using connection pooling - ensuring there are ample connections for the requirements.
 
-+ Then we will call this connection - it is a function - and it expects a callback. This callback will give us the connection object.
++ Now in app.js - import this connection - `const mongoConnect = require('./utility/database').mongoConnect;`
+
++ Then run the server inside a successful db.
 
   ```
-  mongoConnect(client => {
-      console.log(client);
+  mongoConnect(() => {
       app.listen(3000);
   });
   ```
@@ -1790,10 +1818,93 @@ Here we see all the ip addresses that are allowed to connect to the mongoDB Serv
 
 + Run server to test, we should get a client object in the terminal.
 
+
+
+### Setup Our routes to work with mongo
+
+#### Product model
+
++ Firstly we pull in our getDb connection method - `const getDb = require('../utility/database').getDb;`
+
++ The we create a product class, and include in the constructor the title, price, description and imageUrl.
+
++ Then create a save() method and grab the db and define our collection
+
++ On this collection we can execute modgo db operations - [see docs ](https://docs.mongodb.com/manual/crud/)
+
+  + insertOne / insertMany - Inserts documents - insert many takes an array of js objects, insertOne just takes a single object.
+
++ We will use insertOne here to insert one product
+
+  ```
+  // grab our getDb connection from our database.js file
+  const getDb = require('../utility/database').getDb;
+  
+  // our mongo db product model class
+  class Product {
+      constructor(title, price, description, imageUrl) {
+          this.title = title;
+          this.price = price;
+          this.description = description;
+          this.imageUrl = imageUrl;
+      }
+  
+      save() {
+          // now tell mongo what db we want to use - in this case the default from our connection in 
+          // database.js
+          const db = getDb();
+          // now specify the collection in that db we want to use
+          // select the insertOne operation
+          // insert this - as this represents this instance
+          db.collection('products')
+          .insertOne(this)
+          .then(result => {
+              console.log(result)
+              
+          })
+          .catch(err => {
+              console.log(err);
+          });
+      }
+  }
+  
+  module.exports = Product;
+  ```
+
+#### Controllers - Admin Js file
+
++ Initially comment out any pre-existing controllers that are not required - if following on from sequelize
++ Add/leave the controller for post add product and get add product.
+
+#### Routes - Admin.js file
+
++ Initially comment out any pre-existing routes that are not required - if following on from sequelize
++ Add/leave a route for posting and getting the add product page
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # Resources
 
 + Learn more about MySQL/ SQL in General: https://www.w3schools.com/sql/
+
 + Learn more about the Node MySQL Package: https://github.com/sidorares/node-mysql2
+
 + Sequelize Official Docs: http://docs.sequelizejs.com/
+
++ Mongo Crud operations: https://docs.mongodb.com/manual/crud/
+
+  
 
 [<< Back to Index](#index)

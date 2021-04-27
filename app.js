@@ -7,10 +7,10 @@ const app = express();
 // now setup the default template engine
 app.set('view engine', 'ejs');
 
-// const adminRoutes = require('./routes/admin');
+const adminRoutes = require('./routes/admin');
 // const shopRoutes = require('./routes/shop');
 const errorController = require('./controllers/errors.js')
-const mongoConnect = require('./utility/database');
+const mongoConnect = require('./utility/database').mongoConnect;
 
 
 app.get('/favicon.ico', (req, res) => {
@@ -33,16 +33,16 @@ app.use((req, res, next) => {
     // .catch(err => {
     //     console.log(err);
     // });
+    next();
 });
 
 // outsourced routes
-// app.use('/admin', adminRoutes);
+app.use('/admin', adminRoutes);
 // app.use(shopRoutes);
 // app.use(errorController.get404);
 
 // call our mongoConnect method in database.js
-mongoConnect(client => {
-    console.log(client);
+mongoConnect(() => {
     app.listen(3000);
 });
 
