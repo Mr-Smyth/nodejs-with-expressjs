@@ -1873,15 +1873,172 @@ Here we see all the ip addresses that are allowed to connect to the mongoDB Serv
   module.exports = Product;
   ```
 
-#### Controllers - Admin Js file
 
-+ Initially comment out any pre-existing controllers that are not required - if following on from sequelize
-+ Add/leave the controller for post add product and get add product.
 
 #### Routes - Admin.js file
 
 + Initially comment out any pre-existing routes that are not required - if following on from sequelize
+
 + Add/leave a route for posting and getting the add product page
+
+  
+
+#### Controllers - Admin Js file
+
++ Add the following postAddProduct controller
+
++ The save method in the model returns a promise now, so we can deal with it in a .then block.
+
+  ```
+  // now handle the logic for the post from the form in add-products
+  exports.postAddProduct = (req, res, next) => {
+      // get form data
+      const title = req.body.title;
+      const imageUrl = req.body.imageUrl;
+      const price = req.body.price;
+      const description = req.body.description;
+      const product = new Product(title, imageUrl, price, description);
+      
+      product.save()
+      .then(response => {
+          console.log(response);
+          res.redirect('/admin/products');
+      })
+      .catch(err => {
+          console.log(err);
+      });
+  };
+  ```
+
+  
+
+
+
+### Getting Products
+
+#### In models
+
++ Add a static method here to retrieve our products - rem static methods can be called out side of an instance of a product - which is what we would need.
+
++ We use  .find here to get the products we need, we can use find to find a title of a book like this `.find({title: 'Gardening'})` - but if we want to find all we can just use `.find()`.
+
++ find does not immediately return a promise, instead it returns a cursor. A **Cursor** is an object provided by mongoDb which allows us to go through our elements step by stem. This is because a result of find could include thousands or even millions od results, and a mongoDb cursor does not actually return any products - but instead allows you to flip through them one at a time and use pagination for example. 
+
++ But if you know you only have a small number of results - it is possible to tack on `.toArray()` This tells mongo db to actually get all documents and turn them into an array.
+
+  ```
+  static fetchAll() {
+          const db = getDb();
+          return db.collection('products')
+          .find()
+          .toArray()
+          .then(products => {
+              console.log(products);
+              return products;
+          })
+          .catch(err => {
+              console.log(err);
+          });
+      }
+  ```
+
+  
+
+#### In our shop Controllers - get Index and getProducts
+
++ Make sure the products model is imported: `const Product = require('../models/product');`
+
++ Here we simply need to create a call to our fetchAll static method
+
++ The return a response to the correct page
+
+  ```
+  exports.getIndex = (req, res, next) => {
+      Product.fetchAll()
+      // we should then have our products in an object
+      .then(products => {
+          res.render('shop/index', {
+              products: products,
+              pageTitle: 'Home page',
+              path :'/index',
+          });
+      })
+      .catch(err => {
+          console.log(err)
+      });
+  };
+  ```
+
+  
+
+  ```
+  // Display our products controller
+  exports.getProducts = (req, res, next) => {
+      Product.fetchAll()
+      // we should then have our products
+      .then(products => {
+          res.render('shop/product-list', {
+              products: products,
+              pageTitle: 'All Products',
+              path :'/product-list',
+          });
+      })
+      .catch(err => {
+          console.log(err);
+      });    
+  };
+  ```
+
++ Add the routes in app.js and in the routes file
+
++ app. js
+
+  ```
+  const shopRoutes = require('./routes/shop');
+  app.use(shopRoutes);
+  ```
+
++ In shop routes:
+
+  ```
+  // Landing page
+  router.get('/', shopController.getIndex);
+  
+  // Product List page
+  router.get('/product-list', shopController.getProducts);
+  ```
+
+  
+
+
+
+
+
+
+
+
+
+### Compass
+
+#### Setup Compass
+
+Compass is a free utility which gives us a GUI in which we can visualize our DB
+
++ Download and install/unzip it from here : https://www.mongodb.com/try/download/compass
++ Open
++ Go to new connection
++ Open MongoDb in browser and log in and go to clusters and click connect
++ Click "I have MongoDb Compass"
++ Copy the connection string - but make sure to include correct username and password.
++ Paste in the connection string to compass and click connect
++ You are now connected
++ Dont touch the admin or local databases - they belong to mongo and should not be touched.
+
+#### Using compass
+
++ When you open Compass you can connect by inserting the string again or double clicking on the recent database option
++ Once open you should be able to see any added products, and edit / delete them.
++ We will only use it for viewing here - but see official docs for more info - : https://docs.mongodb.com/compass/master/
 
 
 

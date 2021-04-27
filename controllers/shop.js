@@ -3,7 +3,7 @@ const Product = require('../models/product');
 
 // Display our products controller
 exports.getProducts = (req, res, next) => {
-    Product.findAll()
+    Product.fetchAll()
     // we should then have our products
     .then(products => {
         res.render('shop/product-list', {
@@ -54,7 +54,7 @@ exports.getProductDetails = (req, res, next) => {
 
 // Display our Home Page controller
 exports.getIndex = (req, res, next) => {
-    Product.findAll()
+    Product.fetchAll()
     // we should then have our products in an object
     .then(products => {
         res.render('shop/index', {
