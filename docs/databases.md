@@ -1897,7 +1897,7 @@ Here we see all the ip addresses that are allowed to connect to the mongoDB Serv
       const imageUrl = req.body.imageUrl;
       const price = req.body.price;
       const description = req.body.description;
-      const product = new Product(title, imageUrl, price, description);
+      const product = new Product(title, price, description, imageUrl);
       
       product.save()
       .then(response => {
@@ -2008,9 +2008,7 @@ Here we see all the ip addresses that are allowed to connect to the mongoDB Serv
   router.get('/product-list', shopController.getProducts);
   ```
 
-  
-
-
++ These pages should now display any products in the Db.
 
 
 

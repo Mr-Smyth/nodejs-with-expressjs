@@ -22,9 +22,10 @@ exports.getProductDetails = (req, res, next) => {
     // we can access params in the req using express params object
     // this allows us to get productID which is the name we choose in the routes
     const prodId = req.params.productId;
+
     // option A:
     // use the sequelize method findByPk() - it returns a single product
-    Product.findByPk(prodId)
+    Product.fetchOne(prodId)
     .then(product => {
         res.render('shop/product-details', {
             product: product, 

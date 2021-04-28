@@ -1,3 +1,6 @@
+const mongodb = require('mongodb');
+
+
 // grab our getDb connection from our database.js file
 const getDb = require('../utility/database').getDb;
 
@@ -36,6 +39,22 @@ class Product {
         .then(products => {
             console.log(products);
             return products;
+        })
+        .catch(err => {
+            console.log(err);
+        });
+    }
+
+    static fetchOne(prodId) {
+        const db = getDb();
+        return db.collection('products')
+        // need to compare like for like here so we need to use the mongodb method - ObjectId - 
+        // _id is already an object id - so we need to convert prodId which is a string version of the _id we grab in the template
+        .find({_id: new mongodb.ObjectId(prodId)})
+        .next() // gets the next and final document in the cursor
+        .then(product => {
+            console.log(product);
+            return product;
         })
         .catch(err => {
             console.log(err);
