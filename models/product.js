@@ -11,7 +11,8 @@ class Product {
         this.price = price;
         this.description = description;
         this.imageUrl = imageUrl;
-        this._id = new mongodb.ObjectId(id);
+        // add a ternary here to set value to null if no id is passed
+        this._id = id ? new mongodb.ObjectId(id): null;
     }
 
     save() {
@@ -59,6 +60,17 @@ class Product {
         .then(product => {
             console.log(product);
             return product;
+        })
+        .catch(err => {
+            console.log(err);
+        });
+    }
+
+    static deleteById(prodId) {
+        const db = getDb();
+        return db.collection('products').deleteOne({_id: new mongodb.ObjectId(prodId)})
+        .then(result => {
+            console.log(' -------------------- Deleted');
         })
         .catch(err => {
             console.log(err);

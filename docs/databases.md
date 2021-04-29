@@ -2044,6 +2044,12 @@ Compass is a free utility which gives us a GUI in which we can visualize our DB
 
 ### Getting a single product - setting up product details functionality
 
+#### Routes
+
++ Make sure you have setup the correct route to handle this: 
+
+  `router.get('/product-details/:productId', shopController.getProductDetails);`
+
 #### Views - in index and products pages
 
 + Make sure when we get the product id we pass `._id` and not just id
@@ -2104,6 +2110,20 @@ Compass is a free utility which gives us a GUI in which we can visualize our DB
 
 ### Edit Products
 
+#### Routes
+
++ Make sure you have setup the correct route to handle this: 
+
+  ```
+  // Handles edit product page - takes in the product id in the url
+  router.get('/edit-product/:productId', adminController.getEditProduct);
+  
+  // handle the post from the edit-product page
+  router.post('/edit-product', adminController.postGetEditProduct);
+  ```
+
+  
+
 #### In related views
 
 + Make sure when we get the product id we pass `._id` and not just id
@@ -2112,28 +2132,34 @@ Compass is a free utility which gives us a GUI in which we can visualize our DB
 
 + We need to add in an optional parameter to our constructor - `id`
 
-+ This will be included when calling the constructor and if an id has a value - then we must be editing.
++ This will be included when calling the constructor and if an id has a value - then we must be editing, so we can convert the id string into a mongoDb ObjectId - else we set id to null.
 
 + So we use this in the save method, and depending on the existence of `this._id` the dbOperation will either insert a new record or `"$set"` the record with the edited values.
 
   ```
-  save() {
-          // now tell mongo what db we want to use - in this case the default from our connection 
-          // in database.js
+  class Product {
+      constructor(title, price, description, imageUrl, id) {
+          this.title = title;
+          this.price = price;
+          this.description = description;
+          this.imageUrl = imageUrl;
+          // add a ternary here to set value to null if no id is passed
+          this._id = id ? new mongodb.ObjectId(id): null;
+      }
+  
+      save() {
+          // now tell mongo what db we want to use - in this case the default from our 
+          // connection in database.js
           const db = getDb();
           let dbOperation;
-          
           // Now we want to check if _id already has value - if it does we are editing
-          if (_id) {
-              dbOperation = db.collection('products')
-              .updateOne({ _id: new mongodb.ObkectId(this._id) }, { $set: this })
+          if (this._id) {
+              dbOperation = db.collection('products').updateOne({ _id: this._id }, { $set: this })
           } else {
-              dbOperation = db.collection('products')
-              .insertOne(this)
+              dbOperation = db.collection('products').insertOne(this)
           }
   
-          // we will return dbOperation - so we can treat it overall as a promise in our 
-          // contoller
+          // we will return dbOperation - so we can treat it overall as a promise in our contoller
           return dbOperation
               .then(result => {
                   console.log(result)
@@ -2142,6 +2168,7 @@ Compass is a free utility which gives us a GUI in which we can visualize our DB
                   console.log(err);
               });
       }
+  }
   ```
 
   
@@ -2217,9 +2244,80 @@ Compass is a free utility which gives us a GUI in which we can visualize our DB
 
 ### Delete Products
 
+#### Routes
+
++ Make sure you have setup the correct route to handle this: 
+
+  `router.post('/delete-product', adminController.postDeleteProduct);`
+
 #### In related views
 
 + Make sure when we get the product id we pass `._id` and not just id
+
+#### models - product model
+
++ Here we will create another static model to handle the delete functionality `deleteById()`
+
++ We will use the mongoDb `deleteOne` method
+
+  ```
+  static deleteById(prodId) {
+          const db = getDb();
+          return db.collection('products').deleteOne({_id: new mongodb.ObjectId(prodId)})
+          .then(result => {
+              console.log(' -------------------- Deleted');
+          })
+          .catch(err => {
+              console.log(err);
+          });
+      }
+  ```
+
+
+
+#### Controllers - admin - postDeleteProduct
+
++ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

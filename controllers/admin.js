@@ -81,20 +81,17 @@ exports.postGetEditProduct = (req, res, next) => {
 };
 
 
-// exports.postDeleteProduct = (req, res, next) => {
-//     let prodId = req.body.productId;
-//     Product.findByPk(prodId)
-//     .then(product => {
-//         product.destroy();
-//     })
-//     .then(result => {
-//         console.log(`Deleted - product`);
-//         return res.redirect('/');
-//     })
-//     .catch(err => {
-//         console.log(err);
-//     });
-// };
+exports.postDeleteProduct = (req, res, next) => {
+    let prodId = req.body.productId;
+    Product.deleteById(prodId)
+    .then(() => {
+        console.log(`Deleted - product`);
+        return res.redirect('/admin/products');
+    })
+    .catch(err => {
+        console.log(err);
+    });
+};
 
 
 exports.getProducts = (req, res, next) => {
