@@ -1,5 +1,3 @@
-// import mongodb
-const mongodb = require('mongodb');
 
 // import model
 const Product = require('../models/product');
@@ -70,7 +68,7 @@ exports.postGetEditProduct = (req, res, next) => {
     const updatedDescription = req.body.description;
     
     // create a new product - make sure order matches the product constructor!
-    const product = new Product(updatedTitle, updatedPrice, updatedDescription, updatedImageUrl, new mongodb.ObjectId(prodId));
+    const product = new Product(updatedTitle, updatedPrice, updatedDescription, updatedImageUrl, prodId);
     
     // save the product
     product.save()

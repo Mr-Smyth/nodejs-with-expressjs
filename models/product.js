@@ -11,7 +11,7 @@ class Product {
         this.price = price;
         this.description = description;
         this.imageUrl = imageUrl;
-        this._id = id
+        this._id = new mongodb.ObjectId(id);
     }
 
     save() {
@@ -20,7 +20,7 @@ class Product {
         let dbOperation;
         // Now we want to check if _id already has value - if it does we are editing
         if (this._id) {
-            dbOperation = db.collection('products').updateOne({ _id: new mongodb.ObjectId(this._id) }, { $set: this })
+            dbOperation = db.collection('products').updateOne({ _id: this._id }, { $set: this })
         } else {
             dbOperation = db.collection('products').insertOne(this)
         }
