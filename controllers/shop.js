@@ -23,8 +23,7 @@ exports.getProductDetails = (req, res, next) => {
     // this allows us to get productID which is the name we choose in the routes
     const prodId = req.params.productId;
 
-    // option A:
-    // use the sequelize method findByPk() - it returns a single product
+    // use our static method from product model
     Product.fetchOne(prodId)
     .then(product => {
         res.render('shop/product-details', {
@@ -36,21 +35,6 @@ exports.getProductDetails = (req, res, next) => {
     .catch(err => {
         console.log(err)
     });
-
-
-    // option B:
-    // use the findAll method - which will find all occurances - note where in lowercase
-    // Product.findAll({ where: {id: prodId } })
-    // .then(products => {
-    //     res.render('shop/product-details', {
-    //         product: products[1], 
-    //         pageTitle: products[0].title,
-    //         path: '/product-details'
-    //     });
-    // })
-    // .catch(err => {
-    //     console.log(err)
-    // });
 };
 
 // Display our Home Page controller

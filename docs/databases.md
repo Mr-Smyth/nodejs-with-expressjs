@@ -2042,13 +2042,155 @@ Compass is a free utility which gives us a GUI in which we can visualize our DB
 
 
 
+### Getting a single product - setting up product details functionality
+
+#### Views - in index and products pages
+
++ Make sure when we get the product id we pass `._id` and not just id
++ This will be passed as a string from the template - so we will need to convert i in the model below
+
+#### in models - product.js
+
++ Add a method called `fetchOne`
+
+  ```
+  static fetchOne(prodId) {
+          const db = getDb();
+          return db.collection('products')
+          // need to compare like for like here so we need to use the mongodb method - ObjectId - 
+          // _id is already an object id - so we need to convert prodId which is a string version of the _id we grab in the template
+          .find({_id: new mongodb.ObjectId(prodId)})
+          .next() // gets the next and final document in the cursor
+          .then(product => {
+              console.log(product);
+              return product;
+          })
+          .catch(err => {
+              console.log(err);
+          });
+      }
+  ```
+
+  
+
+#### Controllers - shop.js / .getProductDetails
+
++ Use our static method in the products model to get our product
+
+  ```
+  exports.getProductDetails = (req, res, next) => {
+      // we can access params in the req using express params object
+      // this allows us to get productID which is the name we choose in the routes
+      const prodId = req.params.productId;
+      
+      // use our static method from product model
+      Product.fetchOne(prodId)
+      .then(product => {
+          res.render('shop/product-details', {
+              product: product, 
+              pageTitle: product.title,
+              path: '/product-details'
+          });
+      })
+      .catch(err => {
+          console.log(err)
+      });
+  };
+  ```
+
+  
 
 
 
+### Edit Products
 
+#### In related views
 
++ Make sure when we get the product id we pass `._id` and not just id
 
+#### Models - product model - save method
 
++ We need to add in an optional parameter to our constructor - `id`
+
++ This will be included when calling the constructor and if an id has a value - then we must be editing.
+
++ So we use this in the save method, and depending on the existence of `this._id` the dbOperation will either insert a new record or `"$set"` the record with the edited values.
+
+  ```
+  save() {
+          // now tell mongo what db we want to use - in this case the default from our connection 
+          // in database.js
+          const db = getDb();
+          let dbOperation;
+          
+          // Now we want to check if _id already has value - if it does we are editing
+          if (_id) {
+              dbOperation = db.collection('products')
+              .updateOne({ _id: new mongodb.ObkectId(this._id) }, { $set: this })
+          } else {
+              dbOperation = db.collection('products')
+              .insertOne(this)
+          }
+  
+          // we will return dbOperation - so we can treat it overall as a promise in our 
+          // contoller
+          return dbOperation
+              .then(result => {
+                  console.log(result)
+              })
+              .catch(err => {
+                  console.log(err);
+              });
+      }
+  ```
+
+  
+
+#### Controllers getEditProduct
+
++ Use our fetchOne method:
+
+  ```
+  exports.getEditProduct = (req, res, next) => {
+      // check quer param to see if param sent from template is true
+      const editMode = req.query.edit;
+      if (!(editMode === 'true')) {
+          return res.redirect('/');
+      }
+  
+      // now we need the product id that was passed in the url
+      const prodId = req.params.productId;
+      
+      // call the fetchOne method inside product model - returns a product
+      Product.fetchOne(prodId)
+      .then(product => {
+          // add a check in case product does not exist
+          if (!product) {
+              return res.redirect('/');
+              // could also pass an error in here
+          }
+          res.render('admin/edit-product', {
+              pageTitle: 'Edit Product Page',
+              path: '/admin/edit-product',
+              editing: editMode,
+              product: product
+          });
+      })
+      .catch(err => {
+          console.log(err);
+      });
+  };
+  ```
+
+#### Controllers postEditProduct
+
++ 
+
+### Delete Products
+
+#### In related views
+
++ Make sure when we get the product id we pass `._id` and not just id
 
 
 

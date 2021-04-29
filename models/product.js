@@ -6,29 +6,33 @@ const getDb = require('../utility/database').getDb;
 
 // our mongo db product model class
 class Product {
-    constructor(title, price, description, imageUrl) {
+    constructor(title, price, description, imageUrl, id) {
         this.title = title;
         this.price = price;
         this.description = description;
         this.imageUrl = imageUrl;
+        this._id = id
     }
 
     save() {
         // now tell mongo what db we want to use - in this case the default from our connection in database.js
         const db = getDb();
-        // now specify the collection in that db we want to use
-        // select the insertOne operation
-        // insert this - as this represents this instance
+        let dbOperation;
+        // Now we want to check if _id already has value - if it does we are editing
+        if (_id) {
+            dbOperation = db.collection('products').updateOne({ _id: new mongodb.ObkectId(this._id) }, { $set: this })
+        } else {
+            dbOperation = db.collection('products').insertOne(this)
+        }
 
-        // we will return this - so we can treat it overall as a promise in our contoller
-        return db.collection('products')
-        .insertOne(this)
-        .then(result => {
-            console.log(result)
-        })
-        .catch(err => {
-            console.log(err);
-        });
+        // we will return dbOperation - so we can treat it overall as a promise in our contoller
+        return dbOperation
+            .then(result => {
+                console.log(result)
+            })
+            .catch(err => {
+                console.log(err);
+            });
     }
 
     static fetchAll() {
