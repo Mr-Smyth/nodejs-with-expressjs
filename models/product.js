@@ -19,8 +19,8 @@ class Product {
         const db = getDb();
         let dbOperation;
         // Now we want to check if _id already has value - if it does we are editing
-        if (_id) {
-            dbOperation = db.collection('products').updateOne({ _id: new mongodb.ObkectId(this._id) }, { $set: this })
+        if (this._id) {
+            dbOperation = db.collection('products').updateOne({ _id: new mongodb.ObjectId(this._id) }, { $set: this })
         } else {
             dbOperation = db.collection('products').insertOne(this)
         }

@@ -1,3 +1,6 @@
+// import mongodb
+const mongodb = require('mongodb');
+
 // import model
 const Product = require('../models/product');
 
@@ -37,7 +40,7 @@ exports.getEditProduct = (req, res, next) => {
 
     // now we need the product id that was passed in the url
     const prodId = req.params.productId;
-    
+
     // call the fetchOne method inside product model - returns a product
     Product.fetchOne(prodId)
     .then(product => {
@@ -65,19 +68,13 @@ exports.postGetEditProduct = (req, res, next) => {
     const updatedPrice = req.body.price;
     const updatedImageUrl = req.body.imageUrl;
     const updatedDescription = req.body.description;
-    // get the product we want to update
-    Product.findByPk(prodId)
-    .then(product => {
-        product.title = updatedTitle;
-        product.price = updatedPrice;
-        product.imageUrl = updatedImageUrl;
-        product.description = updatedDescription;
-        // now call save() on product and return the promise
-        return product.save();
-    })
-    // handle the response to save()
+    
+    // create a new product - make sure order matches the product constructor!
+    const product = new Product(updatedTitle, updatedPrice, updatedDescription, updatedImageUrl, new mongodb.ObjectId(prodId));
+    
+    // save the product
+    product.save()
     .then(result => {
-        console.log(`"${result.title}" has been updated`);
         res.redirect('/admin/products');
     })
     .catch(err => {

@@ -2184,7 +2184,36 @@ Compass is a free utility which gives us a GUI in which we can visualize our DB
 
 #### Controllers postEditProduct
 
-+ 
++ Get the edited values from the request body
+
++ We need to create a product, include the id and then call the save method
+
++ The save method will then check to see if an id is present, and because it is - it will update or $set these values into the document.
+
+  ```
+  exports.postGetEditProduct = (req, res, next) => {
+      //collect the edited product data from the request body
+      const prodId = req.body.productId;
+      const updatedTitle = req.body.title;
+      const updatedPrice = req.body.price;
+      const updatedImageUrl = req.body.imageUrl;
+      const updatedDescription = req.body.description;
+      
+      // create a new product - make sure order matches the product constructor!
+      const product = new Product(updatedTitle, updatedPrice, updatedDescription, updatedImageUrl, new mongodb.ObjectId(prodId));
+      
+      // save the product
+      product.save()
+      .then(result => {
+          res.redirect('/admin/products');
+      })
+      .catch(err => {
+          console.log(err);
+      });
+  };
+  ```
+
+  
 
 ### Delete Products
 
