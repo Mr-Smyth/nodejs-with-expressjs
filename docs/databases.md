@@ -1820,6 +1820,8 @@ Here we see all the ip addresses that are allowed to connect to the mongoDB Serv
 
 
 
+## Implement MongoDb CRUD in node
+
 ### Creating Products
 
 #### Product model
@@ -2277,11 +2279,27 @@ Compass is a free utility which gives us a GUI in which we can visualize our DB
 
 #### Controllers - admin - postDeleteProduct
 
-+ 
++ We can call our model method and pass the id of the item we want to delete
 
+  ```
+  exports.postDeleteProduct = (req, res, next) => {
+      let prodId = req.body.productId;
+      Product.deleteById(prodId)
+      .then(() => {
+          console.log(`Deleted - product`);
+          return res.redirect('/admin/products');
+      })
+      .catch(err => {
+          console.log(err);
+      });
+  };
+  ```
 
+  
 
+**CRUD complete**
 
+## Relations in MongoDb
 
 
 
