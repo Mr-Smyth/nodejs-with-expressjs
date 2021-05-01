@@ -10,15 +10,14 @@ class User {
     }
 
     save() {
-        const db = getDb;
+        const db = getDb();
         return db.collection('users').insertOne(this);
     }
 
     static findById(userId) {
-        const db = getDb;
-        return db.collection('users')
-        .findOne({id: mongodb.ObjectId(userId)});
+        const db = getDb();
+        return db.collection('users').findOne({ _id: new mongodb.ObjectId(userId) });
     }
 }
 
-module.exports = user;
+module.exports = User;

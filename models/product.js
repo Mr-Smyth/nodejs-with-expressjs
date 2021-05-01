@@ -6,13 +6,14 @@ const getDb = require('../utility/database').getDb;
 
 // our mongo db product model class
 class Product {
-    constructor(title, price, description, imageUrl, id) {
+    constructor(title, price, description, imageUrl, id, userId) {
         this.title = title;
         this.price = price;
         this.description = description;
         this.imageUrl = imageUrl;
         // add a ternary here to set value to null if no id is passed
         this._id = id ? new mongodb.ObjectId(id): null;
+        this.userId = userId;
     }
 
     save() {

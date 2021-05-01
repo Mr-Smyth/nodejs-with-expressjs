@@ -11,6 +11,8 @@ const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const errorController = require('./controllers/errors.js')
 const mongoConnect = require('./utility/database').mongoConnect;
+const User = require('./models/user');
+const { homedir } = require('os');
 
 
 app.get('/favicon.ico', (req, res) => {
@@ -24,22 +26,23 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // register a new middleware to get the user set into the request object
 app.use((req, res, next) => {
-    // User.findByPk(1)
-    // .then(user => {
-    //     // then set the user in the request - user is a sequelize object
-    //     req.user = user;
-    //     next();
-    // })
-    // .catch(err => {
-    //     console.log(err);
-    // });
-    next();
+    User.findById('608dc6a5ad17a5ed4fc30d4d')
+    .then(user => {
+        // then set the user in the request - user is a sequelize object
+        req.user = user;
+        next();
+    })
+    .catch(err => {
+        console.log(err);
+    });
 });
 
 // outsourced routes
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 app.use(errorController.get404);
+
+
 
 // call our mongoConnect method in database.js
 mongoConnect(() => {

@@ -2301,13 +2301,103 @@ Compass is a free utility which gives us a GUI in which we can visualize our DB
 
 ## Relations in MongoDb
 
+### Setting up Users
+
+#### User Models
+
++ Setup a basic user model:
+
+  ```
+  const mongodb = require('mongodb');
+  
+  // grab our getDb connection from our database.js file
+  const getDb = require('../utility/database').getDb;
+  
+  class User {
+      constructor(username, email) {
+          this.username = username;
+          this.email = email;
+      }
+  
+      save() {
+          const db = getDb();
+          return db.collection('users').insertOne(this);
+      }
+  
+      static findById(userId) {
+          const db = getDb();
+          return db.collection('users').findOne({ _id: new mongodb.ObjectId(userId) });
+      }
+  }
+  
+  module.exports = User;
+  ```
+
+  
+
+#### In Compass
+
++ For this purpose, for now set up a new users collection and add a user with name and email field
++ Grab the id of this user
++ We will manually add this to the request object in app.js
 
 
 
+#### In app.js
 
++ Add the id of the created user to the request object
 
+  ```
+  app.use((req, res, next) => {
+      User.findById('608dc6a5ad17a5ed4fc30d4d')
+      .then(user => {
+          // then set the user in the request - user is a sequelize object
+          req.user = user;
+          next();
+      })
+      .catch(err => {
+          console.log(err);
+      });
+  });
+  ```
 
+  
 
+### Linking created products to current user
+
++ In the products model, we can now take in the user._id
+
++ Add the user id to the product model constructor:
+
+  ```
+  class Product {
+      constructor(title, price, description, imageUrl, id, userId) {
+          this.title = title;
+          this.price = price;
+          this.description = description;
+          this.imageUrl = imageUrl;
+          // add a ternary here to set value to null if no id is passed
+          this._id = id ? new mongodb.ObjectId(id): null;
+          this.userId = userId;
+  ```
+
++ Next we now must add to our add product controller. First we must add null to represent the product id which would not exist if creating a new product. Then add in the user id from the request body.
+
+  ```
+  exports.postAddProduct = (req, res, next) => {
+      // get form data
+      const title = req.body.title;
+      const imageUrl = req.body.imageUrl;
+      const price = req.body.price;
+      const description = req.body.description;
+      const product = new Product(title, price, description, imageUrl, null, req.user._id);
+      
+      product.save()
+  ```
+
+  
+
+After running this program and adding a new product - you should have a product with the added user id field.
 
 
 
