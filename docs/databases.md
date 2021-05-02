@@ -818,10 +818,10 @@ We want to get all our products for the index page and the products page
     ```
     // require the sequelize constructor class
     const Sequelize = require('sequelize');
-
+    
     // import our own sequelize object
     const sequelize = require('../utility/database');
-
+    
     const user = sequelize.define('user', {
         id: {
             type: Sequelize.INTEGER,
@@ -838,7 +838,7 @@ We want to get all our products for the index page and the products page
             allowNull: false
         }
     });
-
+    
     module.exports = user;
     ```
 
@@ -2401,7 +2401,15 @@ After running this program and adding a new product - you should have a product 
 
 
 
+### Setting up the cart
 
+For every user we have a cart - the cart will hold the products for that user - here we will be using embedded documents
+
+#### In User Model
+
++ We first update the constructor to take in a cart and a user id - we want to set this up in app.js so we can create a proper user object containing a cart
++ Add an addToCart method
++ This takes in the product being added and will embed a cart with this product inside the user object
 
 
 
