@@ -28,8 +28,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use((req, res, next) => {
     User.findById('608dc6a5ad17a5ed4fc30d4d')
     .then(user => {
-        // then set the user in the request - user is a sequelize object
-        req.user = user;
+        // we want to make req.user an instance of User - so we can use all the methods
+        req.user = new User(user.username, user.email, user.cart, user.userId);
         next();
     })
     .catch(err => {

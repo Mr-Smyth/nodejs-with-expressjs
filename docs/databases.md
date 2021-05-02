@@ -2351,7 +2351,6 @@ Compass is a free utility which gives us a GUI in which we can visualize our DB
   app.use((req, res, next) => {
       User.findById('608dc6a5ad17a5ed4fc30d4d')
       .then(user => {
-          // then set the user in the request - user is a sequelize object
           req.user = user;
           next();
       })
@@ -2360,8 +2359,8 @@ Compass is a free utility which gives us a GUI in which we can visualize our DB
       });
   });
   ```
-
   
+
 
 ### Linking created products to current user
 
@@ -2408,14 +2407,60 @@ For every user we have a cart - the cart will hold the products for that user - 
 #### In User Model
 
 + We first update the constructor to take in a cart and a user id - we want to set this up in app.js so we can create a proper user object containing a cart
+
 + Add an addToCart method
-+ This takes in the product being added and will embed a cart with this product inside the user object
+
++ This takes in the product being added and for now will just embed a cart with this product inside the user object - we will have to add functionality on dealing with existing products
+
+  ```
+  addToCart(product) {
+          const db = getDb();
+          // run findIndex with a function to find the item with the match index and return it
+          // remember that findIndex will run until it finds true
+          const cartProduct = this.cart.item.findIndex(cartProd => {
+              return cartProd._id === product._id;
+          });
+          console.log(cartProd);
+  
+          // we need an object we can insert
+          // Using spread - an elegant way to make updatedCart equal to the product info with an 
+          // added quantity info
+          const updatedCart = { items: [{...Product, quantity: 1}] }
+          // now we want to store it in the users collection under current user
+          return db
+          .collection('users')
+          .updateOne(
+              { _id: new mongodb.ObjectId(this.userId) },
+              { $set: {cart: updatedCart} }
+          );
+      }
+  ```
+
+  
 
 
 
+#### In App.js - wire up user in the request
 
+We want the user request object to contain more than simply the data contained inside the database, we want the methods from the model.
 
++ So in the req object we will insert user as an instance of the model so we can utilize it elsewhere:
 
+  ```
+  app.use((req, res, next) => {
+      User.findById('608dc6a5ad17a5ed4fc30d4d')
+      .then(user => {
+          // we want to make req.user an instance of User - so we can use all the methods
+          req.user = new User(user.username, user.email, user.cart, user.userId);
+          next();
+      })
+      .catch(err => {
+          console.log(err);
+      });
+  });
+  ```
+
+  
 
 
 
