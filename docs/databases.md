@@ -2399,7 +2399,7 @@ After running this program and adding a new product - you should have a product 
 
 
 
-### Setting up the cart
+### Setting up the cart - Adding Items to a cart
 
 For every user we have a cart - the cart will hold the products for that user - here we will be using embedded documents
 
@@ -2567,6 +2567,83 @@ This is probably a little too much information, so we will reduce it a little.
   
 
 **This will now add a cart if not there and will increment existing products or insert a new one**
+
+
+
+### Setting up the cart - Displaying the cart
+
+#### In Models - user.js
+
++ Add a getCart method
+
++ We get an array of the product id's from the cart
+
++ We use that to get an array of products matching the id's
+
++ Then we modify this insert the quantity into each product in the array - each product is an object remember.
+
+  ```
+  static getCart() {
+          const db = getDb();
+  
+          // get the product Id's that are in the cart into an array of id's using map
+          const productIds = this.cart.items.map(item => {
+              return item.productId;
+          });
+          // grab the full details of any products that are in the cart
+          // $in takes an array of id's - here is where we use our array productIds
+          // so give us any products whose ids are mentioned in the productIds array - returns a cursor 
+          // which we can convert manually
+          return db.collection('products').find({_id: {$in: productIds}})
+          .toArray()
+          .then(products => {
+          
+              // what we want back is an object with the quantity inserted - so we use map for this
+              return products.map(prod => {
+              
+                  // as we use arrow functions we can still use this here to reference the overall class
+                  // then we can find any item that has a product id
+                  return {...prod, quantity: this.cart.items.find(item => {
+                  
+                      // check if the id of each item in our cart matches the id of a product in our new 
+                      // object
+                      // when this returns true, we know we have matched the correct cart item with the
+                      // correct product 
+                      return item.productId.toString() === prod._id.toString();
+                      
+                  // so we just point at the cart items quantity field - and so add the quantity
+                  }).quantity
+                  }
+              })
+          })
+          .catch(err => console.log(err));
+      }
+  ```
+
+  
+
+#### In Controllers - shop.js - getCart
+
++ With the above model we just call getCart and get an object containing products with quantities
++ return this to the template
+
+
+
+#### In routes - shop routes
+
++ enable the display cart route: `router.get('/cart', shopController.getCart);`
+
+
+
+#### In views - make sure you are displaying data correctly
+
+
+
+
+
+
+
+
 
 
 

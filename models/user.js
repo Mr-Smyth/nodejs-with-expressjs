@@ -7,7 +7,7 @@ class User {
     constructor(username, email, cart, userId) {
         this.username = username;
         this.email = email;
-        this.cart = cart != null ? cart : {items: []}; // an object {items: []}
+        this.cart = cart != null ? cart : {items: []};
         this.userId = userId;
     }
 
@@ -54,6 +54,36 @@ class User {
             { $set: {cart: updatedCart} }
         );
     }
+
+    getCart() {
+        const db = getDb();
+
+        // get the product Id's that are in the cart into an array of id's using map
+        const productIds = this.cart.items.map(item => {
+            return item.productId;
+        });
+        // grab the full details of any products that are in the cart
+        // $in takes an array of id's - here is where we use our array productIds
+        // so give us any products whose ids are mentioned in the productIds array - returns a cursor which we can convert manually
+        return db.collection('products').find({_id: {$in: productIds}})
+        .toArray()
+        .then(products => {
+            // what we want back is an object with the quantity inserted - so we use map for this
+            return products.map(prod => {
+                // as we use arrow functions we can still use this here to reference the overall class
+                // then we can find any item that has a product id
+                return {...prod, quantity: this.cart.items.find(item => {
+                    // check if the id of each item in our cart matches the id of a product in our new object
+                    // when this returns true, we know we have matched the correct cart item with the correct product 
+                    // so we just point at the cart items quantity field - and so add the quantity
+                    return item.productId.toString() === prod._id.toString();
+                }).quantity
+                }
+            })
+        })
+        .catch(err => console.log(err));
+    }
+
 
     static findById(userId) {
         const db = getDb();

@@ -14,11 +14,9 @@
                 <% products.forEach(product => { %>
                     <li class="cart__item">
                         <h1><%= product.title %></h1>
-                        <!-- The quantity is not part of the cart - but it is part of the related cart-item
-                        Sequelize gives us a way to access it using the cartItem key -->
-                        <h1>(<%= product.cartItem.quantity %>)</h1>
+                        <h1>(<%= product.quantity %>)</h1>
                         <form action="/cart-delete-item" method="POST">
-                            <input type="hidden" name="productId" value="<%= product.id %>">
+                            <input type="hidden" name="productId" value="<%= product._id %>">
                             <button class="btn danger" type="submit">Delete</button>
                         </form>
                     </li>
