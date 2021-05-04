@@ -2639,7 +2639,54 @@ This is probably a little too much information, so we will reduce it a little.
 
 
 
+### Setting up the cart - Deleting items
 
+#### In Models - deleteOne
+
++ We create a copy of the cart, using the js filter method to filter out the item we want to delete
+
++ This becomes our updated cart - so we insert that into the database.
+
+  ```
+  deleteOne(prodId) {
+          const db = getDb();
+  
+          // using filter we can create an array of items we want to keep - ie do not include the item matching the prodId
+          const updatedCart = this.cart.items.filter(item => {
+              return item.productId.toString() !== prodId.toString();
+          });
+  
+          return db.collection('users').updateOne(
+              { _id: new mongodb.ObjectId(this.userId) },
+              { $set: {cart: {items: updatedCart} } }
+          );
+      }
+  ```
+
+  
+
+#### In controllers - shop.js - deleteCartItem
+
++ Get the product id we want to delete from the request
+
++ call our deleteOne method
+
++ redirect
+
+  ```
+  exports.deleteCartItem = (req, res, next) => {
+      // get the product id from the request
+      const prodId = req.body.productId;
+  
+      req.user.deleteOne(prodId)
+      .then(result => {
+          res.redirect('/cart');
+      })
+      .catch(err => console.log(err))
+  };
+  ```
+
+  
 
 
 

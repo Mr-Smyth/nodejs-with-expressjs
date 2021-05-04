@@ -84,6 +84,20 @@ class User {
         .catch(err => console.log(err));
     }
 
+    deleteOne(prodId) {
+        const db = getDb();
+
+        // using filter we can create an array of items we want to keep - ie do not include the item matching the prodId
+        const updatedCart = this.cart.items.filter(item => {
+            return item.productId.toString() !== prodId.toString();
+        });
+
+        return db.collection('users').updateOne(
+            { _id: new mongodb.ObjectId(this.userId) },
+            { $set: {cart: {items: updatedCart} } }
+        );
+    }
+
 
     static findById(userId) {
         const db = getDb();
