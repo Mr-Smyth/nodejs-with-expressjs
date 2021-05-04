@@ -26,7 +26,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // register a new middleware to get the user set into the request object
 app.use((req, res, next) => {
-    User.findById('608dc6a5ad17a5ed4fc30d4d')
+    User.findById('60912a53cb8bb4b081700789')
     .then(user => {
         // we want to make req.user an instance of User - so we can use all the methods
         req.user = new User(user.username, user.email, user.cart, user._id);
