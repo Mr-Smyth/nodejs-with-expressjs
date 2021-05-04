@@ -26,8 +26,8 @@ class User {
         // console.log(cartProd);
 
         // we need an object we can insert
-        // Using spread - an elegant way to make updatedCart equal to the product info with an added quantity info
-        const updatedCart = { items: [{...product, quantity: 1}] }
+        // We only want the product Id and the quantity
+        const updatedCart = { items: [{productId: new mongodb.ObjectId(product._id), quantity: 1}] }
         // now we want to store it in the users collection under current user
         return db
         .collection('users')

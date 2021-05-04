@@ -2494,6 +2494,20 @@ This is probably a little too much information, so we will reduce it a little.
 
 
 
+#### In Models - user.js - addToCart
+
++ We will adjust what we add to the cart, instead of using spread to insert the full product - we will just insert the id and qty
+
+  ```
+  // we need an object we can insert
+  // We only want the product Id and the quantity
+  const updatedCart = { items: [{productId: new mongodb.ObjectId(product._id), quantity: 1}] }
+  ```
+
+  
+
+
+
 
 
 
