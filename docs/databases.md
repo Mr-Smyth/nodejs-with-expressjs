@@ -2359,7 +2359,6 @@ Compass is a free utility which gives us a GUI in which we can visualize our DB
       });
   });
   ```
-  
 
 
 ### Linking created products to current user
@@ -2415,17 +2414,11 @@ For every user we have a cart - the cart will hold the products for that user - 
   ```
   addToCart(product) {
           const db = getDb();
-          // run findIndex with a function to find the item with the match index and return it
-          // remember that findIndex will run until it finds true
-          const cartProduct = this.cart.item.findIndex(cartProd => {
-              return cartProd._id === product._id;
-          });
-          console.log(cartProd);
   
           // we need an object we can insert
           // Using spread - an elegant way to make updatedCart equal to the product info with an 
           // added quantity info
-          const updatedCart = { items: [{...Product, quantity: 1}] }
+          const updatedCart = { items: [{...product, quantity: 1}] }
           // now we want to store it in the users collection under current user
           return db
           .collection('users')
@@ -2435,14 +2428,14 @@ For every user we have a cart - the cart will hold the products for that user - 
           );
       }
   ```
-
+  
   
 
 
 
 #### In App.js - wire up user in the request
 
-We want the user request object to contain more than simply the data contained inside the database, we want the methods from the model.
+We want the user request object to contain more than simply the data contained inside the database, we want the methods from the model. This means that we can call the user in the request and access the users cart which will have been created using the code below
 
 + So in the req object we will insert user as an instance of the model so we can utilize it elsewhere:
 
@@ -2460,13 +2453,44 @@ We want the user request object to contain more than simply the data contained i
   });
   ```
 
-  
++ Now we will use this in the controller
+
+#### In shop.js controller - postToCart
+
++ Grab the product using the product id we get from the request body
++ Then when we have the product we call the addToCart method from the model, but we can do this by calling outr instance of the user - which now contains all those methods and ensures we add it to the current and correct user.
+
+#### In Views / Includes
+
++ If using an includes snippet - check that you are exporting the correct id `<input type="hidden" name="productId" value="<%= product._id %>">`
+
+#### In Routes - shop.js
+
++ Make sure post route for cart is enabled: `router.post('/cart', shopController.postToCart);`
 
 
 
+Testing at this stage should insert a cart inside a user with a copy of the full product and a quantity, looking like this:
 
+```
+{
+"_id":{"$oid":"608dc6a5ad17a5ed4fc30d4d"},
+"name":"Eamonn",
+"email":"eamonn@home.ie",
+"cart":{
+	"items":[{
+		"_id":{"$oid":"608dce2d8f7392045059330b"},
+		"title":"Gardening - The gloves are off!!",
+		"price":"895.99","description":"The truth",
+		"imageUrl":"https://gocreations.info/bakiris/wp-content/uploads/2021/01/leather-book-preview.png",
+		"userId":{"$oid":"608dc6a5ad17a5ed4fc30d4d"},
+		"quantity":1
+		}]
+	}
+}
+```
 
-
+This is probably a little too much information, so we will reduce it a little.
 
 
 

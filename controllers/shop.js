@@ -56,43 +56,54 @@ exports.getIndex = (req, res, next) => {
 // Get post data for our cart
 exports.postToCart = (req, res, next) => {
 
-    // top lvl variables
-    let fetchedCart
-    let newQuantity = 1;
     const prodId = req.body.productId;
-
-    // retrieve product id from req
-    req.user.getCart()
-    .then(cart => {
-        fetchedCart = cart;
-        // first we need to check and see if the product is already in the cart
-        // getProducts will return an array, but our where will make this an array of just one item
-        return cart.getProducts({ where: { id: prodId }})
-    })
-    .then(products => {
-        // check if we get anything
-        let product;
-        if (products.length > 0) {
-            product = products[0];
-        }
-        if (product) {
-            // if there is a product - we need to get the old qty and add new qty to it
-            // we use another magic method here cartItem - see section on displaying cart in readme for more details
-            const oldQuantity = product.cartItem.quantity;
-            newQuantity = oldQuantity + 1;
-            return product;
-        }
-        // Now handle case where product does not already exist in the cart -
-        return Product.findByPk(prodId);
-    })
+    Product.fetchOne(prodId)
     .then(product => {
-        // add it to the cart
-        return fetchedCart.addProduct(product, { through: { quantity: newQuantity } });
+        // call the addToCart - expects a product - and returns a promise
+        return req.user.addToCart(product)
     })
     .then(result => {
-        res.redirect('/cart')
+        console.log(result);
     })
     .catch(err => console.log(err));
+
+    // // top lvl variables
+    // let fetchedCart
+    // let newQuantity = 1;
+    // const prodId = req.body.productId;
+
+    // // retrieve product id from req
+    // req.user.getCart()
+    // .then(cart => {
+    //     fetchedCart = cart;
+    //     // first we need to check and see if the product is already in the cart
+    //     // getProducts will return an array, but our where will make this an array of just one item
+    //     return cart.getProducts({ where: { id: prodId }})
+    // })
+    // .then(products => {
+    //     // check if we get anything
+    //     let product;
+    //     if (products.length > 0) {
+    //         product = products[0];
+    //     }
+    //     if (product) {
+    //         // if there is a product - we need to get the old qty and add new qty to it
+    //         // we use another magic method here cartItem - see section on displaying cart in readme for more details
+    //         const oldQuantity = product.cartItem.quantity;
+    //         newQuantity = oldQuantity + 1;
+    //         return product;
+    //     }
+    //     // Now handle case where product does not already exist in the cart -
+    //     return Product.findByPk(prodId);
+    // })
+    // .then(product => {
+    //     // add it to the cart
+    //     return fetchedCart.addProduct(product, { through: { quantity: newQuantity } });
+    // })
+    // .then(result => {
+    //     res.redirect('/cart')
+    // })
+    // .catch(err => console.log(err));
 };
 
 
