@@ -1820,6 +1820,10 @@ Here we see all the ip addresses that are allowed to connect to the mongoDB Serv
 
 
 
+[<< Back to Index](#index)
+
+
+
 ## Implement MongoDb CRUD in node
 
 ### Creating Products
@@ -1914,7 +1918,7 @@ Here we see all the ip addresses that are allowed to connect to the mongoDB Serv
 
   
 
-
+[<< Back to Index](#index)
 
 ### Getting Products
 
@@ -2014,7 +2018,7 @@ Here we see all the ip addresses that are allowed to connect to the mongoDB Serv
 
 
 
-
+[<< Back to Index](#index)
 
 
 
@@ -2042,7 +2046,7 @@ Compass is a free utility which gives us a GUI in which we can visualize our DB
 
 
 
-
+[<< Back to Index](#index)
 
 ### Getting a single product - setting up product details functionality
 
@@ -2108,7 +2112,7 @@ Compass is a free utility which gives us a GUI in which we can visualize our DB
 
   
 
-
+[<< Back to Index](#index)
 
 ### Edit Products
 
@@ -2124,7 +2128,8 @@ Compass is a free utility which gives us a GUI in which we can visualize our DB
   router.post('/edit-product', adminController.postGetEditProduct);
   ```
 
-  
+
+
 
 #### In related views
 
@@ -2173,7 +2178,8 @@ Compass is a free utility which gives us a GUI in which we can visualize our DB
   }
   ```
 
-  
+
+[<< Back to Index](#index)
 
 #### Controllers getEditProduct
 
@@ -2242,7 +2248,8 @@ Compass is a free utility which gives us a GUI in which we can visualize our DB
   };
   ```
 
-  
+
+[<< Back to Index](#index)
 
 ### Delete Products
 
@@ -2298,6 +2305,12 @@ Compass is a free utility which gives us a GUI in which we can visualize our DB
   
 
 **CRUD complete**
+
+
+
+[<< Back to Index](#index)
+
+
 
 ## Relations in MongoDb
 
@@ -2361,6 +2374,11 @@ Compass is a free utility which gives us a GUI in which we can visualize our DB
   ```
 
 
+
+[<< Back to Index](#index)
+
+
+
 ### Linking created products to current user
 
 + In the products model, we can now take in the user._id
@@ -2396,6 +2414,10 @@ Compass is a free utility which gives us a GUI in which we can visualize our DB
   
 
 After running this program and adding a new product - you should have a product with the added user id field.
+
+
+
+[<< Back to Index](#index)
 
 
 
@@ -2570,6 +2592,10 @@ This is probably a little too much information, so we will reduce it a little.
 
 
 
+[<< Back to Index](#index)
+
+
+
 ### Setting up the cart - Displaying the cart
 
 #### In Models - user.js
@@ -2637,6 +2663,10 @@ This is probably a little too much information, so we will reduce it a little.
 
 #### In views - make sure you are displaying data correctly
 
+[<< Back to Index](#index)
+
+
+
 
 
 ### Setting up the cart - Deleting items
@@ -2686,7 +2716,12 @@ This is probably a little too much information, so we will reduce it a little.
   };
   ```
 
-  
+
+
+
+[<< Back to Index](#index)
+
+
 
 ### Add Orders
 
@@ -2753,6 +2788,8 @@ This is probably a little too much information, so we will reduce it a little.
       .catch(err => console.log(err));
   };
   ```
+
+[<< Back to Index](#index)
 
 
 
@@ -2839,13 +2876,15 @@ This is probably a little too much information, so we will reduce it a little.
 
   
 
+[<< Back to Index](#index)
 
 
 
 
 
+# Future Improvements
 
-
++ As it currently stands - deleting items is not clearly reflected in the cart - although if the item is deleted - it cannot be retrieved by the cart which is effectively correct - but this could be improved with some scripting
 
 
 
@@ -2855,10 +2894,18 @@ This is probably a little too much information, so we will reduce it a little.
 
 + Learn more about the Node MySQL Package: https://github.com/sidorares/node-mysql2
 
++ Learn more about MongoDB: https://academind.com/learn/mongodb
+
 + Sequelize Official Docs: http://docs.sequelizejs.com/
 
 + Mongo Crud operations: https://docs.mongodb.com/manual/crud/
 
++ SQL vs NoSQL: https://academind.com/learn/web-dev/sql-vs-nosql/
+
++ MongoDB Official Docs: [https://docs.mongodb.com/manual/core/security-encryption-at-rest/https://docs.mongodb.com/manual/](https://docs.mongodb.com/manual/)
+
+  
+  
   
 
 [<< Back to Index](#index)
