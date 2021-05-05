@@ -98,6 +98,22 @@ class User {
         );
     }
 
+    addToOrder() {
+        const db = getDb();
+        // store the cart in a collection called orders
+        return db.collection('orders').insertOne(this.cart)
+        .then(result => {
+            // empty the cart in the user object
+            this.cart = {items: []};
+            // empty the cart in the database
+            return db.collection('users').updateOne(
+                { _id: new mongodb.ObjectId(this.userId) },
+                { $set: {cart: {items: []} } }
+            );
+        })
+        .catch(err => console.log(err));
+    }
+
 
     static findById(userId) {
         const db = getDb();

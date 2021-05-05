@@ -2688,7 +2688,53 @@ This is probably a little too much information, so we will reduce it a little.
 
   
 
+### Add Orders
 
+#### In Models - user model
+
++ We will use the user model to save the cart to a new collection called orders
+
++ We will then empty the cart
+
+  ```
+      addToOrder() {
+          const db = getDb();
+          
+          // store the cart in a collection called orders
+          return db.collection('orders').insertOne({this.cart})
+          
+          .then(result => {
+              // empty the cart in the user object
+              this.cart = {items: []};
+              
+              // empty the cart in the database
+              return db.collection('users').updateOne(
+                  { _id: new mongodb.ObjectId(this.userId) },
+                  { $set: {cart: {items: []} } }
+              );
+          })
+          .catch(err => console.log(err));
+      }
+  ```
+
+  
+
+#### In Controllers - postOrder
+
++ Call our addToOrder method and then redirect to the orders screen
+
+  ```
+  exports.postOrder = (req, res, next) => {
+      // call our user model method to add cart to order
+      req.user.addToOrder()
+      .then(result => {
+          res.redirect('/orders');
+      })
+      .catch(err => console.log(err));
+  };
+  ```
+
+#### In Controllers - GetOrders
 
 
 
