@@ -2,6 +2,161 @@
 
 [Return to Readme](https://github.com/Mr-Smyth/nodejs-with-expressjs/blob/main/README.md)
 
+# Index
+
+- [Types of Databases](#types-of-databases)
+
+- [SQL](#sql)
+    + [Horizontal scaling](#horizontal-scaling)
+    + [Vertical scaling](#vertical-scaling)
+  
+  ---
+  
+  * [The SQL setup with Node JS](#the-sql-setup-with-node-js)
+    + [Installation](#installation)
+    + [Connecting Node to the sql database](#connecting-node-to-the-sql-database)
+      - [In database.js](#in-databasejs)
+      - [In app.js](#in-appjs)
+    + [Setup a Table Using Workbench](#setup-a-table-using-workbench)
+    + [Node - Retrieve data using node with SQL commands](#node---retrieve-data-using-node-with-sql-commands)
+    + [Using Models to interact with our data](#using-models-to-interact-with-our-data)
+      - [Setting up fetchAll()](#setting-up-fetchall--)
+        * [models](#models)
+      - [controllers](#controllers)
+      - [Setting up ability to add products](#setting-up-ability-to-add-products)
+        * [models](#models-1)
+        * [controllers](#controllers-1)
+      - [Setting up ability to get product details for 1 particular product](#setting-up-ability-to-get-product-details-for-1-particular-product)
+        * [models](#models-2)
+        * [controllers](#controllers-2)
+  
+  ---
+  
+  * [Using Sequelize](#using-sequelize)
+    
+    + [Install sequelize](#install-sequelize)
+    + [Using Sequelize](#using-sequelize-1)
+      - [Setup - In Workbench](#setup---in-workbench)
+      - [Setup - In database.js - for our connection](#setup---in-databasejs---for-our-connection)
+      - [Setup sequelize - In models](#setup-sequelize---in-models)
+      - [Setup sequelize - Create a product table in our database](#setup-sequelize---create-a-product-table-in-our-database)
+      - [Using sequelize - creating a product using sequelize](#using-sequelize---creating-a-product-using-sequelize)
+        * [Controllers - admin.js](#controllers---adminjs)
+      - [Using sequelize - Finding and fetching Data](#using-sequelize---finding-and-fetching-data)
+        * [controllers - shop](#controllers---shop)
+        * [controllers](#controllers-3)
+      - [Using sequelize - Updating Products](#using-sequelize---updating-products)
+        * [In Controllers - admin.js](#in-controllers---adminjs)
+        * [in Controllers - app.js](#in-controllers---appjs)
+      - [Using Sequelize - Deleting Products](#using-sequelize---deleting-products)
+        * [in controllers - admin.js](#in-controllers---adminjs)
+    
+    ---
+    
+    
+    
+  * [Setting up users with sequelize](#setting-up-users-with-sequelize)
+    + [Creating associations/ relations](#creating-associations--relations)
+      - [Create a sample user in app.js](#create-a-sample-user-in-appjs)
+      - [Add a new product that has the user linked.](#add-a-new-product-that-has-the-user-linked)
+      - [Fetching associated products](#fetching-associated-products)
+    + [Setup the cart with sequelize](#setup-the-cart-with-sequelize)
+      - [Relationships](#relationships)
+      - [Creating a cart and fetching from cart](#creating-a-cart-and-fetching-from-cart)
+      - [Posting Items to the cart](#posting-items-to-the-cart)
+      - [Displaying the cart](#displaying-the-cart)
+      - [Deleting a product from the cart](#deleting-a-product-from-the-cart)
+    + [Orders](#orders)
+      - [Setup the Order Model](#setup-the-order-model)
+      - [In app.js](#in-appjs-1)
+      - [Create our checkout button functionality](#create-our-checkout-button-functionality)
+      - [Display our order on the orders page](#display-our-order-on-the-orders-page)
+
+---
+
+---
+
+- [NoSql](#nosql)
+    
+    + [Horizontal scaling](#horizontal-scaling-1)
+  + [Vertical scaling](#vertical-scaling-1)
+  * [What is Mongo Db](#what-is-mongo-db)
+    + [Manage relations in Mongo](#manage-relations-in-mongo)
+  * [Setup MongoDb](#setup-mongodb)
+    + [Initial setup - Cluster](#initial-setup---cluster)
+    + [Setup User](#setup-user)
+    + [IP Whitelist](#ip-whitelist)
+    + [Connect to our mongoDb server from inside our NodeJs app](#connect-to-our-mongodb-server-from-inside-our-nodejs-app)
+      - [In Mongo](#in-mongo)
+      - [In Node - Install the MongoDb Driver](#in-node---install-the-mongodb-driver)
+      - [Connect to the database](#connect-to-the-database)
+  * [Implement MongoDb CRUD in node](#implement-mongodb-crud-in-node)
+    + [Creating Products](#creating-products)
+      - [Product model](#product-model)
+      - [Routes - Admin.js file](#routes---adminjs-file)
+      - [Controllers - Admin Js file](#controllers---admin-js-file)
+    + [Getting Products](#getting-products)
+      - [In models](#in-models)
+      - [In our shop Controllers - get Index and getProducts](#in-our-shop-controllers---get-index-and-getproducts)
+    + [Compass](#compass)
+      - [Setup Compass](#setup-compass)
+      - [Using compass](#using-compass)
+    + [Getting a single product - setting up product details functionality](#getting-a-single-product---setting-up-product-details-functionality)
+      - [Routes](#routes)
+      - [Views - in index and products pages](#views---in-index-and-products-pages)
+      - [in models - product.js](#in-models---productjs)
+      - [Controllers - shop.js / .getProductDetails](#controllers---shopjs---getproductdetails)
+    + [Edit Products](#edit-products)
+      - [Routes](#routes-1)
+      - [In related views](#in-related-views)
+      - [Models - product model - save method](#models---product-model---save-method)
+      - [Controllers getEditProduct](#controllers-geteditproduct)
+      - [Controllers postEditProduct](#controllers-posteditproduct)
+    + [Delete Products](#delete-products)
+      - [Routes](#routes-2)
+      - [In related views](#in-related-views-1)
+      - [models - product model](#models---product-model)
+      - [Controllers - admin - postDeleteProduct](#controllers---admin---postdeleteproduct)
+  * [Relations in MongoDb](#relations-in-mongodb)
+    + [Setting up Users](#setting-up-users)
+      - [User Models](#user-models)
+      - [In Compass](#in-compass)
+      - [In app.js](#in-appjs-2)
+    + [Linking created products to current user](#linking-created-products-to-current-user)
+    + [Setting up the cart - Adding Items to a cart](#setting-up-the-cart---adding-items-to-a-cart)
+      - [In User Model](#in-user-model)
+      - [In App.js - wire up user in the request](#in-appjs---wire-up-user-in-the-request)
+      - [In shop.js controller - postToCart](#in-shopjs-controller---posttocart)
+      - [In Views / Includes](#in-views---includes)
+      - [In Routes - shop.js](#in-routes---shopjs)
+      - [In Models - user.js - addToCart](#in-models---userjs---addtocart)
+      - [Now we make the model work for updating and/or adding a new item to the cart](#now-we-make-the-model-work-for-updating-and-or-adding-a-new-item-to-the-cart)
+    + [Setting up the cart - Displaying the cart](#setting-up-the-cart---displaying-the-cart)
+      - [In Models - user.js](#in-models---userjs)
+      - [In Controllers - shop.js - getCart](#in-controllers---shopjs---getcart)
+      - [In routes - shop routes](#in-routes---shop-routes)
+      - [In views - make sure you are displaying data correctly](#in-views---make-sure-you-are-displaying-data-correctly)
+    + [Setting up the cart - Deleting items](#setting-up-the-cart---deleting-items)
+      - [In Models - deleteOne](#in-models---deleteone)
+      - [In controllers - shop.js - deleteCartItem](#in-controllers---shopjs---deletecartitem)
+    + [Add Orders](#add-orders)
+      - [In Models - user model - create addToOrder](#in-models---user-model---create-addtoorder)
+      - [In Controllers - postOrder](#in-controllers---postorder)
+    + [Get Orders](#get-orders)
+      - [In Models - user model - create getOrder](#in-models---user-model---create-getorder)
+      - [In Controllers - GetOrders](#in-controllers---getorders)
+      - [In routes](#in-routes)
+      - [In Views](#in-views)
+  
+- [Future Improvements](#future-improvements)
+
+- [Resources](#resources)
+
+
+
+
+
+
 # Types of Databases
 
 +   SQL
@@ -2880,6 +3035,26 @@ This is probably a little too much information, so we will reduce it a little.
 
 
 
+## Mongoose
+
+
+
+Mongoose is an ODM - Object Document Mapping Library - similar to what Sequelize does for MySql - except where sequelize is an ORM - where the R stands for Relational database - Mongo being non relation - uses Documents - hence the D in ODM.
+
+
+
+It handles the syntax for running our db queries, It uses Schemas and models to construct our core db structure. We can then use instances and queries to interact with the db.
+
+
+
+### Mongoose Setup
+
+
+
+
+
+
+
 
 
 # Future Improvements
@@ -2903,6 +3078,8 @@ This is probably a little too much information, so we will reduce it a little.
 + SQL vs NoSQL: https://academind.com/learn/web-dev/sql-vs-nosql/
 
 + MongoDB Official Docs: [https://docs.mongodb.com/manual/core/security-encryption-at-rest/https://docs.mongodb.com/manual/](https://docs.mongodb.com/manual/)
+
++ Mongoose Js official Docs: https://mongoosejs.com/
 
   
   
