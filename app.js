@@ -1,6 +1,8 @@
 const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const connectionUri = require('./utility/env').connectionUri;
 
 const app = express();
 
@@ -10,7 +12,6 @@ app.set('view engine', 'ejs');
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const errorController = require('./controllers/errors.js')
-const mongoConnect = require('./utility/database').mongoConnect;
 const User = require('./models/user');
 const { homedir } = require('os');
 
@@ -42,10 +43,10 @@ app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 app.use(errorController.get404);
 
+console.log(connectionUri);
 
-
-// call our mongoConnect method in database.js
-mongoConnect(() => {
+mongoose.connect(connectionUri)
+.then(result => {
     app.listen(3000);
-});
-
+})
+.catch(err => console.log(err));

@@ -3049,11 +3049,41 @@ It handles the syntax for running our db queries, It uses Schemas and models to 
 
 ### Mongoose Setup
 
+#### Install mongoose
 
++ In the terminal enter : `npm install --save mongoose`
 
+#### Connect Mongoose to our database
 
++ We no longer need a database.js file as we did with core mongo db connection - mongoose handles all this functionality for us.
 
++ Go to app.js and import mongoose: `const mongoose = require('mongoose');`
 
++ comment out any existing imports from now deleted or non existent sources such as database.js.
+
++ Setup an env file - where we can store our connection url
+
+  ```
+  const MONGO_URI = 'mongodb+srv://root:AcmePassword@myfirstcluster.ugdke.mongodb.net/AcmeShop?retryWrites=true&w=majority'
+  
+  exports.connectionUri = MONGO_URI;
+  ```
+
++ Add this env file to gitignore
+
++ Import the connection url into app.js
+
++ Use this imported variable to connect - using mongoose connect method - which takes the connection url
+
+  ```
+  mongoose.connect(connectionUri)
+  .then(result => {
+      app.listen(3000);
+  })
+  .catch(err => console.log(err));
+  ```
+
+  
 
 
 
