@@ -8,7 +8,7 @@ class User {
         this.username = username;
         this.email = email;
         this.cart = cart != null ? cart : {items: []};
-        this.userId = userId;
+        this._id = userId;
     }
 
     save() {
@@ -50,7 +50,7 @@ class User {
         const updatedCart = {items: updatedCartItems}
         // now we want to store it in the users collection under current user
         return db.collection('users').updateOne(
-            { _id: new mongodb.ObjectId(this.userId) },
+            { _id: new mongodb.ObjectId(this._id) },
             { $set: {cart: updatedCart} }
         );
     }
@@ -93,7 +93,7 @@ class User {
         });
 
         return db.collection('users').updateOne(
-            { _id: new mongodb.ObjectId(this.userId) },
+            { _id: new mongodb.ObjectId(this._id) },
             { $set: {cart: {items: updatedCart} } }
         );
     }
@@ -101,17 +101,43 @@ class User {
     addToOrder() {
         const db = getDb();
         // store the cart in a collection called orders
-        return db.collection('orders').insertOne(this.cart)
+
+        // firstly we want detailed information about the product and the user in the order
+        // so we can use getCart() and work within that to use that data
+        return this.getCart()
+        .then(products => {
+            // create our order data
+            const orderData = {
+                items: products,
+                user: {
+                    _id: new mongodb.ObjectId(this._id),
+                    name: this.username
+                }
+            }
+            // insert the orderData
+            return db.collection('orders').insertOne(orderData)
+        })
         .then(result => {
             // empty the cart in the user object
             this.cart = {items: []};
             // empty the cart in the database
             return db.collection('users').updateOne(
-                { _id: new mongodb.ObjectId(this.userId) },
+                { _id: new mongodb.ObjectId(this._id) },
                 { $set: {cart: {items: []} } }
             );
         })
         .catch(err => console.log(err));
+    }
+
+
+    getOrder() {
+        const db = getDb();
+        // we need to find orders for specific user
+        // we can define a path to search in for the user id - surrounded by quotes - 'user._id' in this case
+        // then we will compare it with the current users id
+        return db.collection('orders')
+        .find({ 'user._id': new mongodb.ObjectId(this._id) })
+        .toArray();
     }
 
 

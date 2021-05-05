@@ -15,8 +15,8 @@
                 <h1>Order Number: <%= order.id %></h1>
                 <!-- We can now loop through the products that we associated with the order in the controller -->
                 <ul>
-                    <% order.products.forEach(product => { %>
-                    <li><%= product.title %>: (<%= product.orderItem.quantity %>)
+                    <% order.items.forEach(product => { %>
+                    <li><%= product.title %>: (<%= product.quantity %>)
                         <ul>
                             <li><%= product.description %></li>
                             <li><%= product.price %></li>

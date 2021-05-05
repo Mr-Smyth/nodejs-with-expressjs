@@ -115,7 +115,7 @@ exports.postOrder = (req, res, next) => {
 
 // Display our Checkout controller
 exports.getOrders = (req, res, next) => {
-    req.user.getOrders({ include: ['products'] })
+    req.user.getOrder()
     .then(orders => {
         res.render('shop/orders', {
             pageTitle: 'Your Orders',

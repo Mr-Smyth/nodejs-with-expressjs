@@ -2376,7 +2376,7 @@ Compass is a free utility which gives us a GUI in which we can visualize our DB
           this.imageUrl = imageUrl;
           // add a ternary here to set value to null if no id is passed
           this._id = id ? new mongodb.ObjectId(id): null;
-          this.userId = userId;
+          this._id = userId;
   ```
 
 + Next we now must add to our add product controller. First we must add null to represent the product id which would not exist if creating a new product. Then add in the user id from the request body.
@@ -2423,7 +2423,7 @@ For every user we have a cart - the cart will hold the products for that user - 
           return db
           .collection('users')
           .updateOne(
-              { _id: new mongodb.ObjectId(this.userId) },
+              { _id: new mongodb.ObjectId(this._id) },
               { $set: {cart: updatedCart} }
           );
       }
@@ -2558,7 +2558,7 @@ This is probably a little too much information, so we will reduce it a little.
           
           // now we want to store it in the users collection under current user
           return db.collection('users').updateOne(
-              { _id: new mongodb.ObjectId(this.userId) },
+              { _id: new mongodb.ObjectId(this._id) },
               { $set: {cart: updatedCart} }
           );
       }
@@ -2657,7 +2657,7 @@ This is probably a little too much information, so we will reduce it a little.
           });
   
           return db.collection('users').updateOne(
-              { _id: new mongodb.ObjectId(this.userId) },
+              { _id: new mongodb.ObjectId(this._id) },
               { $set: {cart: {items: updatedCart} } }
           );
       }
@@ -2690,26 +2690,46 @@ This is probably a little too much information, so we will reduce it a little.
 
 ### Add Orders
 
-#### In Models - user model
+#### In Models - user model - create addToOrder
 
 + We will use the user model to save the cart to a new collection called orders
+
++ We need detailed information in the order about the product and the user
+
++ We can create an order object and use getCart method to insert full product details with quantity
+
++ We can then also add the current user
+
++ Insert this into the db
 
 + We will then empty the cart
 
   ```
-      addToOrder() {
+  addToOrder() {
           const db = getDb();
-          
           // store the cart in a collection called orders
-          return db.collection('orders').insertOne({this.cart})
-          
+  
+          // firstly we want detailed information about the product and the user in the order
+          // so we can use getCart() and work within that to use that data
+          this.getCart()
+          .then(products => {
+              // create our order data
+              const orderData = {
+                  items: products,
+                  user: {
+                      _id: new mongodb.ObjectId(this._id),
+                      name: this.username
+                  }
+              }
+              // insert the orderData
+              return db.collection('orders').insertOne(orderData)
+          })
           .then(result => {
               // empty the cart in the user object
               this.cart = {items: []};
-              
               // empty the cart in the database
               return db.collection('users').updateOne(
-                  { _id: new mongodb.ObjectId(this.userId) },
+                  { _id: new mongodb.ObjectId(this._id) },
                   { $set: {cart: {items: []} } }
               );
           })
@@ -2734,13 +2754,90 @@ This is probably a little too much information, so we will reduce it a little.
   };
   ```
 
+
+
+### Get Orders
+
+#### In Models - user model - create getOrder
+
++ Create a method that gets the orders but only the orders whose id matched current users id
+
++ See in this example - you can set a default path for the target we are checking - 'user._id' - in this case
+
+  ```
+  getOrder() {
+          const db = getDb();
+          // we need to find orders for specific user
+          // we can define a path to search in for the user id - surrounded by quotes - 'user._id' in 
+          // this case
+          // then we will compare it with the current users id
+          
+          return db.collection('orders')
+          .find({ 'user._id': new mongoDb.ObjectId(this._id) })
+          .toArray();
+      }
+  ```
+
+  
+
+
+
 #### In Controllers - GetOrders
 
++ Grab the order from our getOrder method above and return to the orders template
+
+  ```
+  exports.getOrders = (req, res, next) => {
+      req.user.getOrder()
+      .then(orders => {
+          res.render('shop/orders', {
+              pageTitle: 'Your Orders',
+              path :'/orders',
+              orders: orders
+          });
+      })
+      .catch(err => console.log(err));
+  };
+  ```
+
+  
+
+#### In routes
+
++ Make sure the display orders route is correct: `router.get('/orders', shopController.getOrders);`
 
 
 
+#### In Views
 
++ Make sure you are targeting the correct data:
 
+  ```
+  <main>
+          <% if(orders.length <= 0) {  %>
+              <h1>Orders - No Orders as yet!</h1>
+          <% } else { %>
+              <% orders.forEach(order => {  %>
+                  <!-- Every order will have an ID -->
+                  <h1>Order Number: <%= order.id %></h1>
+                  <!-- We can now loop through the products that we associated with the order in the 
+                  	controller -->
+                  <ul>
+                      <% order.items.forEach(product => { %>
+                      <li><%= product.title %>: (<%= product.quantity %>)
+                          <ul>
+                              <li><%= product.description %></li>
+                              <li><%= product.price %></li>
+                          </ul>
+                      </li>
+                      <% }) %>
+                  </ul>
+              <% }); %>
+          <% } %>
+      </main>
+  ```
+
+  
 
 
 
