@@ -9,7 +9,6 @@
 - [SQL](#sql)
     + [Horizontal scaling](#horizontal-scaling)
     + [Vertical scaling](#vertical-scaling)
-  
   ---
   
   * [The SQL setup with Node JS](#the-sql-setup-with-node-js)
@@ -77,7 +76,7 @@
 ---
 
 - [NoSql](#nosql)
-    
+  
     + [Horizontal scaling](#horizontal-scaling-1)
   + [Vertical scaling](#vertical-scaling-1)
   * [What is Mongo Db](#what-is-mongo-db)
@@ -3081,6 +3080,52 @@ It handles the syntax for running our db queries, It uses Schemas and models to 
       app.listen(3000);
   })
   .catch(err => console.log(err));
+  ```
+
+  **Mongoose is now ready to use**
+
+
+
+### Using Mongoose
+
+#### Setting up a product Schema
+
+It may seem odd to set up a schema - in mongoDb - but what mongoose gives you is the freedom to code without thinking of where or how to get or insert data - mongoose does that for you. But to allow mongoose to do this it does need to know how you would like your data laid out. - Worth noting that schemas are not essential - we could still simply use mongoose to manually manage our db.
+
++ In our product.js model import mongoose
+
++ set up a Schema variable equal to the mongoose Schema constructor.
+
++ Then create a new instance  called productSchema
+
++ Into this we pass an object which describes the structure of a product
+
+  ```
+  const mongoose = require('mongoose');
+  
+  // set up a variable to represent the Schema constructor
+  const Schema = mongoose.Schema;
+  
+  // create a new schema - a product schema - by instantiating a Schema object.
+  // pass in an object that defines how your products should look
+  const productSchema = new Schema({
+      title: {
+          type: String,
+          required: true
+      },
+      price: {
+          type: Number,
+          required: true
+      },
+      description: {
+          type: String,
+          required: true
+      },
+      imageUrl: {
+          type: String,
+          required: true
+      }
+  });
   ```
 
   

@@ -1,3 +1,41 @@
+const mongoose = require('mongoose');
+
+// set up a variable to represent the Schema constructor
+const Schema = mongoose.Schema;
+
+// create a new schema - a product schema - by instantiating a Schema object.
+// pass in an object that defines how your products should look
+const productSchema = new Schema({
+    title: {
+        type: String,
+        required: true
+    },
+    price: {
+        type: Number,
+        required: true
+    },
+    description: {
+        type: String,
+        required: true
+    },
+    imageUrl: {
+        type: String,
+        required: true
+    }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
 // const mongodb = require('mongodb');
 
 
