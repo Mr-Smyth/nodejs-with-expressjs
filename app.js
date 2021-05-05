@@ -43,7 +43,6 @@ app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 app.use(errorController.get404);
 
-console.log(connectionUri);
 
 mongoose.connect(connectionUri)
 .then(result => {
