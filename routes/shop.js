@@ -6,11 +6,11 @@ const router = express.Router();
 
 const shopController = require('../controllers/shop');
 
-// // Landing page
-// router.get('/', shopController.getIndex);
+// Landing page
+router.get('/', shopController.getIndex);
 
-// // Product List page
-// router.get('/product-list', shopController.getProducts);
+// Product List page
+router.get('/product-list', shopController.getProducts);
 
 // // Product Details page - takes in the product id in the url
 // router.get('/product-details/:productId', shopController.getProductDetails);

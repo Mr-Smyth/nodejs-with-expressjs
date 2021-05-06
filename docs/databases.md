@@ -3086,9 +3086,9 @@ It handles the syntax for running our db queries, It uses Schemas and models to 
 
 
 
-### Using Mongoose
+### Using Mongoose - Setting up a schema
 
-#### Setting up a product Schema
+#### Models - product.js
 
 It may seem odd to set up a schema - in mongoDb - but what mongoose gives you is the freedom to code without thinking of where or how to get or insert data - mongoose does that for you. But to allow mongoose to do this it does need to know how you would like your data laid out. - Worth noting that schemas are not essential - we could still simply use mongoose to manually manage our db.
 
@@ -3224,7 +3224,63 @@ It may seem odd to set up a schema - in mongoDb - but what mongoose gives you is
   .catch(err => console.log(err));
   ```
 
+
+
+### Fetching products to display on page
+
+***I will not mention to activate or enter the routes - but this must be done for each stage - i will mention it if there  is some variation to the standard setup of the routes.***
+
+#### In Controllers - Shop.js - getProducts 
+
++ Here we can use one of the mongoose static methods that exist now in our model - `find()`
+
++ find() - when used in mongoose does not give us a cursor like in plain mongo - instead it gives us the actual products. Now we can change this by tacking on `.cursor()` to the end and then it will return a cursor where we can use next() or eachAsync() to loop through them. But in this example we will just use the `find()` method to return the actual products.
+
+  ```
+  exports.getProducts = (req, res, next) => {
+      Product.find()
+      // we should then have our products
+      .then(products => {
+          console.log(products);
+          res.render('shop/product-list', {
+              products: products,
+              pageTitle: 'All Products',
+              path :'/product-list',
+          });
+      })
+      .catch(err => {
+          console.log(err);
+      });    
+  };
+  ```
+
+
+
+#### In Controllers - Shop.js - getIndex
+
++ We will setup this controller in the same way as above.
+
+  ```
+  exports.getIndex = (req, res, next) => {
+      Product.find()
+      // we should then have our products in an object
+      .then(products => {
+          console.log(products);
+          res.render('shop/index', {
+              products: products,
+              pageTitle: 'Home page',
+              path :'/index',
+          });
+      })
+      .catch(err => {
+          console.log(err);
+      });
+  };
+  ```
+
   
+
+
 
 
 

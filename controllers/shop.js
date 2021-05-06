@@ -3,9 +3,10 @@ const Product = require('../models/product');
 
 // Display our products controller
 exports.getProducts = (req, res, next) => {
-    Product.fetchAll()
+    Product.find()
     // we should then have our products
     .then(products => {
+        console.log(products);
         res.render('shop/product-list', {
             products: products,
             pageTitle: 'All Products',
@@ -39,9 +40,10 @@ exports.getProductDetails = (req, res, next) => {
 
 // Display our Home Page controller
 exports.getIndex = (req, res, next) => {
-    Product.fetchAll()
+    Product.find()
     // we should then have our products in an object
     .then(products => {
+        console.log(products);
         res.render('shop/index', {
             products: products,
             pageTitle: 'Home page',
@@ -49,7 +51,7 @@ exports.getIndex = (req, res, next) => {
         });
     })
     .catch(err => {
-        console.log(err)
+        console.log(err);
     });
 };
 
