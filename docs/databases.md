@@ -3130,6 +3130,134 @@ It may seem odd to set up a schema - in mongoDb - but what mongoose gives you is
 
   
 
+#### Exporting the model
+
++ The model is what we will export the product schema as. Mongoose works with these models and they refer to the blueprint which is the schema created above.
+
++ To export the model we use module.exports  and we make that equal to mongoose.model() and pass in the name we want our model to be followed by the schema used to define this model.
+
++ The name you give this model, will also be pluralised and used as the collection name in mongoDb
+
+  ```
+  module.exports = mongoose.model('Product', productSchema);
+  ```
+
+  
+
+#### Using the exported model - Setup postAddProduct controller in Admin
+
++ Import the Product model: `const Product = require('../models/product');`.
+
++ Go to the postAddProduct controller in admin controllers
+
++ We collect the data from the template via the request body and then pass it into a new instance of our model
+
++ We can then call save and redirect
+
+  ```
+  exports.postAddProduct = (req, res, next) => {
+      // get form data
+      const title = req.body.title;
+      const imageUrl = req.body.imageUrl;
+      const price = req.body.price;
+      const description = req.body.description;
+      const product = new Product(
+          {
+              title: title,
+              imageUrl: imageUrl,
+              price: price,
+              description: description
+          });
+      
+      product.save()
+      .then(response => {
+          console.log(response);
+          res.redirect('/admin/products');
+      })
+      .catch(err => {
+          console.log(err);
+      });
+  };
+  ```
+
++ This should now allow us to add a product, make sure the routes for add product are setup - view previous code for this - and also comment out any previous user setup that may be included in the app.js file from previous sett-ups 
+
++ Current app.js file example here :
+
+  ```
+  const path = require('path');
+  const express = require('express');
+  const bodyParser = require('body-parser');
+  const mongoose = require('mongoose');
+  const connectionUri = require('./utility/env').connectionUri;
+  
+  const app = express();
+  
+  // now setup the default template engine
+  app.set('view engine', 'ejs');
+  
+  const adminRoutes = require('./routes/admin');
+  const shopRoutes = require('./routes/shop');
+  const errorController = require('./controllers/errors.js')
+  const { homedir } = require('os');
+  
+  
+  app.get('/favicon.ico', (req, res) => {
+      res.status(204);
+      res.end();
+  });
+  
+  app.use(bodyParser.urlencoded({extended: false}));
+  // this tells express to look into the public folder to serve up css files
+  app.use(express.static(path.join(__dirname, 'public')));
+  
+  // outsourced routes
+  app.use('/admin', adminRoutes);
+  app.use(shopRoutes);
+  app.use(errorController.get404);
+  
+  
+  mongoose.connect(connectionUri)
+  .then(result => {
+      app.listen(3000);
+  })
+  .catch(err => console.log(err));
+  ```
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # Future Improvements

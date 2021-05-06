@@ -12,7 +12,7 @@ app.set('view engine', 'ejs');
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const errorController = require('./controllers/errors.js')
-const User = require('./models/user');
+// const User = require('./models/user');
 const { homedir } = require('os');
 
 
@@ -26,17 +26,17 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // register a new middleware to get the user set into the request object
-app.use((req, res, next) => {
-    User.findById('60912a53cb8bb4b081700789')
-    .then(user => {
-        // we want to make req.user an instance of User - so we can use all the methods
-        req.user = new User(user.username, user.email, user.cart, user._id);
-        next();
-    })
-    .catch(err => {
-        console.log(err);
-    });
-});
+// app.use((req, res, next) => {
+//     User.findById('60912a53cb8bb4b081700789')
+//     .then(user => {
+//         // we want to make req.user an instance of User - so we can use all the methods
+//         req.user = new User(user.username, user.email, user.cart, user._id);
+//         next();
+//     })
+//     .catch(err => {
+//         console.log(err);
+//     });
+// });
 
 // outsourced routes
 app.use('/admin', adminRoutes);
