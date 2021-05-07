@@ -46,7 +46,7 @@ exports.getEditProduct = (req, res, next) => {
     const prodId = req.params.productId;
 
     // call the fetchOne method inside product model - returns a product
-    Product.fetchOne(prodId)
+    Product.findById(prodId)
     .then(product => {
         // add a check in case product does not exist
         if (!product) {
@@ -105,7 +105,7 @@ exports.getProducts = (req, res, next) => {
     // Product.findAll()
 
     // use the user method
-    Product.fetchAll()
+    Product.find()
     .then(products => {
         res.render('admin/products', {
             products: products,
