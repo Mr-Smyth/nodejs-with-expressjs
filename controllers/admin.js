@@ -73,12 +73,21 @@ exports.postGetEditProduct = (req, res, next) => {
     const updatedImageUrl = req.body.imageUrl;
     const updatedDescription = req.body.description;
     
-    // create a new product - make sure order matches the product constructor!
-    const product = new Product(updatedTitle, updatedPrice, updatedDescription, updatedImageUrl, prodId);
-    
-    // save the product
-    product.save()
+    // find the product, then we get access to it
+    Product.findById(prodId)
+    .then(product => {
+        // this gives us access to an object which is the product
+        // update the product mongoose object
+        product.title = updatedTitle;
+        product.price = updatedPrice;
+        product.imageUrl = updatedImageUrl;
+        product.description = updatedDescription;
+
+        // then call the built in save method save
+        product.save(); 
+    })
     .then(result => {
+        console.log('UPDATED PRODUCT');
         res.redirect('/admin/products');
     })
     .catch(err => {

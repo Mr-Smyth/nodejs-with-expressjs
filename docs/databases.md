@@ -3310,9 +3310,116 @@ It may seem odd to set up a schema - in mongoDb - but what mongoose gives you is
 
   
 
+### Edit product page
 
+#### In Admin controller - get products
 
++ make sure you use the find method here to return all products
 
+#### In Admin controller - getEditProduct
+
++ Use the `findById()` method, to return the product which we send to the template
+
+  ```
+  exports.postAddProduct = (req, res, next) => {
+      // get form data
+      const title = req.body.title;
+      const imageUrl = req.body.imageUrl;
+      const price = req.body.price;
+      const description = req.body.description;
+      const product = new Product(
+          {
+              title: title,
+              imageUrl: imageUrl,
+              price: price,
+              description: description
+          });
+      
+      product.save()
+      .then(response => {
+          console.log('PRODUCT CREATED');
+          res.redirect('/admin/products');
+      })
+      .catch(err => {
+          console.log(err);
+      });
+  };
+  
+  // gets theproduct into a form that needs to be edited
+  exports.getEditProduct = (req, res, next) => {
+      // check quer param to see if param sent from template is true
+      const editMode = req.query.edit;
+      if (!(editMode === 'true')) {
+          return res.redirect('/');
+      }
+  
+      // now we need the product id that was passed in the url
+      const prodId = req.params.productId;
+  
+      // call the fetchOne method inside product model - returns a product
+      Product.findById(prodId)
+      .then(product => {
+          // add a check in case product does not exist
+          if (!product) {
+              return res.redirect('/');
+              // could also pass an error in here
+          }
+          res.render('admin/edit-product', {
+              pageTitle: 'Edit Product Page',
+              path: '/admin/edit-product',
+              editing: editMode,
+              product: product
+          });
+      })
+      .catch(err => {
+          console.log(err);
+      });
+  };
+  ```
+
+  
+
+#### In Controllers - postGetEditProduct()
+
++ The approach here is to get the product - which is an object
+
++ Then add in the updated data
+
++ Then call save 
+
+  ```
+  exports.postGetEditProduct = (req, res, next) => {
+      //collect the edited product data from the request body
+      const prodId = req.body.productId;
+      const updatedTitle = req.body.title;
+      const updatedPrice = req.body.price;
+      const updatedImageUrl = req.body.imageUrl;
+      const updatedDescription = req.body.description;
+      
+      // find the product, then we get access to it
+      Product.findById(prodId)
+      .then(product => {
+          // this gives us access to an object which is the product
+          // update the product mongoose object
+          product.title = updatedTitle;
+          product.price = updatedPrice;
+          product.imageUrl = updatedImageUrl;
+          product.description = updatedDescription;
+  
+          // then call the built in save method save
+          product.save(); 
+      })
+      .then(result => {
+          console.log('UPDATED PRODUCT');
+          res.redirect('/admin/products');
+      })
+      .catch(err => {
+          console.log(err);
+      });
+  };
+  ```
+
+  
 
 
 
