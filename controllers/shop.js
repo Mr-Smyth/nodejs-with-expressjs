@@ -25,7 +25,7 @@ exports.getProductDetails = (req, res, next) => {
     const prodId = req.params.productId;
 
     // use our static method from product model
-    Product.fetchOne(prodId)
+    Product.findById(prodId)
     .then(product => {
         res.render('shop/product-details', {
             product: product, 

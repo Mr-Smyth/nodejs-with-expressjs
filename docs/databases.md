@@ -3280,7 +3280,35 @@ It may seem odd to set up a schema - in mongoDb - but what mongoose gives you is
 
   
 
+### Fetching a single product - for product details
 
+#### In controllers - the getProductDetails
+
++ Here we can use another built in static method which now exists in our model - `findById()`.
+
++ This finds a product by passing in an id.
+
++ It also will convert a string if the id is passed in as a string
+
+  ```
+  exports.getProductDetails = (req, res, next) => {
+      const prodId = req.params.productId;
+      // use our static method from mongoose which lives in our product model
+      Product.findById(prodId)
+      .then(product => {
+          res.render('shop/product-details', {
+              product: product, 
+              pageTitle: product.title,
+              path: '/product-details'
+          });
+      })
+      .catch(err => {
+          console.log(err)
+      });
+  };
+  ```
+
+  
 
 
 
