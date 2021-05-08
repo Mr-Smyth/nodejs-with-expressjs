@@ -3421,7 +3421,27 @@ It may seem odd to set up a schema - in mongoDb - but what mongoose gives you is
 
   
 
+### Delete Products
 
+#### In controllers - postDeleteProduct
+
++ There is no delete method we can use - instead us `findByIdAndRemove()`
+
+  ```
+  exports.postDeleteProduct = (req, res, next) => {
+      let prodId = req.body.productId;
+      Product.findByIdAndRemove(prodId)
+      .then(() => {
+          console.log(`Deleted - product`);
+          return res.redirect('/admin/products');
+      })
+      .catch(err => {
+          console.log(err);
+      });
+  };
+  ```
+
+  
 
 
 

@@ -19,8 +19,8 @@ router.get('/edit-product/:productId', adminController.getEditProduct);
 // handle the post from the edit-product page
 router.post('/edit-product', adminController.postGetEditProduct);
 
-// // handle the post from the delete-product link in admin products
-// router.post('/delete-product', adminController.postDeleteProduct);
+// handle the post from the delete-product link in admin products
+router.post('/delete-product', adminController.postDeleteProduct);
 
 // view products in admin page
 router.get('/products', adminController.getProducts);
