@@ -3486,10 +3486,49 @@ It may seem odd to set up a schema - in mongoDb - but what mongoose gives you is
 
 #### In app.js
 
++ Import the user model: `const User = require('./models/user');`
+
 + Create a user before we start listening
-+ 
 
+  ```
+  mongoose.connect(connectionUri)
+  .then(result => {
+      // create a new user
+      const user = new User({
+          username: 'Eamonn',
+          email: 'eamonn@homedir.ie',
+          cart: {
+              items: []
+          }
+      });
+      user.save();
+      app.listen(3000);
+  })
+  .catch(err => console.log(err));
+  ```
 
+  
+
++ Grab the users id in compass of mongo directly
+
++ We will now add that user to our request body
+
+  ```
+  // register a new middleware to get the user set into the request object
+  app.use((req, res, next) => {
+      User.findById('6098477212b68329d095f7f3')
+      .then(user => {
+          // we add our new mongoose user model object to the request
+          req.user = user;
+          next();
+      })
+      .catch(err => {
+          console.log(err);
+      });
+  });
+  ```
+
+  
 
 
 

@@ -26,17 +26,17 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // register a new middleware to get the user set into the request object
-// app.use((req, res, next) => {
-//     User.findById('60912a53cb8bb4b081700789')
-//     .then(user => {
-//         // we want to make req.user an instance of User - so we can use all the methods
-//         req.user = new User(user.username, user.email, user.cart, user._id);
-//         next();
-//     })
-//     .catch(err => {
-//         console.log(err);
-//     });
-// });
+app.use((req, res, next) => {
+    User.findById('6098477212b68329d095f7f3')
+    .then(user => {
+        // we add our new mongoose user model object to the request
+        req.user = user;
+        next();
+    })
+    .catch(err => {
+        console.log(err);
+    });
+});
 
 // outsourced routes
 app.use('/admin', adminRoutes);
@@ -46,15 +46,21 @@ app.use(errorController.get404);
 
 mongoose.connect(connectionUri)
 .then(result => {
-    // create a new user
-    const user = new User({
-        username: 'Eamonn',
-        email: 'eamonn@homedir.ie',
-        cart: {
-            items: []
+    // check have we already got a user
+    User.findOne()
+    .then(user => {
+        if (!user) {
+            // create a new user
+            const user = new User({
+                username: 'Eamonn',
+                email: 'eamonn@homedir.ie',
+                cart: {
+                    items: []
+                }
+            });
+            user.save();
+            app.listen(3000);
         }
     });
-    user.save();
-    app.listen(3000);
 })
 .catch(err => console.log(err));
