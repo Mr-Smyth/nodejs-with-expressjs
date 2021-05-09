@@ -27,7 +27,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // register a new middleware to get the user set into the request object
 app.use((req, res, next) => {
-    User.findById('6098477212b68329d095f7f3')
+    User.findById('609849aee999b92ee0c1d6f6')
     .then(user => {
         // we add our new mongoose user model object to the request
         req.user = user;
