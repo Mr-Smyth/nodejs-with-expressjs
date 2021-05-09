@@ -12,7 +12,7 @@ app.set('view engine', 'ejs');
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const errorController = require('./controllers/errors.js')
-// const User = require('./models/user');
+const User = require('./models/user');
 const { homedir } = require('os');
 
 
@@ -46,6 +46,15 @@ app.use(errorController.get404);
 
 mongoose.connect(connectionUri)
 .then(result => {
+    // create a new user
+    const user = new User({
+        username: 'Eamonn',
+        email: 'eamonn@homedir.ie',
+        cart: {
+            items: []
+        }
+    });
+    user.save();
     app.listen(3000);
 })
 .catch(err => console.log(err));

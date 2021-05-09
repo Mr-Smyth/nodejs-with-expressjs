@@ -3445,9 +3445,49 @@ It may seem odd to set up a schema - in mongoDb - but what mongoose gives you is
 
 ### Setting up a User model/Schema
 
-#### 
+#### In Models - In user.js
 
++ Create a schema for the user - including an embedded cart
 
+  ```
+  const mongoose = require('mongoose');
+  
+  const Schema = new mongoose.Schema;
+  
+  const userSchema = new Schema({
+      username: {
+          type: String,
+          required: true
+      },
+      email: {
+          type: String,
+          required: true
+      },
+      // embed the cart in the user
+      cart: {
+          // make items equal to an array of documents
+          items: [{
+              productId: {
+                  // make the type a type of ObjectId
+                  type: Schema.Types.ObjectId,
+                  required: true
+              },
+              quantity: {
+                  type: Number,
+                  required: true
+              },
+  
+          }]
+      },
+  });
+  ```
+
+  
+
+#### In app.js
+
++ Create a user before we start listening
++ 
 
 
 
