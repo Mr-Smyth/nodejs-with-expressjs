@@ -3443,7 +3443,9 @@ It may seem odd to set up a schema - in mongoDb - but what mongoose gives you is
 
   
 
+### Setting up a User model/Schema
 
+#### 
 
 
 
