@@ -3493,16 +3493,22 @@ It may seem odd to set up a schema - in mongoDb - but what mongoose gives you is
   ```
   mongoose.connect(connectionUri)
   .then(result => {
-      // create a new user
-      const user = new User({
-          username: 'Eamonn',
-          email: 'eamonn@homedir.ie',
-          cart: {
-              items: []
+      // check have we already got a user
+      User.findOne()
+      .then(user => {
+          if (!user) {
+              // create a new user
+              const user = new User({
+                  username: 'Eamonn',
+                  email: 'eamonn@homedir.ie',
+                  cart: {
+                      items: []
+                  }
+              });
+              user.save();
+              app.listen(3000);
           }
       });
-      user.save();
-      app.listen(3000);
   })
   .catch(err => console.log(err));
   ```
@@ -3529,6 +3535,53 @@ It may seem odd to set up a schema - in mongoDb - but what mongoose gives you is
   ```
 
   
+
+### Setting up a relationship between user and product
+
+#### In models - product schema
+
++ Edit this to include the user
+
+  ```
+  userId: {
+          type: Schema.Types.ObjectId,
+          // use a ref to make sure we are referring to an Id in the user collection
+          ref: 'User',
+          required: true
+      }
+  ```
+
+  
+
++ We add the user, and this can include a ref - for reference. This reference will say what collection the id reffers to.
+
++ When using embedded documents as we are - this ref is slightly redundant as the structure of an embedded document obviously implies a relationship anyhow.
+
+
+
+
+#### In Controllers - admin - addProduct controller
+
++ Here we need to add in the user because when we create a new product we want to store the userId.
+
+  ```
+  const product = new Product(
+          {
+              title: title,
+              imageUrl: imageUrl,
+              price: price,
+              description: description,
+              userId: req.user._id
+          });
+  ```
+
++ We could also simply make userId equal to req.user: `userId: req.user` - which is the complete user object - and mongoose will conveniently extract the id from the object for us.
+
+
+
+Restart sever and create new product - user should now be linked
+
+
 
 
 

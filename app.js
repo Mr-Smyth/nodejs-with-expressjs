@@ -59,8 +59,8 @@ mongoose.connect(connectionUri)
                 }
             });
             user.save();
-            app.listen(3000);
         }
+        app.listen(3000);
     });
 })
 .catch(err => console.log(err));

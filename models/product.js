@@ -21,6 +21,12 @@ const productSchema = new Schema({
     imageUrl: {
         type: String,
         required: true
+    },
+    userId: {
+        type: Schema.Types.ObjectId,
+        // use a ref to make sure we are referring to an Id in the user collection
+        ref: 'User',
+        required: true
     }
 });
 
