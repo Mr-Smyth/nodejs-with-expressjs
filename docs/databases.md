@@ -3571,25 +3571,76 @@ It may seem odd to set up a schema - in mongoDb - but what mongoose gives you is
               imageUrl: imageUrl,
               price: price,
               description: description,
-              userId: req.user._id
+              userId: req.user
           });
   ```
 
-+ We could also simply make userId equal to req.user: `userId: req.user` - which is the complete user object - and mongoose will conveniently extract the id from the object for us.
++ Above we make the userId equal to the entire user object - we can specify that its the id by adding `._id` - but with mongoose there is no need as mongoose will extract the id for us. Also this gives us some clever functionality when fetching - using `populate` and `specify`
+
++ Restart sever and create new product - user should now be linked
 
 
 
-Restart sever and create new product - user should now be linked
+### Fetching related data
+
+#### Sidenote - populate and select
+
+##### Populate()
+
++ At the moment our product should have a field with the user id embedded
++ If we wanted to fetch a product with only certain data - and perhaps even some of the users data, it could be quite cumbersome to manually extract each user of each product.
++ Mongoose allows us to do this by using `populate()` - It takes a path to the field you need to populate as a first argument, and then takes  a string of what fields you want to extract as an optional 2nd argument
++ So if we wanted to populate our user, from the user id which we have in the product we could add this `.populate('userId', 'name')`
+
+##### Select()
+
++ We can use specify to specify what we want back from the data - it takes a string where we can specify what we want
++ For example : `.select('title price userId')` will bring back only the title and the price
 
 
 
+So doing something like this: 
+
+```
+Product.find()
+    .select('title price')
+    .populate('userId', 'username')
+    .then(products => {
+        console.log(products);
+        res.render('admin/products', {
+            products: products,
+            pageTitle: 'Admin Products',
+            path :'/admin/products',
+        });
+    })
+```
 
 
 
+Will give you this in the console:
+
+```
+{
+    _id: 60991fd4c5dcfe232c98c8f8,
+    title: 'Tutoring - The Truth',
+    price: 99.99,
+    userId: { _id: 609849aee999b92ee0c1d6f6, username: 'Eamonn' }
+}
+```
+
+We could also specify that we dont want the id, by adding it with a minus symbol: `.select('title price -_id')` - giving us this:
+
+```
+{
+    title: 'Tutoring - The Truth',
+    price: 99.99,
+    userId: { _id: 609849aee999b92ee0c1d6f6, username: 'Eamonn' }
+}
+```
 
 
 
-
+### 
 
 
 
