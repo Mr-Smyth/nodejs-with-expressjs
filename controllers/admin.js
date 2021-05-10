@@ -116,8 +116,6 @@ exports.getProducts = (req, res, next) => {
 
     // use the user method
     Product.find()
-    .select('title price -_id')
-    .populate('userId', 'username')
     .then(products => {
         console.log(products);
         res.render('admin/products', {

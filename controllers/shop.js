@@ -59,7 +59,7 @@ exports.getIndex = (req, res, next) => {
 exports.postToCart = (req, res, next) => {
 
     const prodId = req.body.productId;
-    Product.fetchOne(prodId)
+    Product.findById(prodId)
     .then(product => {
         // call the addToCart - expects a product - and returns a promise
         return req.user.addToCart(product)
