@@ -79,6 +79,7 @@ exports.getCart = (req, res, next) => {
     // must add this as populate does not return a promise - execPopulate() does this for us.
     .execPopulate()
     .then(user => {
+
         res.render('shop/cart', {
             pageTitle: 'Shopping Cart',
             path :'/cart',
