@@ -3226,7 +3226,7 @@ It may seem odd to set up a schema - in mongoDb - but what mongoose gives you is
 
 
 
-### Fetching products to display on page
+### Fetching products to display on page - using Mongoose
 
 ***I will not mention to activate or enter the routes - but this must be done for each stage - i will mention it if there  is some variation to the standard setup of the routes.***
 
@@ -3280,7 +3280,7 @@ It may seem odd to set up a schema - in mongoDb - but what mongoose gives you is
 
   
 
-### Fetching a single product - for product details
+### Fetching a single product - for product details - using Mongoose
 
 #### In controllers - the getProductDetails
 
@@ -3310,7 +3310,7 @@ It may seem odd to set up a schema - in mongoDb - but what mongoose gives you is
 
   
 
-### Edit product page
+### Edit product page - using Mongoose
 
 #### In Admin controller - get products
 
@@ -3443,7 +3443,7 @@ It may seem odd to set up a schema - in mongoDb - but what mongoose gives you is
 
   
 
-### Setting up a User model/Schema
+### Setting up a User model/Schema - using Mongoose
 
 #### In Models - In user.js
 
@@ -3536,7 +3536,7 @@ It may seem odd to set up a schema - in mongoDb - but what mongoose gives you is
 
   
 
-### Setting up a relationship between user and product
+### Setting up a relationship between user and product - using Mongoose
 
 #### In models - product schema
 
@@ -3640,13 +3640,13 @@ We could also specify that we dont want the id, by adding it with a minus symbol
 
 
 
-### The Cart
+### The Cart - using Mongoose
 
 In the previous  lesson where we used raw mongodb commands - we included our own method for adding to the cart. With mongoose there is obviously no default add to cart built in method - but we can add our own custom methods to our schema - in this case we will need to add it to our user schema as the cart is related to a user - not to a product.
 
 
 
-To do this we will access our userSchema and use the methods key - which allows us to create our own methods
+To do this we will access our userSchema and use the methods key - which allows us to create our own methods. Read more here =>  [Docs...](https://mongoosejs.com/docs/guide.html#methods)
 
 
 
@@ -3667,6 +3667,8 @@ To do this we will access our userSchema and use the methods key - which allows 
 + Inside this function we can use code very similar to the logic we used in the mongoDb cart section.
 
 + The big differences are we do not need to convert the ObjectId when storing it - mongoose will do this for us. And we just call save at the end. 
+
++ Do **not** declare methods using ES6 arrow functions (`=>`). Arrow functions [explicitly prevent binding `this`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions#No_binding_of_this), so your method will **not** have access to the document
 
 + Full commented code example of addToCart method in the user schema:
 
@@ -3743,6 +3745,81 @@ To do this we will access our userSchema and use the methods key - which allows 
 + Check to make sure the correct route is active in routes file
 
 + You should be able to add items to the cart
+
+
+
+### Get the Cart - using Mongoose
+
+We do not need to add a method for this, we can do it all in the controller using populate. This is because we have the cart embedded within the user like this:
+
+```
+{
+  cart: { items: [ [Object], [Object] ] },
+  _id: 609849aee999b92ee0c1d6f6,
+  username: 'Eamonn',
+  email: 'eamonn@homedir.ie',
+  __v: 0
+}
+```
+
+
+
+So all we need to do is populate out these items that have product Id's stored within them, and we can do this in the controller
+
+#### Controllers - getCart()
+
++ We will use .populate to target the productId inside the cart, to do this we must pass in the path to the productId.
+
++ Then we need to use `execPopulate()` to get a promise that we can then work with
+
++ Then we will have the full user with the populated cart, we can point to this when returning the products
+
+  ```
+  exports.getCart = (req, res, next) => {
+      req.user
+      // use populate to populate out the product - we just need to pass in the path to the productId
+      .populate('cart.items.productId')
+      // must add this as populate does not return a promise - execPopulate() does this for us.
+      .execPopulate()
+      .then(user => {
+  
+          res.render('shop/cart', {
+              pageTitle: 'Shopping Cart',
+              path :'/cart',
+              products: user.cart.items
+          });
+      })
+      .catch(err => {
+          console.log(err);
+      });
+  };
+  ```
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

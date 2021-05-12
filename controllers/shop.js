@@ -73,12 +73,16 @@ exports.postToCart = (req, res, next) => {
 
 // Display our Cart controller
 exports.getCart = (req, res, next) => {
-    req.user.getCart()
-    .then(products => {
+    req.user
+    // use populate to populate out the product - we just need to pass in the path to the productId
+    .populate('cart.items.productId')
+    // must add this as populate does not return a promise - execPopulate() does this for us.
+    .execPopulate()
+    .then(user => {
         res.render('shop/cart', {
             pageTitle: 'Shopping Cart',
             path :'/cart',
-            products: products
+            products: user.cart.items
         });
     })
     .catch(err => {
