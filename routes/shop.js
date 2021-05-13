@@ -18,8 +18,8 @@ router.get('/product-details/:productId', shopController.getProductDetails);
 // Shopping Cart page
 router.get('/cart', shopController.getCart);
 
-// // handle delete item from cart post method
-// router.post('/cart-delete-item', shopController.deleteCartItem);
+// handle delete item from cart post method
+router.post('/cart-delete-item', shopController.deleteCartItem);
 
 // Product details to Shopping Cart Post handler
 router.post('/cart', shopController.postToCart);

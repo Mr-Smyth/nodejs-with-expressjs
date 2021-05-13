@@ -3797,7 +3797,49 @@ So all we need to do is populate out these items that have product Id's stored w
 
   
 
+### Delete item from cart using Mongoose
 
+To do this we will add another method to our user schema
+
+#### Models - User - deleteOne
+
++ We will make an updated cart variable and make it equal to every item in the cart - except for the item we want to delete
+
++ Then save this as our cart
+
+  ```
+  userSchema.methods.deleteOne = function(prodId) {
+      // using filter we can create an array of items we want to keep - ie do not include the item matching 
+      // the prodId
+      const updatedCart = this.cart.items.filter(item => {
+          return item.productId.toString() !== prodId.toString();
+      });
+  
+      this.cart.items = updatedCart;
+      return this.save();
+  }
+  ```
+
+  
+
+#### Controllers - shop deleteCartItem
+
++ This can stay as it did in the mongoDb lessons, which calls a method called deleteOne()
+
+  ```
+  exports.deleteCartItem = (req, res, next) => {
+      // get the product id from the request
+      const prodId = req.body.productId;
+  
+      req.user.deleteOne(prodId)
+      .then(result => {
+          res.redirect('/cart');
+      })
+      .catch(err => console.log(err))
+  };
+  ```
+
+  
 
 
 
