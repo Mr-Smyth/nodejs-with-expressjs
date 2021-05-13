@@ -3841,11 +3841,88 @@ To do this we will add another method to our user schema
 
   
 
+### Order - with mongoose
 
++ First we need a new model/schema for orders
 
+#### Models - order.js
 
++ Create a schema with user data and product data:
 
++ We then export this and the rest we will do in the controller
 
++ we will make products and array of documents - containing each products details and quantity
+
+  ```
+  const mongoose = require('mongoose');
+  
+  // set up a variable to represent the Schema constructor
+  const Schema = mongoose.Schema;
+  
+  // create a new schema - a order schema - by instantiating a Schema object.
+  // pass in an object that defines how our order should look
+  const orderSchema = new Schema({
+      products: [{
+          productData: { type: Object, required: true },
+          quantity: { type: Number, required: true },
+      }],
+      user: {
+          username: { type: String, required: true },
+          userId: { type: Schema.Types.ObjectId, ref: 'User', required: true }
+      }
+  });
+  
+  
+  module.exports = mongoose.model('Order', orderSchema);
+  ```
+
+#### In Controllers - shop.js - postToCart
+
++ Import the above model
+
++ Get the products in the cart - to do this we will call req.user and ask it to populate the cart.items.productId field - as this is where the cart items are stored.
+
++ We will then use execPopulate to transform it to a promise 
+
++ Then within the .then block we will use map to iterate over each product in the cart and give us back what we need for our schema, which is a product entry and a quantity entry.
+
++ Inside the same then block we ccreate an new instance of the order, inserting the correct data to satisfy our order schema.
+
++ we then return order.save and chain on a then to handle redirect and catch any errors
+
+  ```
+  exports.postOrder = (req, res, next) => {
+  
+      req.user
+      // use populate to populate out the product - we just need to pass in the path to the productId
+      .populate('cart.items.productId')
+      .execPopulate()
+      .then(user => {
+          // here we prepare our product object in the format our schema expects
+          const products = user.cart.items.map(item => {
+              return { quantity: item.quantity, product: item.productId }
+          });
+          // create a new instance of our order
+          const order = new Order({
+              user: {
+                  username: req.user.username,
+                  userId: req.user  // mongoose will extract the id - or we can specify and point to ._id
+              },
+              products: products
+          });
+          
+          // save this model, and return it so we can chain then onto it
+          return order.save()
+      })
+      
+      .then(result => {
+          res.redirect('/orders');
+      })
+      .catch(err => console.log(err));
+  };
+  ```
+
+  
 
 
 

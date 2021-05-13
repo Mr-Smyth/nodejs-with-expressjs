@@ -1,5 +1,6 @@
 // import model
 const Product = require('../models/product');
+const Order = require('../models/order');
 
 // Display our products controller
 exports.getProducts = (req, res, next) => {
@@ -112,8 +113,29 @@ exports.getCheckout = (req, res, next) => {
 
 // Handle creating an order from the cart
 exports.postOrder = (req, res, next) => {
-    // call our user model method to add cart to order
-    req.user.addToOrder()
+    req.user
+    // use populate to populate out the product - we just need to pass in the path to the productId
+    .populate('cart.items.productId')
+    .execPopulate()
+    .then(user => {
+        // here we prepare our product object in the format our schema expects
+        // each product will be passed to the products array in the schema
+        const products = user.cart.items.map(item => {
+            return { productData: item.productId,  quantity: item.quantity }
+        });
+        // create a new instance of our order
+        const order = new Order({
+            user: {
+                username: req.user.username,
+                userId: req.user  // mongoose will extract the id - or we can specify and point to ._id
+            },
+            // pass the products to the products array
+            products: products
+        });
+        
+        // save this model, and return it so we can chain then onto it
+        return order.save();
+    })
     .then(result => {
         res.redirect('/orders');
     })

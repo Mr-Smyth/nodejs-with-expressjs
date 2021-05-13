@@ -24,11 +24,11 @@ router.post('/cart-delete-item', shopController.deleteCartItem);
 // Product details to Shopping Cart Post handler
 router.post('/cart', shopController.postToCart);
 
-// // Handle creating an order from the cart
-// router.post('/create-order', shopController.postOrder);
+// Handle creating an order from the cart
+router.post('/create-order', shopController.postOrder);
 
-// // Checkout page
-// router.get('/checkout', shopController.getCheckout);
+// Checkout page
+router.get('/checkout', shopController.getCheckout);
 
 // // Orders page
 // router.get('/orders', shopController.getOrders);
