@@ -121,7 +121,9 @@ exports.postOrder = (req, res, next) => {
         // here we prepare our product object in the format our schema expects
         // each product will be passed to the products array in the schema
         const products = user.cart.items.map(item => {
-            return { productData: item.productId,  quantity: item.quantity }
+            // make productData equal to an object where we spread the productId but using a special  field that is provided by mongoose
+            // that is the '._doc'
+            return { productData: { ...item.productId._doc },  quantity: item.quantity }
         });
         // create a new instance of our order
         const order = new Order({

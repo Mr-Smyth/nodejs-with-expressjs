@@ -3886,7 +3886,11 @@ To do this we will add another method to our user schema
 
 + Then within the .then block we will use map to iterate over each product in the cart and give us back what we need for our schema, which is a product entry and a quantity entry.
 
-+ Inside the same then block we ccreate an new instance of the order, inserting the correct data to satisfy our order schema.
++ Inside the same then block we create an new instance of the order, inserting the correct data to satisfy our order schema.
+
++ make productData equal to an object where we spread the productId
+
++ Optional - i didnt find any difference with or without using `._doc`: ( *when spreading the productId object - use a special field that is provided by mongoose that is the `._doc`. We use `._doc` as this gives us access to only the data we want in the document, without this we would be getting a lot of meta data that is related to the object, so `._doc` filters this all out  and gives us the full product data)*
 
 + we then return order.save and chain on a then to handle redirect and catch any errors
 
@@ -3900,7 +3904,7 @@ To do this we will add another method to our user schema
       .then(user => {
           // here we prepare our product object in the format our schema expects
           const products = user.cart.items.map(item => {
-              return { quantity: item.quantity, product: item.productId }
+              return { productData: { ...item.productId._doc },  quantity: item.quantity }
           });
           // create a new instance of our order
           const order = new Order({
