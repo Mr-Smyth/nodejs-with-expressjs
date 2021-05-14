@@ -140,7 +140,7 @@ exports.postOrder = (req, res, next) => {
     })
     .then(result => {
         // clear out the cart
-        req.user.clearCart();
+        return req.user.clearCart();
     })
     .then(result => {
         res.redirect('/orders');
@@ -150,6 +150,10 @@ exports.postOrder = (req, res, next) => {
 
 // Display our Checkout controller
 exports.getOrders = (req, res, next) => {
+    Order.find( {'user.userId' : req.user._id} )
+    .then(orders => {
+        console.log(orders)
+    })
     req.user.getOrder()
     .then(orders => {
         res.render('shop/orders', {

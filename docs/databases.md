@@ -3932,7 +3932,7 @@ To do this we will add another method to our user schema
   
   
 
-### Clearing the cart
+### Clearing the cart - Using Mongoose
 
 #### in Models - user.js - add a clearCart method
 
@@ -3954,7 +3954,7 @@ To do this we will add another method to our user schema
   ```
       .then(result => {
           // clear out the cart
-          req.user.clearCart();
+          return req.user.clearCart();
       })
       .then(result => {
           res.redirect('/orders');
@@ -3965,7 +3965,7 @@ To do this we will add another method to our user schema
 
   
 
-
+### Get the Orders page - Using Mongoose
 
 
 
