@@ -11,6 +11,7 @@ app.set('view engine', 'ejs');
 
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
+const authRoutes = require('./routes/auth');
 const errorController = require('./controllers/errors.js')
 const User = require('./models/user');
 const { homedir } = require('os');
@@ -41,6 +42,7 @@ app.use((req, res, next) => {
 // outsourced routes
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
+app.use(authRoutes);
 app.use(errorController.get404);
 
 
