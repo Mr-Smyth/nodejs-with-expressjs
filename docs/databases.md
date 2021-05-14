@@ -29,7 +29,7 @@
         * [models](#models-2)
         * [controllers](#controllers-2)
   
-  ---
+---
   
   * [Using Sequelize](#using-sequelize)
     
@@ -50,7 +50,7 @@
       - [Using Sequelize - Deleting Products](#using-sequelize---deleting-products)
         * [in controllers - admin.js](#in-controllers---adminjs)
     
-    ---
+---
     
     
     
@@ -72,7 +72,6 @@
       - [Display our order on the orders page](#display-our-order-on-the-orders-page)
 
 ---
-
 ---
 
 - [NoSql](#nosql)
@@ -146,6 +145,57 @@
       - [In Controllers - GetOrders](#in-controllers---getorders)
       - [In routes](#in-routes)
       - [In Views](#in-views)
+
+---
+
+- [Mongoose](#mongoose)
+  * [Mongoose Setup](#mongoose-setup)
+    + [Install mongoose](#install-mongoose)
+    + [Connect Mongoose to our database](#connect-mongoose-to-our-database)
+  * [Using Mongoose - Setting up a schema](#using-mongoose---setting-up-a-schema)
+    + [Models - product.js](#models---productjs)
+    + [Exporting the model](#exporting-the-model)
+    + [Using the exported model - Setup postAddProduct controller in Admin](#using-the-exported-model---setup-postaddproduct-controller-in-admin)
+  * [Fetching products to display on page - using Mongoose](#fetching-products-to-display-on-page---using-mongoose)
+    + [In Controllers - Shop.js - getProducts](#in-controllers---shopjs---getproducts)
+    + [In Controllers - Shop.js - getIndex](#in-controllers---shopjs---getindex)
+  * [Fetching a single product - for product details - using Mongoose](#fetching-a-single-product---for-product-details---using-mongoose)
+    + [In controllers - the getProductDetails](#in-controllers---the-getproductdetails)
+  * [Edit product page - using Mongoose](#edit-product-page---using-mongoose)
+    + [In Admin controller - get products](#in-admin-controller---get-products)
+    + [In Admin controller - getEditProduct](#in-admin-controller---geteditproduct)
+    + [In Controllers - postGetEditProduct()](#in-controllers---postgeteditproduct--)
+  * [Delete Products](#delete-products)
+    + [In controllers - postDeleteProduct](#in-controllers---postdeleteproduct)
+  * [Setting up a User model/Schema - using Mongoose](#setting-up-a-user-model-schema---using-mongoose)
+    + [In Models - In user.js](#in-models---in-userjs)
+    + [In app.js](#in-appjs)
+  * [Setting up a relationship between user and product - using Mongoose](#setting-up-a-relationship-between-user-and-product---using-mongoose)
+    + [In models - product schema](#in-models---product-schema)
+    + [In Controllers - admin - addProduct controller](#in-controllers---admin---addproduct-controller)
+  * [Side note - populate and select](#side-note---populate-and-select)
+    + [Populate()](#populate--)
+    + [Select()](#select--)
+  * [The Cart - using Mongoose](#the-cart---using-mongoose)
+    + [In Models - User model](#in-models---user-model)
+    + [In controllers - shop - postToCart](#in-controllers---shop---posttocart)
+  * [Get the Cart - using Mongoose](#get-the-cart---using-mongoose)
+    + [Controllers - getCart()](#controllers---getcart--)
+  * [Delete item from cart using Mongoose](#delete-item-from-cart-using-mongoose)
+    + [Models - User - deleteOne](#models---user---deleteone)
+    + [Controllers - shop deleteCartItem](#controllers---shop-deletecartitem)
+  * [Order - with mongoose](#order---with-mongoose)
+    + [Models - order.js](#models---orderjs)
+    + [In Controllers - shop.js - postOrder](#in-controllers---shopjs---postorder)
+  * [Clearing the cart - Using Mongoose](#clearing-the-cart---using-mongoose)
+    + [in Models - user.js - add a clearCart method](#in-models---userjs---add-a-clearcart-method)
+    + [In controllers - shop - postOrder](#in-controllers---shop---postorder)
+  * [Get the Orders page - Using Mongoose](#get-the-orders-page---using-mongoose)
+    + [In Routes - Shop - orders.ejs](#in-routes---shop---ordersejs)
+
+---
+---
+
   
 - [Future Improvements](#future-improvements)
 

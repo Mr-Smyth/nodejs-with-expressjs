@@ -11,6 +11,7 @@
 - [The Model View Controller](https://github.com/Mr-Smyth/nodejs-with-expressjs/blob/main/docs/MVC.md)
 - [Setup shop functionality](https://github.com/Mr-Smyth/nodejs-with-expressjs/blob/main/docs/setup-shop-structure.md)
 - [Databases](https://github.com/Mr-Smyth/nodejs-with-expressjs/blob/main/docs/databases.md)
+- [Authentication](https://github.com/Mr-Smyth/nodejs-with-expressjs/blob/main/docs/authentication.md)
 
 
 
