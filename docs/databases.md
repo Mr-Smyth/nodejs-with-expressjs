@@ -3967,25 +3967,61 @@ To do this we will add another method to our user schema
 
 ### Get the Orders page - Using Mongoose
 
++ In the getOrders controller, we can check if the user id - which we have in the req object remember - is equal to the user id of an order
+
++ We can do this by making a find query.
+
+  ```
+  exports.getOrders = (req, res, next) => {
+      Order.find( {'user.userId' : req.user._id} )
+      .then(orders => {
+          res.render('shop/orders', {
+              pageTitle: 'Your Orders',
+              path :'/orders',
+              orders: orders
+          });
+      })
+      .catch(err => console.log(err));
+  };
+  ```
 
 
 
+#### In Routes - Shop - orders.ejs
 
++ We just need to edit the filepaths to point to our data 
 
+  ```
+  <main>
+          <% if(orders.length <= 0) {  %>
+              <h1>Orders - No Orders as yet!</h1>
+          <% } else { %>
+              <% orders.forEach(order => {  %>
+                  <!-- Every order will have an ID -->
+                  
+                  <h1> - Order Number: <%= order._id %></h1>
+                  <!-- We can now loop through the products that we associated with the order in the 	
+                  	controller -->
+                  <ul class="orders">
+                      <% order.products.forEach(prod => { %>
+                      <li class="orders__item">Item Name: <%= prod.productData.title %>
+                          <ul class="orders__products">
+                              <li class="orders__products-item">Quantity: (<%= prod.quantity %>)</li>
+                              <li class="orders__products-item">Description: <%= 
+                              									prod.productData.description %></li>
+                              <li class="orders__products-item">Item Price: <%= prod.productData.price %>
+                              </li>
+                          </ul>
+                      </li>
+                      <% }) %>
+                  </ul>
+                  <hr>
+              <% }); %>
+          <% } %>
+      </main>
+  ```
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+  
 
 
 
@@ -4011,7 +4047,7 @@ To do this we will add another method to our user schema
 
 + MongoDB Official Docs: [https://docs.mongodb.com/manual/core/security-encryption-at-rest/https://docs.mongodb.com/manual/](https://docs.mongodb.com/manual/)
 
-+ Mongoose Js official Docs: https://mongoosejs.com/
++ Mongoose Js official Docs: https://mongoosejs.com/docs/
 
   
   

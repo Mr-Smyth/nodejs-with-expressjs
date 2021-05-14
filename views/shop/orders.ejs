@@ -1,5 +1,6 @@
 <%- include('../includes/head.ejs') %>
     <link rel="stylesheet" href="/css/product.css">
+    <link rel="stylesheet" href="/css/orders.css">
 </head>
 
 <body>
@@ -12,18 +13,21 @@
         <% } else { %>
             <% orders.forEach(order => {  %>
                 <!-- Every order will have an ID -->
-                <h1>Order Number: <%= order.id %></h1>
+                
+                <h1> - Order Number: <%= order._id %></h1>
                 <!-- We can now loop through the products that we associated with the order in the controller -->
-                <ul>
-                    <% order.items.forEach(product => { %>
-                    <li><%= product.title %>: (<%= product.quantity %>)
-                        <ul>
-                            <li><%= product.description %></li>
-                            <li><%= product.price %></li>
+                <ul class="orders">
+                    <% order.products.forEach(prod => { %>
+                    <li class="orders__item">Item Name: <%= prod.productData.title %>
+                        <ul class="orders__products">
+                            <li class="orders__products-item">Quantity: (<%= prod.quantity %>)</li>
+                            <li class="orders__products-item">Description: <%= prod.productData.description %></li>
+                            <li class="orders__products-item">Item Price: <%= prod.productData.price %></li>
                         </ul>
                     </li>
                     <% }) %>
                 </ul>
+                <hr>
             <% }); %>
         <% } %>
     </main>
