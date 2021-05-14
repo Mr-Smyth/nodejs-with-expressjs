@@ -3876,7 +3876,9 @@ To do this we will add another method to our user schema
   module.exports = mongoose.model('Order', orderSchema);
   ```
 
-#### In Controllers - shop.js - postToCart
+
+
+#### In Controllers - shop.js - postOrder
 
 + Import the above model
 
@@ -3919,6 +3921,41 @@ To do this we will add another method to our user schema
           return order.save()
       })
       
+      ** ---- add in a clearCart method here - see below --- **
+      
+      .then(result => {
+          res.redirect('/orders');
+      })
+      .catch(err => console.log(err));
+  };
+  ```
+  
+  
+
+### Clearing the cart
+
+#### in Models - user.js - add a clearCart method
+
++ Enter a clearCart method:
+
+  ```
+  userSchema.methods.clearCart = function() {
+      this.cart = {items: []};
+      return this.save();
+  }
+  ```
+
+
+
+#### In controllers - shop - postOrder
+
++ We need to call this above method which clears the cart before we redirect
+
+  ```
+      .then(result => {
+          // clear out the cart
+          req.user.clearCart();
+      })
       .then(result => {
           res.redirect('/orders');
       })
@@ -3927,8 +3964,6 @@ To do this we will add another method to our user schema
   ```
 
   
-
-
 
 
 

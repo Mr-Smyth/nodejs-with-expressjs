@@ -70,6 +70,11 @@ userSchema.methods.addToCart = function(product) {
     return this.save();
 }
 
+userSchema.methods.clearCart = function() {
+    this.cart = {items: []};
+    return this.save();
+}
+
 userSchema.methods.deleteOne = function(prodId) {
     // using filter we can create an array of items we want to keep - ie do not include the item matching the prodId
     const updatedCart = this.cart.items.filter(item => {
