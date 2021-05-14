@@ -31,7 +31,8 @@ exports.getProductDetails = (req, res, next) => {
         res.render('shop/product-details', {
             product: product, 
             pageTitle: product.title,
-            path: '/product-details'
+            path: '/product-details',
+            isAuthenticated: req.isLoggedIn
         });
     })
     .catch(err => {
@@ -49,6 +50,7 @@ exports.getIndex = (req, res, next) => {
             products: products,
             pageTitle: 'Home page',
             path :'/index',
+            isAuthenticated: req.isLoggedIn
         });
     })
     .catch(err => {
@@ -80,11 +82,11 @@ exports.getCart = (req, res, next) => {
     // must add this as populate does not return a promise - execPopulate() does this for us.
     .execPopulate()
     .then(user => {
-
         res.render('shop/cart', {
             pageTitle: 'Shopping Cart',
             path :'/cart',
-            products: user.cart.items
+            products: user.cart.items,
+            isAuthenticated: req.isLoggedIn
         });
     })
     .catch(err => {
@@ -108,6 +110,7 @@ exports.getCheckout = (req, res, next) => {
     res.render('shop/checkout', {
         pageTitle: 'Checkout',
         path :'/checkout',
+        isAuthenticated: req.isLoggedIn
     });
 };
 
@@ -155,7 +158,8 @@ exports.getOrders = (req, res, next) => {
         res.render('shop/orders', {
             pageTitle: 'Your Orders',
             path :'/orders',
-            orders: orders
+            orders: orders,
+            isAuthenticated: req.isLoggedIn
         });
     })
     .catch(err => console.log(err));
