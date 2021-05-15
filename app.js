@@ -3,6 +3,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const connectionUri = require('./utility/env').connectionUri;
+const session = require('express-session');
 
 const app = express();
 
@@ -25,6 +26,13 @@ app.get('/favicon.ico', (req, res) => {
 app.use(bodyParser.urlencoded({extended: false}));
 // this tells express to look into the public folder to serve up css files
 app.use(express.static(path.join(__dirname, 'public')));
+
+// setup session
+app.use(session({
+    secret: 'secret key here',
+    resave: false,  // means that session will only resave when some change has been made
+    saveUninitialized: false
+}));
 
 // register a new middleware to get the user set into the request object
 app.use((req, res, next) => {
