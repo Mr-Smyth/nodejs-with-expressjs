@@ -30,8 +30,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 // setup session
 app.use(session({
     secret: 'secret key here',
-    resave: false,  // means that session will only resave when some change has been made
-    saveUninitialized: false
+    resave: false,
+    saveUninitialized: false,
+    isLoggedIn: false
 }));
 
 // register a new middleware to get the user set into the request object
