@@ -2,10 +2,18 @@ const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const connectionUri = require('./utility/env').connectionUri;
+const CONNECTION_URI = require('./utility/env').connectionUri;
 const session = require('express-session');
+// Here we pass session to what is a function (connect-mongodb-session) - and the result is stored in MongoDbStore
+const MongoDbStore = require('connect-mongodb-session')(session);
 
 const app = express();
+
+// Initialize a new store for session and setup a collection in mongoDb
+const store = new MongoDbStore({
+    uri: CONNECTION_URI,
+    collection: 'sessions'
+});
 
 // now setup the default template engine
 app.set('view engine', 'ejs');
@@ -17,7 +25,7 @@ const errorController = require('./controllers/errors.js')
 const User = require('./models/user');
 const { homedir } = require('os');
 
-
+// TO STOP ERRORS RELATING TO FAVICON
 app.get('/favicon.ico', (req, res) => {
     res.status(204);
     res.end();
@@ -32,7 +40,6 @@ app.use(session({
     secret: 'secret key here',
     resave: false,
     saveUninitialized: false,
-    isLoggedIn: false
 }));
 
 // register a new middleware to get the user set into the request object
@@ -55,7 +62,7 @@ app.use(authRoutes);
 app.use(errorController.get404);
 
 
-mongoose.connect(connectionUri)
+mongoose.connect(CONNECTION_URI)
 .then(result => {
     // check have we already got a user
     User.findOne()
