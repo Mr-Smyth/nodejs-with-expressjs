@@ -35,25 +35,26 @@ app.use(bodyParser.urlencoded({extended: false}));
 // this tells express to look into the public folder to serve up css files
 app.use(express.static(path.join(__dirname, 'public')));
 
-// setup session
+// setup a session
 app.use(session({
     secret: 'secret key here',
     resave: false,
     saveUninitialized: false,
+    store: store  // tell our session to store in the collection we setup above
 }));
 
 // register a new middleware to get the user set into the request object
-app.use((req, res, next) => {
-    User.findById('609849aee999b92ee0c1d6f6')
-    .then(user => {
-        // we add our new mongoose user model object to the request
-        req.user = user;
-        next();
-    })
-    .catch(err => {
-        console.log(err);
-    });
-});
+// app.use((req, res, next) => {
+//     User.findById('609849aee999b92ee0c1d6f6')
+//     .then(user => {
+//         // we add our new mongoose user model object to the request
+//         req.user = user;
+//         next();
+//     })
+//     .catch(err => {
+//         console.log(err);
+//     });
+// });
 
 // outsourced routes
 app.use('/admin', adminRoutes);
