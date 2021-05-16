@@ -66,7 +66,7 @@ exports.postToCart = (req, res, next) => {
     Product.findById(prodId)
     .then(product => {
         // call the addToCart - expects a product - and returns a promise
-        return req.user.addToCart(product)
+        return req.session.user.addToCart(product)
     })
     .then(result => {
         res.redirect('/cart')
@@ -77,7 +77,7 @@ exports.postToCart = (req, res, next) => {
 
 // Display our Cart controller
 exports.getCart = (req, res, next) => {
-    req.user
+    req.session.user
     // use populate to populate out the product - we just need to pass in the path to the productId
     .populate('cart.items.productId')
     // must add this as populate does not return a promise - execPopulate() does this for us.
@@ -99,7 +99,7 @@ exports.deleteCartItem = (req, res, next) => {
     // get the product id from the request
     const prodId = req.body.productId;
 
-    req.user.deleteOne(prodId)
+    req.session.user.deleteOne(prodId)
     .then(result => {
         res.redirect('/cart');
     })
@@ -117,7 +117,7 @@ exports.getCheckout = (req, res, next) => {
 
 // Handle creating an order from the cart
 exports.postOrder = (req, res, next) => {
-    req.user
+    req.session.user
     // use populate to populate out the product - we just need to pass in the path to the productId
     .populate('cart.items.productId')
     .execPopulate()
@@ -132,8 +132,8 @@ exports.postOrder = (req, res, next) => {
         // create a new instance of our order
         const order = new Order({
             user: {
-                username: req.user.username,
-                userId: req.user  // mongoose will extract the id - or we can specify and point to ._id
+                username: req.session.user.username,
+                userId: req.session.user  // mongoose will extract the id - or we can specify and point to ._id
             },
             // pass the products to the products array
             products: products
@@ -144,7 +144,7 @@ exports.postOrder = (req, res, next) => {
     })
     .then(result => {
         // clear out the cart
-        return req.user.clearCart();
+        return req.session.user.clearCart();
     })
     .then(result => {
         res.redirect('/orders');
@@ -154,7 +154,7 @@ exports.postOrder = (req, res, next) => {
 
 // Display our Checkout controller
 exports.getOrders = (req, res, next) => {
-    Order.find( {'user.userId' : req.user._id} )
+    Order.find( {'user.userId' : req.session.user._id} )
     .then(orders => {
         res.render('shop/orders', {
             pageTitle: 'Your Orders',
