@@ -23,7 +23,7 @@ exports.postAddProduct = (req, res, next) => {
             imageUrl: imageUrl,
             price: price,
             description: description,
-            userId: req.session.user
+            userId: req.user
         });
     
     product.save()
@@ -119,7 +119,6 @@ exports.getProducts = (req, res, next) => {
     // use the user method
     Product.find()
     .then(products => {
-        console.log(products);
         res.render('admin/products', {
             products: products,
             pageTitle: 'Admin Products',

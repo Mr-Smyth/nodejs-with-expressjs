@@ -7,7 +7,6 @@ exports.getProducts = (req, res, next) => {
     Product.find()
     // we should then have our products
     .then(products => {
-        console.log(products);
         res.render('shop/product-list', {
             products: products,
             pageTitle: 'All Products',
@@ -66,7 +65,7 @@ exports.postToCart = (req, res, next) => {
     Product.findById(prodId)
     .then(product => {
         // call the addToCart - expects a product - and returns a promise
-        return req.session.user.addToCart(product)
+        return req.user.addToCart(product)
     })
     .then(result => {
         res.redirect('/cart')
@@ -77,7 +76,7 @@ exports.postToCart = (req, res, next) => {
 
 // Display our Cart controller
 exports.getCart = (req, res, next) => {
-    req.session.user
+    req.user
     // use populate to populate out the product - we just need to pass in the path to the productId
     .populate('cart.items.productId')
     // must add this as populate does not return a promise - execPopulate() does this for us.
@@ -99,7 +98,7 @@ exports.deleteCartItem = (req, res, next) => {
     // get the product id from the request
     const prodId = req.body.productId;
 
-    req.session.user.deleteOne(prodId)
+    req.user.deleteOne(prodId)
     .then(result => {
         res.redirect('/cart');
     })
@@ -117,7 +116,7 @@ exports.getCheckout = (req, res, next) => {
 
 // Handle creating an order from the cart
 exports.postOrder = (req, res, next) => {
-    req.session.user
+    req.user
     // use populate to populate out the product - we just need to pass in the path to the productId
     .populate('cart.items.productId')
     .execPopulate()
@@ -144,7 +143,7 @@ exports.postOrder = (req, res, next) => {
     })
     .then(result => {
         // clear out the cart
-        return req.session.user.clearCart();
+        return req.user.clearCart();
     })
     .then(result => {
         res.redirect('/orders');
