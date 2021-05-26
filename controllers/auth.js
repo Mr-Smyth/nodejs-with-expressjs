@@ -11,22 +11,48 @@ exports.getLogin = (req, res, next) => {
 };
 
 exports.postLogin = (req, res, next) => {
+    // firstly get the data from the form
+    const email = req.body.email;
+    const password = req.body.password;
+
     // Once session has been installed and setup in app.js - session is now part of the request object
     // we can add any key we want to it
-    User.findById('609849aee999b92ee0c1d6f6')
+    User.findOne({email: email })
     .then(user => {
-        // we add our new mongoose user model object to the request
-        req.session.isLoggedIn = true;
-        req.session.user = user;
 
-        // call save on the session so that we can ensure the session has been created before we redirect - 
-        // this way we can avoid possible errors where the redirect is done before the session is created successfully
-        req.session.save(err => {
-            if (!err) {
-                return res.redirect('/');
+        if (!user) {
+            return res.redirect('/login');
+        }
+
+        // now use bcrypt to compare stored hashed password with the hashed version of what the user entered.
+        bcrypt.compare(password, user.password)
+        .then(result => {
+            // here we get a true if they are equal,  or false if they are not equal
+            if (result) {
+                // we add our new mongoose user model object to the request
+                req.session.isLoggedIn = true;
+                req.session.user = user;
+
+                // call save on the session so that we can ensure the session has been created before we redirect - 
+                // this way we can avoid possible errors where the redirect is done before the session is created successfully
+                return req.session.save(err => {
+                    if (!err) {
+                        res.redirect('/');
+                    }
+                    console.log(err);
+                })
             }
-            console.log(err);
+
+            // else - not a match - redirect to login
+            res.redirect('/login');
+
         })
+        .catch(err => {
+            console.log(err);
+            return res.redirect('/login');
+        });
+
+        
     })
     .catch(err => {
         console.log(err);
