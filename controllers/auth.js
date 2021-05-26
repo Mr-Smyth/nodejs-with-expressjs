@@ -31,6 +31,18 @@ exports.postLogin = (req, res, next) => {
     });
 };
 
+exports.getSignup = (req, res, next) => {
+    res.render('auth/signup', {
+        pageTitle: 'Signup',
+        path: '/signup',
+        isAuthenticated: false
+    });
+};
+
+exports.postSignup = (req, res, next) => {
+    
+};
+
 exports.getLogout = (req, res, next) => {
     res.render('auth/logout', {
         pageTitle: 'Logout',
