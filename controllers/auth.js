@@ -1,3 +1,5 @@
+// ====== REQUIRES ======
+const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 
 exports.getLogin = (req, res, next) => {
@@ -53,19 +55,29 @@ exports.postSignup = (req, res, next) => {
         if (userDoc) {
             return res.redirect('/signup');
         }
-        // if we get here - we can create a new user
-        user = new User({username: username,
-            email: email,
-            password: password,
-            cart: { items: [] }
+        
+        // if we get here - we can go ahead and create a new user
+        // create a hashed password - 12 represents an approved salt value
+        return bcrypt.hash(password, 12)
+        // then we have a hashed password - create the user
+        .then(hashedPassword => {
+            user = new User({username: username,
+                email: email,
+                password: hashedPassword,
+                cart: { items: [] }
+            });
+            // save it to mongo
+            return user.save();
+        })
+        // then we have the result of the user creation
+        .then(result => {
+            res.redirect('/login');
         });
-        return user.save();
-    })
-    .then(result => {
-        res.redirect('/login');
+
     })
     .catch(err => console.log(err));
 };
+
 
 exports.getLogout = (req, res, next) => {
     res.render('auth/logout', {
