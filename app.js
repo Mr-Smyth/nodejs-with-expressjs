@@ -67,7 +67,7 @@ app.use(authRoutes);
 app.use(errorController.get404);
 
 
-mongoose.connect(CONNECTION_URI)
+mongoose.connect(CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true })
 .then(result => {
     // check have we already got a user
     User.findOne()

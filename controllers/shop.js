@@ -45,7 +45,6 @@ exports.getIndex = (req, res, next) => {
     Product.find()
     // we should then have our products in an object
     .then(products => {
-        console.log(products);
         res.render('shop/index', {
             products: products,
             pageTitle: 'Home page',

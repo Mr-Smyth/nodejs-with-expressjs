@@ -16,7 +16,13 @@ exports.postLogin = (req, res, next) => {
         // we add our new mongoose user model object to the request
         req.session.isLoggedIn = true;
         req.session.user = user;
-        res.redirect('/');
+
+        // call save on the session so that we can ensure the session has been created before we redirect - 
+        // this way we can avoid possible errors where the redirect is done before the session is created successfully
+        req.session.save(err => {
+            console.log(err);
+            res.redirect('/');
+        })
     })
     .catch(err => {
         console.log(err);
