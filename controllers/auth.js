@@ -20,8 +20,10 @@ exports.postLogin = (req, res, next) => {
         // call save on the session so that we can ensure the session has been created before we redirect - 
         // this way we can avoid possible errors where the redirect is done before the session is created successfully
         req.session.save(err => {
+            if (!err) {
+                return res.redirect('/');
+            }
             console.log(err);
-            res.redirect('/');
         })
     })
     .catch(err => {
@@ -39,7 +41,9 @@ exports.getLogout = (req, res, next) => {
 
 exports.postLogout = (req, res, next) => {
     req.session.destroy(err => {
+        if(!err) {
+            return res.redirect('/');
+        }
         console.log(err);
-        res.redirect('/');
     });
 };
