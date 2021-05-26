@@ -40,7 +40,31 @@ exports.getSignup = (req, res, next) => {
 };
 
 exports.postSignup = (req, res, next) => {
-    
+
+    // get form data - without validation
+    const username = req.body.username;
+    const email = req.body.email;
+    const password = req.body.password;
+    const confirmPassword = req.body.confirmPassword;
+
+    // check if user exists - try to find it
+    User.findOne({email: email})
+    .then(userDoc => {
+        if (userDoc) {
+            return res.redirect('/signup');
+        }
+        // if we get here - we can create a new user
+        user = new User({username: username,
+            email: email,
+            password: password,
+            cart: { items: [] }
+        });
+        return user.save();
+    })
+    .then(result => {
+        res.redirect('/login');
+    })
+    .catch(err => console.log(err));
 };
 
 exports.getLogout = (req, res, next) => {
