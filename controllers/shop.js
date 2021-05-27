@@ -11,7 +11,6 @@ exports.getProducts = (req, res, next) => {
             products: products,
             pageTitle: 'All Products',
             path :'/product-list',
-            isAuthenticated: req.session.isLoggedIn
         });
     })
     .catch(err => {
@@ -32,7 +31,6 @@ exports.getProductDetails = (req, res, next) => {
             product: product, 
             pageTitle: product.title,
             path: '/product-details',
-            isAuthenticated: req.session.isLoggedIn
         });
     })
     .catch(err => {
@@ -49,9 +47,6 @@ exports.getIndex = (req, res, next) => {
             products: products,
             pageTitle: 'Home page',
             path :'/index',
-            isAuthenticated: req.session.isLoggedIn,
-            // a csrfToken method is provided in the req by installing csurf
-            csrfToken: req.csrfToken()
         });
     })
     .catch(err => {
@@ -87,7 +82,6 @@ exports.getCart = (req, res, next) => {
             pageTitle: 'Shopping Cart',
             path :'/cart',
             products: user.cart.items,
-            isAuthenticated: req.session.isLoggedIn
         });
     })
     .catch(err => {
@@ -111,7 +105,6 @@ exports.getCheckout = (req, res, next) => {
     res.render('shop/checkout', {
         pageTitle: 'Checkout',
         path :'/checkout',
-        isAuthenticated: req.session.isLoggedIn
     });
 };
 
@@ -160,7 +153,6 @@ exports.getOrders = (req, res, next) => {
             pageTitle: 'Your Orders',
             path :'/orders',
             orders: orders,
-            isAuthenticated: req.session.isLoggedIn
         });
     })
     .catch(err => console.log(err));

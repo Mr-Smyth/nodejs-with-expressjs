@@ -70,6 +70,14 @@ app.use((req, res, next) => {
     });
 });
 
+// csrf - step 4 - add a normal middleware - to tell express to include csrf in all of our views using '.locals.
+// we can also include isAuthenticated check'
+app.use((req, res, next) => {
+    res.locals.isAuthenticated = req.session.isLoggedIn;
+    res.locals.csrfToken = req.csrfToken();
+    next();
+});
+
 // outsourced routes
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
