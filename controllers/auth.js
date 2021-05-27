@@ -109,7 +109,9 @@ exports.getLogout = (req, res, next) => {
     res.render('auth/logout', {
         pageTitle: 'Logout',
         path: '/logout',
-        isAuthenticated: req.session.isLoggedIn
+        isAuthenticated: req.session.isLoggedIn,
+        csrfToken: req.csrfToken()
+
     });
 };
 

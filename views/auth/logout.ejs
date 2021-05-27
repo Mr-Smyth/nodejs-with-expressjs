@@ -11,6 +11,7 @@
         <h1><%= pageTitle %></h1>
         <form class="login-form centered" action="/logout" method="POST">
             <h2>Are you sure you want to leave ?</h2>
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             <button class="btn" type="submit">Logout</button>
             <a href="/" class="btn" type="submit">Cancel</a>
         </form>

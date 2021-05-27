@@ -49,7 +49,9 @@ exports.getIndex = (req, res, next) => {
             products: products,
             pageTitle: 'Home page',
             path :'/index',
-            isAuthenticated: req.session.isLoggedIn
+            isAuthenticated: req.session.isLoggedIn,
+            // a csrfToken method is provided in the req by installing csurf
+            csrfToken: req.csrfToken()
         });
     })
     .catch(err => {

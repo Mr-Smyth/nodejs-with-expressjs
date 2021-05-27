@@ -1,9 +1,13 @@
+// ====== REQUIRES ======
 const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const CONNECTION_URI = require('./utility/env').connectionUri;
 const session = require('express-session');
+
+// csrf - step 1 install and require csurf
+const csrf = require('csurf');
 // Here we pass session to what is a function (connect-mongodb-session) - and the result is stored in MongoDbStore
 const MongoDbStore = require('connect-mongodb-session')(session);
 
@@ -14,6 +18,9 @@ const store = new MongoDbStore({
     uri: CONNECTION_URI,
     collection: 'sessions'
 });
+
+// csrf - step 2 initialize
+const csrfProtection = csrf();
 
 // now setup the default template engine
 app.set('view engine', 'ejs');
@@ -42,6 +49,9 @@ app.use(session({
     saveUninitialized: false,
     store: store  // tell our session to store in the collection we setup above
 }));
+
+// csrf - step 3 - after session is initialized we use the csrf, this is because csrf uses the session
+app.use(csrfProtection);
 
 // Use the session above to insert the user that is in the session, thanks to our login controller.
 // we inset it back into a mongoose user model that we can use to access our models
