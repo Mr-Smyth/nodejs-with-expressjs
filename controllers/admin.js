@@ -3,10 +3,6 @@
 const Product = require('../models/product');
 
 exports.getAddProduct = (req, res, next) => {
-    // add some router protection - we dont want any unauthenticated visitors
-    if (!req.session.isLoggedIn) {
-        return res.redirect('/login');
-    }
     res.render('admin/add-product', {
         pageTitle: 'Admin Page',
         path: '/admin/add-product',
