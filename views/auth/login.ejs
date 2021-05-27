@@ -9,6 +9,11 @@
     
     <main>
         <h1><%= pageTitle %></h1>
+        <% if (errorMsg) { %>
+            <div>
+                <h2><%= errorMsg %></h2>
+            </div>        
+        <% } %>
         <form class="login-form" action="/login" method="POST">
             <div class="form-control">
                 <label for="email">E-Mail</label>

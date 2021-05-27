@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const CONNECTION_URI = require('./utility/env').connectionUri;
 const session = require('express-session');
+const flash = require('connect-flash');
 
 // csrf - step 1 install and require csurf
 const csrf = require('csurf');
@@ -21,6 +22,7 @@ const store = new MongoDbStore({
 
 // csrf - step 2 initialize
 const csrfProtection = csrf();
+
 
 // now setup the default template engine
 app.set('view engine', 'ejs');
@@ -49,6 +51,9 @@ app.use(session({
     saveUninitialized: false,
     store: store  // tell our session to store in the collection we setup above
 }));
+
+// initialize connect-flash
+app.use(flash());
 
 // csrf - step 3 - after session is initialized we use the csrf, this is because csrf uses the session
 app.use(csrfProtection);
