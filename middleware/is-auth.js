@@ -1,4 +1,4 @@
-// chech authentication middleware
+// check authentication middleware
 
 module.exports = (req, res, next) => {
     if (!req.session.isLoggedIn) {

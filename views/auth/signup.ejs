@@ -7,6 +7,13 @@
    <%- include('../includes/navigation.ejs') %>
 
     <main>
+        <h1><%= pageTitle %></h1>
+
+        <% if (errorMsg) { %>
+            <div class="user-message user-message--error">
+                <p><%= errorMsg %></p>
+            </div>        
+        <% } %>
         <form class="signup-form" action="/signup" method="POST">
             <div class="form-control">
                 <label for="email">Username</label>
@@ -14,11 +21,11 @@
             </div>
             <div class="form-control">
                 <label for="email">E-Mail</label>
-                <input type="email" name="email" id="email">
+                <input type="email" name="email" id="email" required>
             </div>
             <div class="form-control">
                 <label for="password">Password</label>
-                <input type="password" name="password" id="password">
+                <input type="password" name="password" id="password" required>
             </div>
             <div class="form-control">
                 <label for="confirmPassword">Confirm Password</label>
