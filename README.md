@@ -12,6 +12,8 @@
 - [Setup shop functionality](https://github.com/Mr-Smyth/nodejs-with-expressjs/blob/main/docs/setup-shop-structure.md)
 - [Databases](https://github.com/Mr-Smyth/nodejs-with-expressjs/blob/main/docs/databases.md)
 - [Authentication](https://github.com/Mr-Smyth/nodejs-with-expressjs/blob/main/docs/authentication.md)
+- [Env variables](#dotenv)
+- [Emails](#emails)
 
 
 
@@ -171,4 +173,52 @@ So just make sure you have imported path and findDir in all route files and app.
 [<< Back to Index..](#index)
 
 
+## DotEnv
+
+* `npm install dotenv --save`
+* In the file where you need to access an env variable : `require('dotenv').config();`
+* To use - example: `creatingBranchId: process.env.BRANCH_ID,` - BRANCH_ID being the variable in the env file
+
+Example.env file:
+```
+USER='userdatahere$jskdjsfsjkdsbfdsfdsfsnj'
+PASSWORD='dfsfdsnfdsfsbdsnfnsjkfhdkjnfs'
+BRANCH_ID='fjdfksdffsfnjskfdsfnskjdfnsf
+
+```
+
+[<< Back to Index..](#index)
+
 ---
+
+## Emails
+
++ Setup a sendGrid account
+- [Authentication](https://github.com/Mr-Smyth/nodejs-with-expressjs/blob/main/docs/authentication.md)
++ install send grid with sendgrid-transport: `npm install --save nodemailer nodemailer-sendgrid-transport`
++ import them both into auth.js: 
+  ```
+  const nodemailer = require('nodemailer');
+  const sendgridTransport = require('nodemailer-sendgrid-transport');
+```
++ initialize a so called - transporter - tells nodemailer how the emails will be delivered. We then call the createTransport method and pass in our sendgridTransport we created above and execute it as a function:
+
+`const transporter = nodemailer.createTransport(sendgridTransport());`
+
++ This then needs some an object to handle its authentication, this includes getting an API key from the sendGrid site.
++ Goto the sendGrid site
+    + click settings - Api Keys - create new API Key
+    + Give the API a name example: 'node-shop'
+    + Allow full access
+    + Click Create.
+    + Copy the key
+
++ Back in app.js we enter this key as follows:
+```
+
+```
+
+
+[<< Back to Index..](#index)
+ 
+ ---

@@ -3,7 +3,10 @@ const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const CONNECTION_URI = require('./utility/env').connectionUri;
+
+// const CONNECTION_URI = require('./utility/env').connectionUri;
+require('dotenv').config();
+
 const session = require('express-session');
 const flash = require('connect-flash');
 
@@ -16,7 +19,7 @@ const app = express();
 
 // Initialize a new store for session and setup a collection in mongoDb
 const store = new MongoDbStore({
-    uri: CONNECTION_URI,
+    uri: process.env.MONGO_URI,
     collection: 'sessions'
 });
 
@@ -90,7 +93,7 @@ app.use(authRoutes);
 app.use(errorController.get404);
 
 
-mongoose.connect(CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
 .then(result => {
     app.listen(3000);
 })
