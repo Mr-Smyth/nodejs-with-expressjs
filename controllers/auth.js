@@ -4,17 +4,15 @@ const User = require('../models/user');
 
 // ====== EMAILS - SETUP ======
 const nodemailer = require('nodemailer');
-const sendgridTransport = require('nodemailer-sendgrid-transport');
 
-// initialize a so called - transporter - tell nodemailer how the emails will be delivered
-// we then call the .createTransport method and pass in our sendgridTransport we created above and 
-// execute it as a function
-
-const transporter = nodemailer.createTransport(sendgridTransport({
+const transport = nodemailer.createTransport({
+    host: "smtp.mailtrap.io",
+    port: 2525,
     auth: {
-        api_key: process.env.SENDGRID
+      user: "5f11b7883cab99",
+      pass: "89d2b76e180136"
     }
-}));
+  });
 
 
 exports.getLogin = (req, res, next) => {
@@ -130,7 +128,16 @@ exports.postSignup = (req, res, next) => {
         // then we have the result of the user creation
         .then(result => {
             res.redirect('/login');
-        });
+            // send an email after signup - use transporter - it gives a promise so we return it
+            return transport.sendMail({
+                to: email,
+                from: 'registration@node-shop.com',
+                subject: 'Signup succeeded',
+                html: '<h1>You signed up - well done</h1>'
+            });
+        })
+        // catch any errors in email
+        .catch(err => console.log(err));
 
     })
     .catch(err => console.log(err));

@@ -193,30 +193,92 @@ BRANCH_ID='fjdfksdffsfnjskfdsfnskjdfnsf
 
 ## Emails
 
-+ Setup a sendGrid account
-- [Authentication](https://github.com/Mr-Smyth/nodejs-with-expressjs/blob/main/docs/authentication.md)
-+ install send grid with sendgrid-transport: `npm install --save nodemailer nodemailer-sendgrid-transport`
-+ import them both into auth.js: 
-  ```
-  const nodemailer = require('nodemailer');
-  const sendgridTransport = require('nodemailer-sendgrid-transport');
+
+### Setup
+
++ Setup a mailTrap account
++ install nodemailer: `npm install --save nodemailer`
++ import into auth.js: `const nodemailer = require('nodemailer');`
++ Get the setup for the transporter from the mailtrap site and paste it into auth.js:
 ```
-+ initialize a so called - transporter - tells nodemailer how the emails will be delivered. We then call the createTransport method and pass in our sendgridTransport we created above and execute it as a function:
-
-`const transporter = nodemailer.createTransport(sendgridTransport());`
-
-+ This then needs some an object to handle its authentication, this includes getting an API key from the sendGrid site.
-+ Goto the sendGrid site
-    + click settings - Api Keys - create new API Key
-    + Give the API a name example: 'node-shop'
-    + Allow full access
-    + Click Create.
-    + Copy the key
-
-+ Back in app.js we enter this key as follows:
+const transport = nodemailer.createTransport({
+  host: "smtp.mailtrap.io",
+  port: 2525,
+  auth: {
+    user: "5f11b7883cab99",
+    pass: "89d2b76e180136"
+  }
+});
 ```
 
+Initiate an email from your code
+
+
+
+### setup to send an email after Signing up:
+
++ Gotot the controller handling the signup (postSignup), and goto where we redirect back to the login page after successfull signup.
+
+Example:
+
 ```
+exports.postSignup = (req, res, next) => {
+
+    // get form data - without validation
+    const username = req.body.username;
+    const email = req.body.email;
+    const password = req.body.password;
+    const confirmPassword = req.body.confirmPassword;
+
+    // check if user exists - try to find it
+    User.findOne({email: email})
+    .then(userDoc => {
+        if (userDoc) {
+            req.flash('signupError', 'Email exists already');
+            return res.redirect('/signup');
+        }
+        
+        // if we get here - we can go ahead and create a new user
+        // create a hashed password - 12 represents an approved salt value
+        return bcrypt.hash(password, 12)
+        // then we have a hashed password - create the user
+        .then(hashedPassword => {
+            user = new User({username: username,
+                email: email,
+                password: hashedPassword,
+                cart: { items: [] }
+            });
+            // save it to mongo
+            return user.save();
+        })
+        // then we have the result of the user creation
+
+        *******************************************************************************
+        *******************************************************************************
+        EMAIL sent here - below
+        *******************************************************************************
+        .then(result => {
+            res.redirect('/login');
+            // send an email after signup - use transporter - it gives a promise so we return it
+            return transport.sendMail({
+                to: email,
+                from: 'registration@node-shop.com',
+                subject: 'Signup succeeded',
+                html: '<h1>You signed up - well done</h1>'
+            });
+        })
+        // catch any errors in email
+        .catch(err => console.log(err));
+
+    })
+    .catch(err => console.log(err));
+};
+```
+
+now view the inbox in mailtrap and see the email sent
+
+
+
 
 
 [<< Back to Index..](#index)
