@@ -14,13 +14,13 @@
                 <p><%= errorMsg %></p>
             </div>        
         <% } %>
-        <form class="login-form" action="/login" method="POST">
+        <form class="login-form" action="/reset" method="POST">
             <div class="form-control">
                 <label for="email">Enter the E-Mail address</label>
                 <input type="email" name="email" id="email" placeholder="Enter a valid email">
             </div>
             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-            <button class="btn" type="submit">Login</button>
+            <button class="btn" type="submit">Reset Password</button>
         </form>
     </main>
     

@@ -1,4 +1,5 @@
 // ====== REQUIRES ======
+const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 
@@ -161,7 +162,7 @@ exports.postLogout = (req, res, next) => {
 };
 
 exports.getReset = (req, res, next) => {
-    let message = req.flash('signupError');
+    let message = req.flash('error');
     if (message.length > 0) {
         message = message[0];
     }
@@ -173,4 +174,47 @@ exports.getReset = (req, res, next) => {
         path: '/reset',
         errorMsg: message
     });
+};
+
+// here we need to generate a token we can send with a reset request email link
+// node has a crypto library for this - which we import at top of page
+exports.postReset = (req, res, next) => {
+    crypto.randomBytes(32, (err, buffer) => {
+        if (err) {
+            console.log(err);
+            return res.redirect('/reset');
+        }
+        // get the token from the buffer then, and convert the hex value in the buffer to a string
+        const token = buffer.toString('hex');
+
+        // then we need to store this token within the user - so first find the user with mongoose
+        User.findOne({email: req.body.email})
+
+        // create the propper fields in our user model - resetToken and resetTokenExpiration
+        .then(user => {
+            if (!user) {
+                req.flash('error', 'No account with that email address currently exists');
+                return res.redirect('/reset');
+            }
+            user.resetToken = token;
+            // set expire to date plus one hour in mili seconds
+            user.resetTokenExpiration = Date.now() + 3600000;
+            return user.save();
+        })
+        .then(result => {
+            res.redirect('/');
+            console.log('reset sent')
+            transport.sendMail({
+                to: req.body.email,
+                from: 'registration@node-shop.com',
+                subject: 'Password Reset',
+                html: `
+                <p>You have requested a password reset for : ${req.body.email}</p>
+                <p>Click the link below to reset your password:</p>
+                <p>Reset link: <a href="http://localhost:3000/reset/${token}">link</a></p>
+                `
+            });
+        })
+        .catch(err => console.log(err));
+    })
 };
