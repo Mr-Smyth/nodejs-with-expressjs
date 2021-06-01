@@ -19,11 +19,16 @@ router.get('/logout',isAuth, authController.getLogout);
 
 router.post('/logout',isAuth, authController.postLogout);
 
+// gets the password reset request screen
 router.get('/reset', authController.getReset);
 
+// handles the post from the request password reset - handles email link
 router.post('/reset', authController.postReset);
 
-// load the enter new password form screen
+// load the enter new password form screen - what user sees when they click on emailed reset link
 router.get('/reset/:token', authController.getNewPassword);
+
+// handles the updating of the users password
+router.post('/new-password', authController.postNewPassword);
 
 module.exports = router;

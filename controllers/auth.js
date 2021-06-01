@@ -219,6 +219,13 @@ exports.postReset = (req, res, next) => {
     })
 };
 
+/**
+ * handles rendering the screen for entering a new password
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ */
 exports.getNewPassword = (req, res, next) => {
 
     // retrieve the token from the url
@@ -238,9 +245,43 @@ exports.getNewPassword = (req, res, next) => {
             path: '/new-password',
             errorMsg: message,
             // need to send in the users id and will include it as hidden in the form - so we can update the correct users password
-            userId: user._id.toString()
+            userId: user._id.toString(),
+            passwordToken: token
         });
     })
     .catch(err => console.log(err));
+};
 
+exports.postNewPassword = (req, res, next) => {
+    const newPassword = req.body.password;
+    const userId = req.body.userId;
+    // also grab the token so we can invalidate it
+    const token = req.body.passwordToken;
+
+    // set a global for the user, as we will need it throughout the code
+    let resetUser;
+
+    // reset the user
+    User.findOne({
+        resetToken: token,
+        resetTokenExpiration: {$gt: Date.now()},
+        _id: userId
+    })
+    .then(user => {
+        resetUser = user;
+        // Hash up the new password - ready for saving to the user -  using bcrypt to hash it
+        return bcrypt.hash(newPassword, 12)
+    })
+    .then(hashedPassword => {
+        // now update our user
+        resetUser.password = hashedPassword;
+        resetUser.resetToken = undefined;
+        resetUser.resetTokenExpiration = undefined;
+        return resetUser.save();
+    })
+    .then(result => {
+        // once saved - redirect back to login page
+        res.redirect('/login');
+    })
+    .catch(err => console.log(err));
 };
