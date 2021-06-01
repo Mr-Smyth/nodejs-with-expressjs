@@ -218,3 +218,29 @@ exports.postReset = (req, res, next) => {
         .catch(err => console.log(err));
     })
 };
+
+exports.getNewPassword = (req, res, next) => {
+
+    // retrieve the token from the url
+    const token = req.params.token;
+    // find the user by the token, and use $gt to check if expiry on token is greater than current date
+    User.findOne({resetToken: token, resetTokenExpiration: {$gt: Date.now()}})
+    .then(user => {
+        let message = req.flash('error');
+        if (message.length > 0) {
+            message = message[0];
+        }
+        else {
+            message = null;
+        }
+        res.render('auth/new-password', {
+            pageTitle: 'New Password',
+            path: '/new-password',
+            errorMsg: message,
+            // need to send in the users id and will include it as hidden in the form - so we can update the correct users password
+            userId: user._id.toString()
+        });
+    })
+    .catch(err => console.log(err));
+
+};
