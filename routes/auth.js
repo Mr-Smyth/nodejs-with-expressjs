@@ -2,6 +2,8 @@ const express = require('express');
 
 // ====== setup express validator - STEP 1 ======
 // using destructuring we extract a check function from express-validator/check
+
+// ====== see https://www.npmjs.com/package/validator for more validators ==== 
 const { check } = require('express-validator');
 
 const router = express.Router();
@@ -20,7 +22,10 @@ router.post('/login', authController.postLogin);
 // ====== setup express validator - STEP 2 ======
 // enter check as middleware and use a method called isEmail
 // what this does is store or collect any possible errors and we can access them in the controller using validationResult()
-router.post('/signup', check('email').isEmail().withMessage('Please enter a valid email address'), authController.postSignup);
+router.post('/signup',
+check('email').isEmail().withMessage('Please enter a valid email address'),
+check('username').isLength({min: 6, max: 12}).withMessage('Please enter a valid Username between 6 and 12 characters'),
+authController.postSignup);
 
 router.get('/logout',isAuth, authController.getLogout);
 

@@ -119,7 +119,7 @@ exports.postSignup = (req, res, next) => {
         return res.status(422).render('auth/signup', {
             pageTitle: 'Signup',
             path: '/signup',
-            errorMsg: `${errors.array()[0].value} is not a valid email. ${errors.array()[0].msg}`
+            errorMsg: `'${errors.array()[0].value}' is not valid. ${errors.array()[0].msg}`
         });
     }
 
