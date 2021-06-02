@@ -23,8 +23,16 @@ router.post('/login', authController.postLogin);
 // enter check as middleware and use a method called isEmail
 // what this does is store or collect any possible errors and we can access them in the controller using validationResult()
 router.post('/signup',
-check('email').isEmail().withMessage('Please enter a valid email address'),
+check('email').isEmail().withMessage('Please enter a valid email address')
+// add a custom check to the email validation
+.custom((value, { req }) => {
+    if (value === 'test@test.com') {
+        throw new Error('This email address is not allowed.');
+    }
+    return true;
+}),
 check('username').isLength({min: 6, max: 12}).withMessage('Please enter a valid Username between 6 and 12 characters'),
+
 authController.postSignup);
 
 router.get('/logout',isAuth, authController.getLogout);
