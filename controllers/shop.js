@@ -43,10 +43,18 @@ exports.getIndex = (req, res, next) => {
     Product.find()
     // we should then have our products in an object
     .then(products => {
+        let message = req.flash('message');
+        if (message.length > 0) {
+            message = message[0];
+        }
+        else {
+            message = null;
+        }
         res.render('shop/index', {
             products: products,
             pageTitle: 'Home page',
             path :'/index',
+            message: message
         });
     })
     .catch(err => {

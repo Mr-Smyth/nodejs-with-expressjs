@@ -9,6 +9,12 @@
     <main>
         <h1><%= pageTitle %></h1>
         <!-- Add the if check for products with ejs -->
+        <% if (message) { %>
+            <div class="user-message user-message">
+                <p><%= message %></p>
+            </div>        
+        <% } %>
+
         <% if (products.length > 0) { %>
         <div class="grid">
             <% for (product of products) { %>
