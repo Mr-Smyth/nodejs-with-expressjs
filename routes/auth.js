@@ -40,6 +40,14 @@ check('username', 'Please enter a valid Username between 6 and 12 characters')
 body('password', 'Please enter a password with only numbers and text, with at least 6 characters and with a maximum of 16')
 .isLength({min: 6, max: 16})
 .isAlphanumeric(),
+// check for password equality
+body('confirmPassword', 'Your repeat password does not match, please check required password and try again')
+.custom((value, { req }) => {
+    if (value !== req.body.password) {
+        throw new Error();
+    }
+    return true;
+}),
 
 authController.postSignup);
 
