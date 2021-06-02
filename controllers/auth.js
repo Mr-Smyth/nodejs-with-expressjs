@@ -3,6 +3,10 @@ const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 
+// ====== setup express validator - STEP 3 ======
+// using destructuring we extract a validationResult function from express-validator/check
+const { validationResult } = require('express-validator');
+
 // ====== EMAILS - SETUP ======
 const nodemailer = require('nodemailer');
 
@@ -104,6 +108,20 @@ exports.postSignup = (req, res, next) => {
     const email = req.body.email;
     const password = req.body.password;
     const confirmPassword = req.body.confirmPassword;
+
+    // ====== VALIDATION SETUP - STEP 4 ======
+    const errors = validationResult(req);
+    // CHECK TO SEE IF THERE WERE ANY ERRORS
+    // check to see that errors is not empty - ie it has an error
+    if (!errors.isEmpty()) {
+        console.log(errors.array());
+        // return 422 - which is a common status code for validation errors
+        return res.status(422).render('auth/signup', {
+            pageTitle: 'Signup',
+            path: '/signup',
+            errorMsg: `${errors.array()[0].value} is not a valid email. ${errors.array()[0].msg}`
+        });
+    }
 
     // check if user exists - try to find it
     User.findOne({email: email})

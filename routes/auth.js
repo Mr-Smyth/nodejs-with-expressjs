@@ -1,5 +1,9 @@
 const express = require('express');
 
+// ====== setup express validator - STEP 1 ======
+// using destructuring we extract a check function from express-validator/check
+const { check } = require('express-validator');
+
 const router = express.Router();
 
 const authController = require('../controllers/auth');
@@ -13,7 +17,10 @@ router.get('/signup', authController.getSignup);
 
 router.post('/login', authController.postLogin);
 
-router.post('/signup', authController.postSignup);
+// ====== setup express validator - STEP 2 ======
+// enter check as middleware and use a method called isEmail
+// what this does is store or collect any possible errors and we can access them in the controller using validationResult()
+router.post('/signup', check('email').isEmail().withMessage('Please enter a valid email address'), authController.postSignup);
 
 router.get('/logout',isAuth, authController.getLogout);
 
