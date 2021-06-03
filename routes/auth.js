@@ -18,7 +18,15 @@ router.get('/login', authController.getLogin);
 
 router.get('/signup', authController.getSignup);
 
-router.post('/login', authController.postLogin);
+router.post('/login',
+    [
+    check('email', 'Please enter a valid email address to login')
+        .isEmail(),
+    body('password', 'Password must be between 6 and 16 alphanumeric characters')
+        .isLength({min: 6, max: 16})
+        .isAlphanumeric()
+    ],
+ authController.postLogin);
 
 // ====== setup express validator - STEP 2 ======
 // enter check as middleware and use a method called isEmail

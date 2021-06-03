@@ -40,6 +40,22 @@ exports.postLogin = (req, res, next) => {
     const email = req.body.email;
     const password = req.body.password;
 
+    // ------------------------------------------------------------------------ //
+    // ========  VALIDATION  ======== //
+
+    const errors = validationResult(req);
+    // CHECK TO SEE IF THERE WERE ANY ERRORS
+    // check to see that errors is not empty - ie it has an error
+    if (!errors.isEmpty()) {
+        console.log(errors.array());
+        // return 422 - which is a common status code for validation errors
+        return res.status(422).render('auth/login', {
+            pageTitle: 'Login',
+            path: '/login',
+            errorMsg: `'${errors.array()[0].value}' is not valid. ${errors.array()[0].msg}`
+        });
+    }
+
     // Once session has been installed and setup in app.js - session is now part of the request object
     // we can add any key we want to it
     User.findOne({email: email })
