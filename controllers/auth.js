@@ -107,7 +107,8 @@ exports.postSignup = (req, res, next) => {
     const username = req.body.username;
     const email = req.body.email;
     const password = req.body.password;
-    const confirmPassword = req.body.confirmPassword;
+    // confirmed password is checked in the routes authentication
+
 
     // ====== VALIDATION SETUP - STEP 4 ======
     const errors = validationResult(req);
@@ -123,42 +124,51 @@ exports.postSignup = (req, res, next) => {
         });
     }
 
+    // ------------------------------------------------------- //
+    // ====== old method of checking for existing email ======
+    
     // check if user exists - try to find it
-    User.findOne({email: email})
-    .then(userDoc => {
-        if (userDoc) {
-            req.flash('signupError', 'Email exists already');
-            return res.redirect('/signup');
-        }
-        
-        // if we get here - we can go ahead and create a new user
-        // create a hashed password - 12 represents an approved salt value
-        return bcrypt.hash(password, 12)
-        // then we have a hashed password - create the user
-        .then(hashedPassword => {
-            user = new User({username: username,
-                email: email,
-                password: hashedPassword,
-                cart: { items: [] }
-            });
-            // save it to mongo
-            return user.save();
-        })
-        // then we have the result of the user creation
-        .then(result => {
-            res.redirect('/login');
-            // send an email after signup - use transporter - it gives a promise so we return it
-            return transport.sendMail({
-                to: email,
-                from: 'registration@node-shop.com',
-                subject: 'Signup succeeded',
-                html: '<h1>You signed up - well done</h1>'
-            });
-        })
-        // catch any errors in email
-        .catch(err => console.log(err));
 
+    // User.findOne({email: email})
+    // .then(userDoc => {
+    //     if (userDoc) {
+    //         req.flash('signupError', 'Email exists already');
+    //         return res.redirect('/signup');
+    //     }
+
+    // if we get here - we can go ahead and create a new user
+    // create a hashed password - 12 represents an approved salt value
+
+    // return bcrypt.hash(password, 12)
+    
+                        // ====== End ====== //
+    // ------------------------------------------------------- //
+
+    // with the existing email check now done in routes we can start with bcrypt
+    bcrypt.hash(password, 12)
+    // then we have a hashed password - create the user
+    .then(hashedPassword => {
+        user = new User({username: username,
+            email: email,
+            password: hashedPassword,
+            cart: { items: [] }
+        });
+        // save it to mongo
+        return user.save();
     })
+    
+    // then we have the result of the user creation
+    .then(result => {
+        res.redirect('/login');
+        // send an email after signup - use transporter - it gives a promise so we return it
+        return transport.sendMail({
+            to: email,
+            from: 'registration@node-shop.com',
+            subject: 'Signup succeeded',
+            html: '<h1>You signed up - well done</h1>'
+        });
+    })
+    // catch any errors in email
     .catch(err => console.log(err));
 };
 

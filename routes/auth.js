@@ -9,6 +9,7 @@ const { check, body } = require('express-validator');
 const router = express.Router();
 
 const authController = require('../controllers/auth');
+const User = require('../models/user');
 
 // get our authentication check middleware
 const isAuth = require('../middleware/is-auth');
@@ -25,12 +26,23 @@ router.post('/login', authController.postLogin);
 router.post('/signup',
 // check email
 check('email').isEmail().withMessage('Please enter a valid email address')
+
 // add a custom check to the email validation
 .custom((value, { req }) => {
-    if (value === 'test@test.com') {
-        throw new Error('This email address is not allowed.');
-    }
-    return true;
+    // if (value === 'test@test.com') {
+    //     throw new Error('This email address is not allowed.');
+    // }
+    // return true;
+
+    // check if email already exists in Db
+    return User.findOne({email: value})
+    .then(userDoc => {
+        if (userDoc) {
+            // that means something is in userDoc - that also means the email already exists
+            // Promise.reject will throw an error from inside the promise - with the included message
+            return Promise.reject('Email already exists, please pick another one.');
+        }
+    });
 }),
 // check username
 check('username', 'Please enter a valid Username between 6 and 12 characters')
