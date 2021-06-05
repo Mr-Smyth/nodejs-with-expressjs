@@ -17,19 +17,19 @@
         <form class="signup-form" action="/signup" method="POST">
             <div class="form-control">
                 <label for="email">Username</label>
-                <input type="username" name="username" id="username">
+                <input type="username" name="username" id="username" value="<%= oldInput.username %>" required>
             </div>
             <div class="form-control">
                 <label for="email">E-Mail</label>
-                <input type="email" name="email" id="email" required>
+                <input type="email" name="email" id="email" value="<%= oldInput.email %>" required>
             </div>
             <div class="form-control">
                 <label for="password">Password</label>
-                <input type="password" name="password" id="password" required>
+                <input type="password" name="password" id="password" value="<%= oldInput.password %>" required>
             </div>
             <div class="form-control">
                 <label for="confirmPassword">Confirm Password</label>
-                <input type="password" name="confirmPassword" id="confirmPassword">
+                <input type="password" name="confirmPassword" id="confirmPassword" value="<%= oldInput.confirmPassword %>" required>
             </div>
             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             <button class="btn" type="submit">Signup</button>

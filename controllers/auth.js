@@ -113,7 +113,9 @@ exports.getSignup = (req, res, next) => {
     res.render('auth/signup', {
         pageTitle: 'Signup',
         path: '/signup',
-        errorMsg: message
+        errorMsg: message,
+        oldInput: {username: '', email: '', password: '', confirmPassword: ''}
+
     });
 };
 
@@ -123,6 +125,7 @@ exports.postSignup = (req, res, next) => {
     const username = req.body.username;
     const email = req.body.email;
     const password = req.body.password;
+    const confirmPassword = req.body.confirmPassword;
     // confirmed password is checked in the routes authentication
 
 
@@ -136,7 +139,8 @@ exports.postSignup = (req, res, next) => {
         return res.status(422).render('auth/signup', {
             pageTitle: 'Signup',
             path: '/signup',
-            errorMsg: `'${errors.array()[0].value}' is not valid. ${errors.array()[0].msg}`
+            errorMsg: `'${errors.array()[0].value}' is not valid. ${errors.array()[0].msg}`,
+            oldInput: {username: username, email: email, password: password, confirmPassword: confirmPassword}
         });
     }
 
