@@ -249,6 +249,12 @@ form {
   color: rgb(156, 16, 16);
 }
 
+.signup-form input.invalid {
+  background: red;
+  color: silver;
+  font-weight: bolder;
+}
+
 
 @media (min-width: 768px) {
   .main-header__nav {

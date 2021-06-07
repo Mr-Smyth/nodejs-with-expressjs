@@ -114,8 +114,8 @@ exports.getSignup = (req, res, next) => {
         pageTitle: 'Signup',
         path: '/signup',
         errorMsg: message,
-        oldInput: {username: '', email: '', password: '', confirmPassword: ''}
-
+        oldInput: {username: '', email: '', password: '', confirmPassword: ''},
+        errorsArray: []
     });
 };
 
@@ -140,7 +140,8 @@ exports.postSignup = (req, res, next) => {
             pageTitle: 'Signup',
             path: '/signup',
             errorMsg: `'${errors.array()[0].value}' is not valid. ${errors.array()[0].msg}`,
-            oldInput: {username: username, email: email, password: password, confirmPassword: confirmPassword}
+            oldInput: {username: username, email: email, password: password, confirmPassword: confirmPassword},
+            errorsArray: errors.array()
         });
     }
 
@@ -179,6 +180,7 @@ exports.postSignup = (req, res, next) => {
     
     // then we have the result of the user creation
     .then(result => {
+        console.log()
         res.redirect('/login');
         // send an email after signup - use transporter - it gives a promise so we return it
         return transport.sendMail({

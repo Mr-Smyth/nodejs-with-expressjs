@@ -24,7 +24,7 @@ router.post('/login',
         .isEmail(),
     body('password', 'Password must be between 6 and 16 alphanumeric characters')
         .isLength({min: 6, max: 16})
-        .isAlphanumeric()
+        .isAlphanumeric(),
     ],
  authController.postLogin);
 
