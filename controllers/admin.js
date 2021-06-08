@@ -1,11 +1,18 @@
 
+// validation
+const { validationResult } = require('express-validator');
+
+
 // import model
 const Product = require('../models/product');
-
+// render the edit-product screen
 exports.getAddProduct = (req, res, next) => {
-    res.render('admin/add-product', {
-        pageTitle: 'Admin Page',
+    res.render('admin/edit-product', {
+        pageTitle: 'Add a new product',
         path: '/admin/add-product',
+        editing: false,
+        hasError: false,
+        errorMsg: null
     });
 };
 
@@ -16,6 +23,28 @@ exports.postAddProduct = (req, res, next) => {
     const imageUrl = req.body.imageUrl;
     const price = req.body.price;
     const description = req.body.description;
+    const errors = validationResult(req);
+
+    // ==== CHECK VALIDATION ====== //
+
+    // RENDER THE EDIT-PRODUCT TEMPLATE WHICH USES SOME TEMPLATE LOGIC TO DECIDE IF WE ARE THERE BECAUSE OF EDITING OR HASERROR
+    if (!errors.isEmpty()) {
+        // return 422 - which is a common status code for validation errors
+        return res.status(422).render('admin/edit-product', {
+            pageTitle: 'Add Product',
+            path: '/admin/add-product',
+            editing: false,
+            product: {
+                title: title,
+                imageUrl: imageUrl,
+                price: price,
+                description: description
+            },
+            hasError: true,
+            errorMsg: errors.array()[0].msg
+        });
+    }
+
     const product = new Product(
         {
             title: title,
@@ -59,6 +88,8 @@ exports.getEditProduct = (req, res, next) => {
             path: '/admin/edit-product',
             editing: editMode,
             product: product,
+            hasError: false,
+            errorMsg: null
         });
     })
     .catch(err => {
@@ -74,6 +105,28 @@ exports.postGetEditProduct = (req, res, next) => {
     const updatedPrice = req.body.price;
     const updatedImageUrl = req.body.imageUrl;
     const updatedDescription = req.body.description;
+    const errors = validationResult(req);
+
+
+    if (!errors.isEmpty()) {
+        console.log(errors.array());
+        // return 422 - which is a common status code for validation errors
+        return res.status(422).render('admin/edit-product', {
+            pageTitle: 'Edit Product',
+            path: '/admin/edit-product',
+            editing: true,
+            product: {
+                title: updatedTitle,
+                imageUrl: updatedImageUrl,
+                price: updatedPrice,
+                description: updatedDescription,
+                _id: prodId
+            },
+            hasError: true,
+            errorMsg: errors.array()[0].msg
+        });
+    }
+
     
     // find the product, then we get access to it
     Product.findById(prodId)
