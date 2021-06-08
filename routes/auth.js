@@ -21,10 +21,14 @@ router.get('/signup', authController.getSignup);
 router.post('/login',
     [
     check('email', 'Please enter a valid email address to login')
-        .isEmail(),
+        .isEmail()
+        // add a sanitizer to make sure email is stored properly - ie - all lower case etc
+        .normalizeEmail(),
     body('password', 'Password must be between 6 and 16 alphanumeric characters')
         .isLength({min: 6, max: 16})
-        .isAlphanumeric(),
+        .isAlphanumeric()
+        // add sanitizer to make sure no white space
+        .trim(),
     ],
  authController.postLogin);
 
@@ -51,17 +55,25 @@ check('email').isEmail().withMessage('Please enter a valid email address')
             return Promise.reject('Email already exists, please pick another one.');
         }
     });
-}),
+})
+// add a sanitizer to make sure email is stored properly - ie - all lower case etc
+.normalizeEmail(),
 // check username
 check('username', 'Please enter a valid Username between 6 and 12 characters')
 .isLength({min: 4, max: 12})
-.isAlphanumeric(),
+.isAlphanumeric()
+// add sanitizer to make sure no white space
+.trim(),
 // check password
 body('password', 'Please enter a password with only numbers and text, with at least 6 characters and with a maximum of 16')
 .isLength({min: 6, max: 16})
-.isAlphanumeric(),
+.isAlphanumeric()
+// add sanitizer to make sure no white space
+.trim(),
 // check for password equality
 body('confirmPassword', 'Your repeat password does not match, please check required password and try again')
+// add sanitizer to make sure no white space
+.trim()
 .custom((value, { req }) => {
     if (value !== req.body.password) {
         throw new Error();

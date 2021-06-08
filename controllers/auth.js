@@ -32,7 +32,10 @@ exports.getLogin = (req, res, next) => {
         pageTitle: 'Login',
         path: '/login',
         errorMsg: message,
-        oldInput: {}
+        oldInput: {
+            email: '',
+            password: ''
+        }
     });
 };
 
@@ -215,7 +218,7 @@ exports.getLogout = (req, res, next) => {
 exports.postLogout = (req, res, next) => {
     req.session.destroy(err => {
         if(!err) {
-            return res.redirect('/');
+            return res.redirect('/login');
         }
         console.log(err);
     });
