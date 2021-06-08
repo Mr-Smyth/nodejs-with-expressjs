@@ -31,7 +31,8 @@ exports.getLogin = (req, res, next) => {
     res.render('auth/login', {
         pageTitle: 'Login',
         path: '/login',
-        errorMsg: message
+        errorMsg: message,
+        oldInput: {}
     });
 };
 
@@ -48,11 +49,12 @@ exports.postLogin = (req, res, next) => {
     // check to see that errors is not empty - ie it has an error
     if (!errors.isEmpty()) {
         console.log(errors.array());
-        // return 422 - which is a common status code for validation errors
+        // return 422 - which is a common status code for validation error
         return res.status(422).render('auth/login', {
             pageTitle: 'Login',
             path: '/login',
-            errorMsg: `'${errors.array()[0].value}' is not valid. ${errors.array()[0].msg}`
+            errorMsg: `'${errors.array()[0].value}' is not valid. ${errors.array()[0].msg}`,
+            oldInput: {email: email, password: ''},
         });
     }
 
@@ -62,8 +64,12 @@ exports.postLogin = (req, res, next) => {
     .then(user => {
 
         if (!user) {
-            req.flash('loginError', 'Invalid Username or Password');
-            return res.redirect('/login');
+            return res.status(422).render('auth/login', {
+                pageTitle: 'Login',
+                path: '/login',
+                errorMsg: 'Invalid Email or Password',
+                oldInput: {email: email, password: ''}
+            });
         }
 
         // now use bcrypt to compare stored hashed password with the hashed version of what the user entered.
@@ -86,8 +92,12 @@ exports.postLogin = (req, res, next) => {
             }
 
             // else - not a match - redirect to login
-            req.flash('loginError', 'Invalid Username or Password');
-            res.redirect('/login');
+            return res.status(422).render('auth/login', {
+                pageTitle: 'Login',
+                path: '/login',
+                errorMsg: 'Invalid Email or Password',
+                oldInput: {email: email, password: ''}
+            });
 
         })
         .catch(err => {
