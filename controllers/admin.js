@@ -12,7 +12,8 @@ exports.getAddProduct = (req, res, next) => {
         path: '/admin/add-product',
         editing: false,
         hasError: false,
-        errorMsg: null
+        errorMsg: null,
+        errorsArray: []
     });
 };
 
@@ -28,6 +29,7 @@ exports.postAddProduct = (req, res, next) => {
     // ==== CHECK VALIDATION ====== //
 
     // RENDER THE EDIT-PRODUCT TEMPLATE WHICH USES SOME TEMPLATE LOGIC TO DECIDE IF WE ARE THERE BECAUSE OF EDITING OR HASERROR
+    // WE INCLUDE THE PRODUCT DETAILS FROM ABOVE SO THESE CAN BE DISPLAYED FOR THE USER IN THE CASE OF AN ERROR
     if (!errors.isEmpty()) {
         // return 422 - which is a common status code for validation errors
         return res.status(422).render('admin/edit-product', {
@@ -41,7 +43,8 @@ exports.postAddProduct = (req, res, next) => {
                 description: description
             },
             hasError: true,
-            errorMsg: errors.array()[0].msg
+            errorMsg: errors.array()[0].msg,
+            errorsArray: errors.array()
         });
     }
 
@@ -89,7 +92,8 @@ exports.getEditProduct = (req, res, next) => {
             editing: editMode,
             product: product,
             hasError: false,
-            errorMsg: null
+            errorMsg: null,
+            errorsArray: []
         });
     })
     .catch(err => {
@@ -123,7 +127,8 @@ exports.postGetEditProduct = (req, res, next) => {
                 _id: prodId
             },
             hasError: true,
-            errorMsg: errors.array()[0].msg
+            errorMsg: errors.array()[0].msg,
+            errorsArray: errors.array()
         });
     }
 

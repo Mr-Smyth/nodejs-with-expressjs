@@ -26,7 +26,7 @@ router.post('/add-product', [
     body('price')
         .isFloat(),
     body('description')
-        .isLength({min: 5, max: 400})
+        .isLength({min: 5, max: 300})
         .trim()
 ], isAuth, adminController.postAddProduct);
 
@@ -42,9 +42,9 @@ router.post('/edit-product', [
     body('imageUrl')
         .isURL().withMessage('Invalid Image URL'),
     body('price')
-        .isFloat(),
+        .isFloat().withMessage('Incorrect price format'),
     body('description')
-        .isLength({min: 5, max: 400})
+        .isLength({min: 3, max: 300}).withMessage('The Description must be between 3 and 300 characters')
         .trim()
 ], isAuth, adminController.postGetEditProduct);
 
