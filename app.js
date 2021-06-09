@@ -94,12 +94,18 @@ app.use((req, res, next) => {
     next();
 });
 
-// outsourced routes
+// outsourced routes - Middleware
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);
 app.use(errorController.get500);
 app.use(errorController.get404);
+
+// special error handling middleware - errors passed to next() will skip to here
+// if you need more than 1 error handling middleware - they will execute from top to bottom
+app.use((error, req, res, next) => {
+    res.redirect('/500');
+});
 
 
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })

@@ -53,7 +53,6 @@ exports.postAddProduct = (req, res, next) => {
 
     const product = new Product(
         {
-            _id: new mongoose.Types.ObjectId('60b7449ba2d39a33d80652d0'),
             title: title,
             imageUrl: imageUrl,
             price: price,
@@ -67,7 +66,9 @@ exports.postAddProduct = (req, res, next) => {
         res.redirect('/admin/products');
     })
     .catch(err => {
-        return res.redirect('/500');
+
+        // ====== OPTION 1 - return to same page with error
+
         // return res.status(500).render('admin/edit-product', {
         //     pageTitle: 'Add Product',
         //     path: '/admin/add-product',
@@ -82,6 +83,15 @@ exports.postAddProduct = (req, res, next) => {
         //     errorMsg: 'Db failed',
         //     errorsArray: []
         // });
+
+        // ====== OPTION 2 - redirect
+        // return res.redirect('/500');
+
+        // ====== OPTION 3 - throw an error
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        // call next with an eror passed in will call our special middleware for handling errors - see app.js
+        return next(error);
     });
 };
 
@@ -115,7 +125,10 @@ exports.getEditProduct = (req, res, next) => {
         });
     })
     .catch(err => {
-        console.log(err);
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        // call next with an eror passed in will call our special middleware for handling errors - see app.js
+        return next(error);
     });
 };
 
