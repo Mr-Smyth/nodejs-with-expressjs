@@ -1,10 +1,13 @@
+// temp - to check error handling
+const mongoose = require('mongoose');
 
 // validation
 const { validationResult } = require('express-validator');
 
-
 // import model
 const Product = require('../models/product');
+
+
 // render the edit-product screen
 exports.getAddProduct = (req, res, next) => {
     res.render('admin/edit-product', {
@@ -50,6 +53,7 @@ exports.postAddProduct = (req, res, next) => {
 
     const product = new Product(
         {
+            _id: new mongoose.Types.ObjectId('60b7449ba2d39a33d80652d0'),
             title: title,
             imageUrl: imageUrl,
             price: price,
@@ -63,7 +67,21 @@ exports.postAddProduct = (req, res, next) => {
         res.redirect('/admin/products');
     })
     .catch(err => {
-        console.log(err);
+        return res.redirect('/500');
+        // return res.status(500).render('admin/edit-product', {
+        //     pageTitle: 'Add Product',
+        //     path: '/admin/add-product',
+        //     editing: false,
+        //     product: {
+        //         title: title,
+        //         imageUrl: imageUrl,
+        //         price: price,
+        //         description: description
+        //     },
+        //     hasError: true,
+        //     errorMsg: 'Db failed',
+        //     errorsArray: []
+        // });
     });
 };
 

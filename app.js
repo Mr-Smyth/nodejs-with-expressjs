@@ -69,11 +69,18 @@ app.use((req, res, next) => {
     }
     User.findById(req.session.user._id)
     .then(user => {
+        // check if we did not get a user
+        if (!user) {
+            return next();
+        }
         // we add our new mongoose user model object to the request
         req.user = user;
         next();
     })
     .catch(err => {
+        // we throw an error here - express gives us a way to handle an error, in this case it is better to do this rather than just call next
+        // because we may have a problem connecting to our database - rather than simply a non existant user.
+        throw new Error(err);
         console.log(err);
     });
 });
@@ -91,6 +98,7 @@ app.use((req, res, next) => {
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);
+app.use(errorController.get500);
 app.use(errorController.get404);
 
 
