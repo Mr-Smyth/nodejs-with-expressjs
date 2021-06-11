@@ -111,7 +111,10 @@ exports.postLogin = (req, res, next) => {
         
     })
     .catch(err => {
-        console.log(err);
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        // call next with an eror passed in will call our special middleware for handling errors - see app.js
+        return next(error);
     });
 };
 
@@ -204,7 +207,12 @@ exports.postSignup = (req, res, next) => {
         });
     })
     // catch any errors in email
-    .catch(err => console.log(err));
+    .catch(err => {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        // call next with an eror passed in will call our special middleware for handling errors - see app.js
+        return next(error);
+    });
 };
 
 
@@ -278,7 +286,12 @@ exports.postReset = (req, res, next) => {
                 `
             });
         })
-        .catch(err => console.log(err));
+        .catch(err => {
+            const error = new Error(err);
+            error.httpStatusCode = 500;
+            // call next with an eror passed in will call our special middleware for handling errors - see app.js
+            return next(error);
+        });
     })
 };
 
@@ -312,7 +325,12 @@ exports.getNewPassword = (req, res, next) => {
             passwordToken: token
         });
     })
-    .catch(err => console.log(err));
+    .catch(err => {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        // call next with an eror passed in will call our special middleware for handling errors - see app.js
+        return next(error);
+    });
 };
 
 exports.postNewPassword = (req, res, next) => {
@@ -346,5 +364,10 @@ exports.postNewPassword = (req, res, next) => {
         // once saved - redirect back to login page
         res.redirect('/login');
     })
-    .catch(err => console.log(err));
+    .catch(err => {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        // call next with an eror passed in will call our special middleware for handling errors - see app.js
+        return next(error);
+    });
 };

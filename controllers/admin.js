@@ -189,7 +189,10 @@ exports.postGetEditProduct = (req, res, next) => {
         });
     })
     .catch(err => {
-        console.log(err);
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        // call next with an eror passed in will call our special middleware for handling errors - see app.js
+        return next(error);
     });
 };
 
@@ -212,7 +215,10 @@ exports.postDeleteProduct = (req, res, next) => {
         }
     })
     .catch(err => {
-        console.log(err);
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        // call next with an eror passed in will call our special middleware for handling errors - see app.js
+        return next(error);
     });
 };
 
@@ -228,5 +234,10 @@ exports.getProducts = (req, res, next) => {
             path :'/admin/products',
         });
     })
-    .catch(err => {console.log(err);});
+    .catch(err => {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        // call next with an eror passed in will call our special middleware for handling errors - see app.js
+        return next(error);
+    });
 };

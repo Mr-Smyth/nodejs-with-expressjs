@@ -14,8 +14,11 @@ exports.getProducts = (req, res, next) => {
         });
     })
     .catch(err => {
-        console.log(err);
-    });    
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        // call next with an eror passed in will call our special middleware for handling errors - see app.js
+        return next(error);
+    });  
 };
 
 // Display a products Details controller
@@ -34,7 +37,10 @@ exports.getProductDetails = (req, res, next) => {
         });
     })
     .catch(err => {
-        console.log(err)
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        // call next with an eror passed in will call our special middleware for handling errors - see app.js
+        return next(error);
     });
 };
 
@@ -58,7 +64,10 @@ exports.getIndex = (req, res, next) => {
         });
     })
     .catch(err => {
-        console.log(err);
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        // call next with an eror passed in will call our special middleware for handling errors - see app.js
+        return next(error);
     });
 };
 
@@ -74,7 +83,12 @@ exports.postToCart = (req, res, next) => {
     .then(result => {
         res.redirect('/cart')
     })
-    .catch(err => console.log(err));
+    .catch(err => {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        // call next with an eror passed in will call our special middleware for handling errors - see app.js
+        return next(error);
+    });
 };
 
 
@@ -93,7 +107,10 @@ exports.getCart = (req, res, next) => {
         });
     })
     .catch(err => {
-        console.log(err);
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        // call next with an eror passed in will call our special middleware for handling errors - see app.js
+        return next(error);
     });
 };
 
@@ -105,7 +122,12 @@ exports.deleteCartItem = (req, res, next) => {
     .then(result => {
         res.redirect('/cart');
     })
-    .catch(err => console.log(err))
+    .catch(err => {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        // call next with an eror passed in will call our special middleware for handling errors - see app.js
+        return next(error);
+    });
 };
 
 // Display our Checkout controller
@@ -151,7 +173,12 @@ exports.postOrder = (req, res, next) => {
     .then(result => {
         res.redirect('/orders');
     })
-    .catch(err => console.log(err));
+    .catch(err => {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        // call next with an eror passed in will call our special middleware for handling errors - see app.js
+        return next(error);
+    });
 };
 
 // Display our Checkout controller
@@ -164,5 +191,10 @@ exports.getOrders = (req, res, next) => {
             orders: orders,
         });
     })
-    .catch(err => console.log(err));
+    .catch(err => {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        // call next with an eror passed in will call our special middleware for handling errors - see app.js
+        return next(error);
+    });
 };

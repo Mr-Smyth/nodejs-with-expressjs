@@ -61,6 +61,15 @@ app.use(flash());
 // csrf - step 3 - after session is initialized we use the csrf, this is because csrf uses the session
 app.use(csrfProtection);
 
+// csrf - step 4 - add a normal middleware - to tell express to include csrf in all of our views using '.locals.
+// we can also include isAuthenticated check'
+app.use((req, res, next) => {
+    res.locals.isAuthenticated = req.session.isLoggedIn;
+    res.locals.csrfToken = req.csrfToken();
+    res.locals.currentUser = req.session.user;
+    next();
+});
+
 // Use the session above to insert the user that is in the session, thanks to our login controller.
 // we inset it back into a mongoose user model that we can use to access our models
 app.use((req, res, next) => {
@@ -69,6 +78,7 @@ app.use((req, res, next) => {
     }
     User.findById(req.session.user._id)
     .then(user => {
+        throw new Error('Dummy');
         // check if we did not get a user
         if (!user) {
             return next();
@@ -78,20 +88,9 @@ app.use((req, res, next) => {
         next();
     })
     .catch(err => {
-        // we throw an error here - express gives us a way to handle an error, in this case it is better to do this rather than just call next
-        // because we may have a problem connecting to our database - rather than simply a non existant user.
-        throw new Error(err);
-        console.log(err);
+        // to allow for throwing of errors within the async bolcks above - we need to call next(with an error)
+        next(new Error(err));
     });
-});
-
-// csrf - step 4 - add a normal middleware - to tell express to include csrf in all of our views using '.locals.
-// we can also include isAuthenticated check'
-app.use((req, res, next) => {
-    res.locals.isAuthenticated = req.session.isLoggedIn;
-    res.locals.csrfToken = req.csrfToken();
-    res.locals.currentUser = req.session.user;
-    next();
 });
 
 // outsourced routes - Middleware
@@ -104,7 +103,12 @@ app.use(errorController.get404);
 // special error handling middleware - errors passed to next() will skip to here
 // if you need more than 1 error handling middleware - they will execute from top to bottom
 app.use((error, req, res, next) => {
-    res.redirect('/500');
+    // res.status(error.httpStatusCode).render(.....)
+    // res.redirect('/500');
+    res.render('500', {
+        pageTitle: 'Error - 500 - Things have really gone south!!',
+        path: '/500',
+    });
 });
 
 
