@@ -3,7 +3,10 @@ const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+
+// file upload related
 const multer = require('multer');
+const { v4: uuidv4 } = require('uuid');
 
 // const CONNECTION_URI = require('./utility/env').connectionUri;
 require('dotenv').config();
@@ -38,6 +41,18 @@ const errorController = require('./controllers/errors.js')
 const User = require('./models/user');
 const { homedir } = require('os');
 
+// file upload related
+const fileStorage = multer.diskStorage({
+    // destination is a function we will make an arrow with a cb that we must call when done setting destination
+    destination: (req, file, cb) => {
+        // first param can be an error - we set it to null
+        cb(null, 'images');
+    },
+    filename: (req, file, cb) => {
+        cb(null, uuidv4() + '-' + file.originalname);
+    }
+})
+
 // TO STOP ERRORS RELATING TO FAVICON
 app.get('/favicon.ico', (req, res) => {
     res.status(204);
@@ -45,7 +60,10 @@ app.get('/favicon.ico', (req, res) => {
 });
 
 app.use(bodyParser.urlencoded({extended: false}));
-app.use(multer({dest: 'images'}).single('image'));
+
+// file upload related
+app.use(multer({storage: fileStorage}).single('image'));
+
 // this tells express to look into the public folder to serve up css files
 app.use(express.static(path.join(__dirname, 'public')));
 
