@@ -3,6 +3,7 @@ const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const multer = require('multer');
 
 // const CONNECTION_URI = require('./utility/env').connectionUri;
 require('dotenv').config();
@@ -44,6 +45,7 @@ app.get('/favicon.ico', (req, res) => {
 });
 
 app.use(bodyParser.urlencoded({extended: false}));
+app.use(multer({dest: 'images'}).single('image'));
 // this tells express to look into the public folder to serve up css files
 app.use(express.static(path.join(__dirname, 'public')));
 

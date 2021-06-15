@@ -24,10 +24,12 @@ exports.getAddProduct = (req, res, next) => {
 exports.postAddProduct = (req, res, next) => {
     // get form data
     const title = req.body.title;
-    const imageUrl = req.body.image;
+    // look for req.file - we use multer to extract image
+    const imageUrl = req.file;
     const price = req.body.price;
     const description = req.body.description;
     const errors = validationResult(req);
+    console.log(imageUrl);
 
     // ==== CHECK VALIDATION ====== //
 
