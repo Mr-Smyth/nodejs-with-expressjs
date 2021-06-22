@@ -51,7 +51,19 @@ const fileStorage = multer.diskStorage({
     filename: (req, file, cb) => {
         cb(null, uuidv4() + '-' + file.originalname);
     }
-})
+});
+
+// filter the types of files we can upload with multer
+const fileFilter = (req, file, cb) => {
+    if (file.mimetype === 'image/png' || file.mimetype === 'image/jpg' || file.mimetype === 'image/jpeg') {
+        // then its true - so we call the cb with true
+        cb(null, true);
+    }
+    else {
+        // its false - file is of another type
+        cb(null, false);
+    }
+};
 
 // TO STOP ERRORS RELATING TO FAVICON
 app.get('/favicon.ico', (req, res) => {
@@ -62,7 +74,7 @@ app.get('/favicon.ico', (req, res) => {
 app.use(bodyParser.urlencoded({extended: false}));
 
 // file upload related
-app.use(multer({storage: fileStorage}).single('image'));
+app.use(multer({storage: fileStorage, fileFilter: fileFilter }).single('image'));
 
 // this tells express to look into the public folder to serve up css files
 app.use(express.static(path.join(__dirname, 'public')));

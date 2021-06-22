@@ -25,11 +25,30 @@ exports.postAddProduct = (req, res, next) => {
     // get form data
     const title = req.body.title;
     // look for req.file - we use multer to extract image
-    const imageUrl = req.file;
+    const image = req.file;
     const price = req.body.price;
     const description = req.body.description;
+    console.log(image);
+
+    if (!image) {
+        return res.status(422).render('admin/edit-product', {
+            pageTitle: 'Add Product',
+            path: '/admin/add-product',
+            editing: false,
+            product: {
+                title: title,
+                imageUrl: image,
+                price: price,
+                description: description
+            },
+            hasError: true,
+            errorMsg: 'Attached image is not a valid image!',
+            // dont need anything in red - so we return just empty array here
+            errorsArray: []
+        });
+    }
+
     const errors = validationResult(req);
-    console.log(imageUrl);
 
     // ==== CHECK VALIDATION ====== //
 
@@ -43,7 +62,7 @@ exports.postAddProduct = (req, res, next) => {
             editing: false,
             product: {
                 title: title,
-                imageUrl: imageUrl,
+                imageUrl: image,
                 price: price,
                 description: description
             },
