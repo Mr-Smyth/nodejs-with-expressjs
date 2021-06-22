@@ -76,8 +76,11 @@ app.use(bodyParser.urlencoded({extended: false}));
 // file upload related
 app.use(multer({storage: fileStorage, fileFilter: fileFilter }).single('image'));
 
-// this tells express to look into the public folder to serve up css files
+// this tells express to look into the public folder to serve up css files as though they were in the route folder
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Says where to look for our static images - but we do not want to serve them as though they were in the route - we want to leave them in the images folder
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 // setup a session
 app.use(session({
