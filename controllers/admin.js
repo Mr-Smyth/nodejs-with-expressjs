@@ -37,7 +37,6 @@ exports.postAddProduct = (req, res, next) => {
             editing: false,
             product: {
                 title: title,
-                imageUrl: image,
                 price: price,
                 description: description
             },
@@ -162,7 +161,7 @@ exports.postGetEditProduct = (req, res, next) => {
     const prodId = req.body.productId;
     const updatedTitle = req.body.title;
     const updatedPrice = req.body.price;
-    const updatedImageUrl = req.body.imageUrl;
+    const image = req.file;
     const updatedDescription = req.body.description;
     const errors = validationResult(req);
 
@@ -176,7 +175,6 @@ exports.postGetEditProduct = (req, res, next) => {
             editing: true,
             product: {
                 title: updatedTitle,
-                imageUrl: updatedImageUrl,
                 price: updatedPrice,
                 description: updatedDescription,
                 _id: prodId
@@ -202,7 +200,9 @@ exports.postGetEditProduct = (req, res, next) => {
         // update the product mongoose object
         product.title = updatedTitle;
         product.price = updatedPrice;
-        product.imageUrl = updatedImageUrl;
+        if (image) {
+            product.imageUrl = image.path;
+        }
         product.description = updatedDescription;
 
         // then call the built in save method save

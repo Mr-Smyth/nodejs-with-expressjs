@@ -19,7 +19,7 @@ router.get('/add-product',isAuth, adminController.getAddProduct);
 router.post('/add-product', [
     body('title')
         .isString()
-        .isLength({min: 3, max: 20})
+        .isLength({min: 3, max: 50})
         .trim(),
     body('price')
         .isFloat(),
@@ -37,8 +37,6 @@ router.post('/edit-product', [
         .isString().withMessage('The Title is not a string')
         .isLength({min: 3, max: 30}).withMessage('The Title must be between 3 and 30 characters')
         .trim(),
-    body('imageUrl')
-        .isURL().withMessage('Invalid Image URL'),
     body('price')
         .isFloat().withMessage('Incorrect price format'),
     body('description')
