@@ -72,6 +72,9 @@ exports.postAddProduct = (req, res, next) => {
         });
     }
 
+    // set up imageUrl as the images location on file storage
+    const imageUrl = image.path
+
     const product = new Product(
         {
             title: title,
