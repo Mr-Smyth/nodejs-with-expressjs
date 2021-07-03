@@ -36,5 +36,8 @@ router.get('/checkout',isAuth, shopController.getCheckout);
 // Orders page
 router.get('/orders',isAuth, shopController.getOrders);
 
+// add a route to handle the downloading of an invoice
+router.get('/orders/:orderId',isAuth, shopController.getInvoice);
+
 module.exports = router;
 

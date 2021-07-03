@@ -23,6 +23,7 @@
                             <li class="orders__products-item">Quantity: (<%= prod.quantity %>)</li>
                             <li class="orders__products-item">Description: <%= prod.productData.description %></li>
                             <li class="orders__products-item">Item Price: <%= prod.productData.price %></li>
+                            <a href="/orders/<%= order._id %>">Download Invoice</a>
                         </ul>
                     </li>
                     <% }) %>

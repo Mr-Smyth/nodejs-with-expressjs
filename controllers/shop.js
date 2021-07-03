@@ -1,6 +1,8 @@
 // import model
 const Product = require('../models/product');
 const Order = require('../models/order');
+const fs = require('fs');
+const path = require('path');
 
 // Display our products controller
 exports.getProducts = (req, res, next) => {
@@ -196,5 +198,28 @@ exports.getOrders = (req, res, next) => {
         error.httpStatusCode = 500;
         // call next with an eror passed in will call our special middleware for handling errors - see app.js
         return next(error);
+    });
+};
+
+// handle download invoice
+exports.getInvoice = (req, res, next) => {
+    console.log('Here i am');
+    const orderId = req.params.orderId;
+    console.log('Here i am again');
+
+    const invoiceName = 'invoice-' + orderId + '.pdf'; 
+    console.log(invoiceName)
+    // use path to find the path to the invoice - first look in data folder - then invoices
+    const invoicePath = path.join('data', 'invoices', invoiceName);
+
+    // readFile gives a callback - this is our arrow function which will be executed when its done reading the file
+    // so we will either get an error, or we will get some data
+    fs.readFile(invoicePath, (err, data) => {
+        if (err) {
+            // next it - so the default error handling can take over
+            return next(err);
+        }
+        // so no error - we can continue
+        res.send(data);
     });
 };
