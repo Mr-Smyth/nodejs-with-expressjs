@@ -3,6 +3,7 @@ const Product = require('../models/product');
 const Order = require('../models/order');
 const fs = require('fs');
 const path = require('path');
+const { type } = require('os');
 
 // Display our products controller
 exports.getProducts = (req, res, next) => {
@@ -220,6 +221,8 @@ exports.getInvoice = (req, res, next) => {
             return next(err);
         }
         // so no error - we can continue
+        res.setHeader('Content-Type', 'application/pdf' );
+        res.setHeader('Content-Disposition', 'attachment; filename="' + invoiceName + '"');
         res.send(data);
     });
 };
