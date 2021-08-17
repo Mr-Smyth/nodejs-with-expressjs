@@ -5,6 +5,8 @@ const fs = require('fs');
 const path = require('path');
 const { type } = require('os');
 
+const pdfDocument = require('pdfkit');
+
 // Display our products controller
 exports.getProducts = (req, res, next) => {
     Product.find()
@@ -222,6 +224,27 @@ exports.getInvoice = (req, res, next) => {
         // use path to find the path to the invoice - first look in data folder - then invoices
         const invoicePath = path.join('data', 'invoices', invoiceName);
 
+        // set up to create a doc on the fly
+        const pdfDoc = new pdfDocument();
+        // pipe the document into a write stream to the invoice path
+
+        res.setHeader('Content-Type', 'application/pdf' );
+        res.setHeader(
+            'Content-Disposition',
+            'inline; filename="' + invoiceName + '"'
+        );
+
+        pdfDoc.pipe(fs.createWriteStream(invoicePath));
+        // ALSO WE WANT TO RETURN IT TO THE CLIENT - SO PIPE THE DOCUMENT INTO OUR RESPONSE - 
+        // res is a writable readstream - pdf is readable - so we can do that
+
+        pdfDoc.pipe(res);
+
+        // create our doc
+        pdfDoc.text('This is your Invoice #' + order.user.userId.toString() +' - onthefly.com');
+        pdfDoc.end();
+
+
         // readFile gives a callback - this is our arrow function which will be executed when its done reading the file
         // so we will either get an error, or we will get some data
 
@@ -237,17 +260,19 @@ exports.getInvoice = (req, res, next) => {
         //     res.send(data);
         // });
 
+        // =====  version of sreaming a static created file - example. This is now handled above where we create the pdf. =====
         // do same as above but by streaming the data rather than reading the whole file - better for larger files.
-        const file = fs.createReadStream(invoicePath);
-        // we still setup the headers to tell browser how to deal with the file.
-        res.setHeader('Content-Type', 'application/pdf' );
-        res.setHeader(
-            'Content-Disposition',
-            'inline; filename="' + invoiceName + '"'
-        );
-        // use the file (created above to read the stream) - using the pipe method 
-        // to forward the data which is read in to my response. res is a writable stream
-        file.pipe(res);
+        // const file = fs.createReadStream(invoicePath);
+        // // we still setup the headers to tell browser how to deal with the file.
+        // res.setHeader('Content-Type', 'application/pdf' );
+        // res.setHeader(
+        //     'Content-Disposition',
+        //     'inline; filename="' + invoiceName + '"'
+        // );
+        // // use the file (created above to read the stream) - using the pipe method 
+        // // to forward the data which is read in to my response. res is a writable stream
+        // file.pipe(res);
+        // ======          ==========            ===========         ===========           ===========         ============ 
     })
     .catch(err => next(err))
 };
