@@ -224,16 +224,30 @@ exports.getInvoice = (req, res, next) => {
 
         // readFile gives a callback - this is our arrow function which will be executed when its done reading the file
         // so we will either get an error, or we will get some data
-        fs.readFile(invoicePath, (err, data) => {
-            if (err) {
-                // next it - so the default error handling can take over
-                return next(err);
-            }
-            // so no error - we can continue
-            res.setHeader('Content-Type', 'application/pdf' );
-            res.setHeader('Content-Disposition', 'inline; filename="' + invoiceName + '"');
-            res.send(data);
-        });
+
+        // process by reading the file is ok for small files
+        // fs.readFile(invoicePath, (err, data) => {
+        //     if (err) {
+        //         // next it - so the default error handling can take over
+        //         return next(err);
+        //     }
+        //     // so no error - we can continue
+        //     res.setHeader('Content-Type', 'application/pdf' );
+        //     res.setHeader('Content-Disposition', 'inline; filename="' + invoiceName + '"');
+        //     res.send(data);
+        // });
+
+        // do same as above but by streaming the data rather than reading the whole file - better for larger files.
+        const file = fs.createReadStream(invoicePath);
+        // we still setup the headers to tell browser how to deal with the file.
+        res.setHeader('Content-Type', 'application/pdf' );
+        res.setHeader(
+            'Content-Disposition',
+            'inline; filename="' + invoiceName + '"'
+        );
+        // use the file (created above to read the stream) - using the pipe method 
+        // to forward the data which is read in to my response. res is a writable stream
+        file.pipe(res);
     })
     .catch(err => next(err))
 };
