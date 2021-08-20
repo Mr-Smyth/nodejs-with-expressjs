@@ -241,7 +241,23 @@ exports.getInvoice = (req, res, next) => {
         pdfDoc.pipe(res);
 
         // create our doc
-        pdfDoc.text('This is your Invoice #' + order.user.userId.toString() +' - onthefly.com');
+        pdfDoc.fontSize(26).text('Invoice', {
+            underline: true,
+        });
+        pdfDoc.text('--------------------------------');
+
+        let totalPrice = 0;
+        order.products.forEach(prod => {
+            console.log('Yippee')
+            totalPrice += prod.quantity * prod.productData.price;
+            console.log(prod)
+            pdfDoc.fontSize(16).text(`${prod.productData.title}: ${prod.quantity} x €${prod.productData.price} -- Line Total €${prod.quantity * prod.productData.price}`);
+        });
+        pdfDoc.text('--------------------------------');
+        pdfDoc.fontSize(20).text(`Total is: €${totalPrice}`);
+        pdfDoc.text('--------------------------------');
+        pdfDoc.text('--------------------------------');
+
         pdfDoc.end();
 
 
