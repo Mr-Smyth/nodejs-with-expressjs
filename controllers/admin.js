@@ -1,6 +1,10 @@
 // temp - to check error handling
 const mongoose = require('mongoose');
 
+// require our delete file utility
+const fileHelper = require('../utility/file')
+
+
 // validation
 const { validationResult } = require('express-validator');
 
@@ -201,6 +205,8 @@ exports.postGetEditProduct = (req, res, next) => {
         product.title = updatedTitle;
         product.price = updatedPrice;
         if (image) {
+            // use fileHelper deleteFile and pass in the path to the products image file - (fire and forget it we do not wait for completion)
+            fileHelper.deleteFile(product.imageUrl);
             product.imageUrl = image.path;
         }
         product.description = updatedDescription;
@@ -224,9 +230,21 @@ exports.postGetEditProduct = (req, res, next) => {
 exports.postDeleteProduct = (req, res, next) => {
     let prodId = req.body.productId;
 
-    // change delete method to deleteOne - so as to also check for correct user
-    // Old method => Product.findByIdAndRemove(prodId)
-    Product.deleteOne({ _id: prodId, userId: req.user._id })
+    // delete the image file using our helper in utility - get the product first
+    Product.findById(prodId)
+    .then(product => {
+        // if no product - throw a new error
+        if (!product) {
+            return next(new Error('Product not found'));
+        }
+        // we got a product! - then we can delete the products file image
+        fileHelper.deleteFile(product.imageUrl);
+
+        // Now we delete the product - return it to get out of the current then block
+        // change delete method to deleteOne - so as to also check for correct user
+                                // Old method => Product.findByIdAndRemove(prodId)
+        return Product.deleteOne({ _id: prodId, userId: req.user._id })
+    })
     .then(response => {
         // response.n gives a 1 for deletion or a 0 for no deletion - use that to redirect
         if (response.n) {
@@ -243,7 +261,7 @@ exports.postDeleteProduct = (req, res, next) => {
         error.httpStatusCode = 500;
         // call next with an eror passed in will call our special middleware for handling errors - see app.js
         return next(error);
-    });
+    });    
 };
 
 
